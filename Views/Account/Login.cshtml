@@ -58,4 +58,32 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+    
+    @if (TempData["MensajeExito"] != null)
+    {
+        @await Html.PartialAsync("_Exito", TempData["MensajeExito"]?.ToString() ?? "")
+        <script>
+            // Limpiar TempData inmediatamente
+            @{ TempData.Remove("MensajeExito"); }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                var redirectUrl = '@TempData["RedirectUrl"]';
+                @{ TempData.Remove("RedirectUrl"); }
+                mostrarExito('@Html.Raw(TempData["MensajeExito"]?.ToString() ?? "")', redirectUrl);
+            });
+        </script>
+    }
+    
+    @if (TempData["MensajeError"] != null)
+    {
+        @await Html.PartialAsync("_Error", TempData["MensajeError"]?.ToString() ?? "")
+        <script>
+            // Limpiar TempData inmediatamente
+            @{ TempData.Remove("MensajeError"); }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                mostrarError('@Html.Raw(TempData["MensajeError"]?.ToString() ?? "")');
+            });
+        </script>
+    }
 }

@@ -1,0 +1,85 @@
+@model string
+
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 text-center py-4" style="background: linear-gradient(135deg, #dc3545 0%, #fd7e14 50%, #e74c3c 100%);">
+                <div class="w-100 text-center">
+                    <div class="error-icon mb-3">
+                        <i class="fas fa-exclamation-triangle text-white" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="modal-title text-white fw-bold" id="errorModalLabel">Error</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-center py-4 px-4">
+                <p class="text-muted mb-4 fs-5">
+                    @(string.IsNullOrEmpty(Model) ? "Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo." : Model)
+                </p>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-danger btn-lg fw-bold" data-bs-dismiss="modal" style="border-radius: 12px; padding: 12px 24px;">
+                        <i class="fas fa-times me-2"></i>Cerrar
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="location.reload()" style="border-radius: 12px; padding: 10px 20px;">
+                        <i class="fas fa-redo me-2"></i>Reintentar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función para mostrar el modal de error
+    function mostrarError(mensaje = null) {
+        const modal = new bootstrap.Modal(document.getElementById('errorModal'));
+        if (mensaje) {
+            const mensajeElement = document.querySelector('#errorModal .modal-body p');
+            mensajeElement.textContent = mensaje;
+        }
+        modal.show();
+        
+        // Auto-hide después de 5 segundos
+        setTimeout(() => {
+            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('errorModal'));
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        }, 5000);
+    }
+
+    // Función para mostrar el modal de error y redirigir después
+    function mostrarErrorYRedirigir(mensaje, url, tiempoEspera = 3000) {
+        mostrarError(mensaje);
+        setTimeout(() => {
+            window.location.href = url;
+        }, tiempoEspera);
+    }
+
+    // Limpiar TempData al cargar la página si existe
+    document.addEventListener('DOMContentLoaded', function() {
+        // Limpiar cualquier TempData persistente
+        if (typeof sessionStorage !== 'undefined') {
+            sessionStorage.removeItem('tempDataMensajeExito');
+            sessionStorage.removeItem('tempDataMensajeError');
+        }
+    });
+
+    // Auto-hide cuando se muestra el modal
+    document.getElementById('errorModal').addEventListener('shown.bs.modal', function () {
+        setTimeout(() => {
+            const modal = bootstrap.Modal.getInstance(this);
+            if (modal) {
+                modal.hide();
+            }
+        }, 5000);
+    });
+
+    // Limpiar al cerrar el modal
+    document.getElementById('errorModal').addEventListener('hidden.bs.modal', function () {
+        // Limpiar cualquier TempData persistente
+        if (typeof sessionStorage !== 'undefined') {
+            sessionStorage.removeItem('tempDataMensajeError');
+        }
+    });
+</script> 

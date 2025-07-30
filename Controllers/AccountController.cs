@@ -30,8 +30,12 @@ namespace VoluntariosConectadosRD.Controllers
             {
                 try
                 {
+                    TempData["MensajeExito"] = "¡Inicio de sesión exitoso! Bienvenido de vuelta.";
+                    TempData["RedirectUrl"] = "/Dashboard/Profile";
+                    return View(model);
+
                     // Intentar llamar a la API primero
-                    var response = await _accountApiService.LoginAsync(model);
+                    /*var response = await _accountApiService.LoginAsync(model);
                     
                     if (response?.Success == true && response.Data != null)
                     {
@@ -39,20 +43,22 @@ namespace VoluntariosConectadosRD.Controllers
                         HttpContext.Session.SetString("JWTToken", response.Data.Token);
                         HttpContext.Session.SetString("UserInfo", System.Text.Json.JsonSerializer.Serialize(response.Data.User));
                         
-                        return RedirectToAction("Profile", "Dashboard");
+                        TempData["MensajeExito"] = "¡Inicio de sesión exitoso! Bienvenido de vuelta.";
+                        TempData["RedirectUrl"] = "/Dashboard/Profile";
+                        return View(model);
                     }
                     else
                     {
-                        // Si la API falla, volver al comportamiento actual
-                        _logger.LogWarning("El login de la API falló, volviendo al flujo de trabajo actual");
-                        return RedirectToAction("Profile", "Dashboard");
-                    }
+                        // Si la API falla, mostrar error
+                        TempData["MensajeError"] = "Credenciales inválidas. " + (response?.Message ?? "Por favor, verifica tu email y contraseña.");
+                        return View(model);
+                    }*/
                 }
                 catch (Exception ex)
                 {
-                    // Si la API no está disponible, volver al comportamiento actual
-                    _logger.LogWarning(ex, "API no disponible, volviendo al flujo de trabajo actual");
-                    return RedirectToAction("Profile", "Dashboard");
+                    // Si la API no está disponible, mostrar error
+                    TempData["MensajeError"] = "Error de conexión. " + ex.Message + " Por favor, inténtalo de nuevo más tarde.";
+                    return View(model);
                 }
             }
             return View(model);
@@ -72,25 +78,32 @@ namespace VoluntariosConectadosRD.Controllers
             {
                 try
                 {
-                    // Intentar llamar a la API primero
-                    var response = await _accountApiService.RegisterVolunteerAsync(model);
+                    TempData["MensajeExito"] = "¡Registro exitoso! Tu cuenta ha sido creada correctamente. Ya puedes iniciar sesión.";
+                    TempData["RedirectUrl"] = "/Account/Login";
+                    return View(model);
+
+                    // PENDIENTE Intentar llamar a la API primero, poner cuando haya API
+                    //var response = await _accountApiService.RegisterVolunteerAsync(model);
                     
-                    if (response?.Success == true)
+                    /*if (response?.Success == true)
                     {
-                        return RedirectToAction("RegistroExito", "Account");
+                        TempData["MensajeExito"] = "¡Registro exitoso! Tu cuenta ha sido creada correctamente. Ya puedes iniciar sesión.";
+                        TempData["RedirectUrl"] = "/Account/Login";
+                        return View(model);
                     }
                     else
                     {
-                        // Si la API falla, volver al comportamiento actual
-                        _logger.LogWarning("El registro de la API falló, volviendo al flujo de trabajo actual");
-                        return RedirectToAction("RegistroExito", "Account");
+                        // Si la API falla, mostrar error
+                        TempData["MensajeError"] = "Error en el registro. " + (response?.Message ?? "Por favor, verifica los datos e inténtalo de nuevo.");
+                        return View(model);
                     }
+                    */
                 }
                 catch (Exception ex)
                 {
-                    // Si la API no está disponible, volver al comportamiento actual
-                    _logger.LogWarning(ex, "API no disponible, volviendo al flujo de trabajo actual");
-                    return RedirectToAction("RegistroExito", "Account");
+                    // Si la API no está disponible, mostrar error
+                    TempData["MensajeError"] = "Error de conexión. " + ex.Message + " Por favor, inténtalo de nuevo más tarde.";
+                    return View(model);
                 }
             }
             return View(model);
@@ -115,29 +128,27 @@ namespace VoluntariosConectadosRD.Controllers
                     
                     if (response?.Success == true)
                     {
-                        return RedirectToAction("RegistroExito", "Account");
+                        TempData["MensajeExito"] = "¡Registro de ONG exitoso! Tu organización ha sido registrada correctamente.";
+                        TempData["RedirectUrl"] = "/Account/Login";
+                        return View(model);
                     }
                     else
                     {
-                        // Si la API falla, volver al comportamiento actual
-                        _logger.LogWarning("El registro de ONG de la API falló, volviendo al flujo de trabajo actual");
-                        return RedirectToAction("RegistroExito", "Account");
+                        // Si la API falla, mostrar error
+                        TempData["MensajeError"] = "Error en el registro de la ONG. " + (response?.Message ?? "Por favor, verifica los datos e inténtalo de nuevo.");
+                        return View(model);
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Si la API no está disponible, volver al comportamiento actual
-                    _logger.LogWarning(ex, "API no disponible, volviendo al flujo de trabajo actual");
-                    return RedirectToAction("RegistroExito", "Account");
+                    // Si la API no está disponible, mostrar error
+                    TempData["MensajeError"] = "Error de conexión. " + ex.Message + " Por favor, inténtalo de nuevo más tarde.";
+                    return View(model);
                 }
             }
             return View(model);
         }
 
-        [HttpGet]
-        public IActionResult RegistroExito()
-        {
-            return View();
-        }
+
     }
 } 
