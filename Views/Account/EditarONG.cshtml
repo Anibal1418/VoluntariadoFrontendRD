@@ -1,0 +1,140 @@
+@model VoluntariosConectadosRD.Models.EditarONGViewModel
+@{
+    ViewData["Title"] = "Editar ONG - Voluntariado Conectado RD";
+}
+
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #2522e7 0%, #5850c9 15%, #6a5cd9 30%, #8645c2 50%, #434294 60%, rgb(85, 84, 202) 75%, #5e54b6 90%, #4e38af 100%); min-height: calc(100vh - 200px); padding-top: 120px !important;">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-6">
+            <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+                <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 25%, #dc3545 50%, #c82333 75%, #bd2130 100%) !important; border: none;">
+                    <h4 class="fw-bold mb-1">EDITAR ORGANIZACIÓN</h4>
+                    <p class="mb-0 opacity-75">Actualiza la información de tu organización</p>
+                </div>
+                <div class="card-body p-4 p-md-4">
+                    <form asp-action="EditarONG" method="post" autocomplete="off" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="LogoActual" />
+                        
+                        <div class="mb-3">
+                            <label asp-for="NombreONG" class="form-label fw-semibold text-dark">Nombre de la ONG</label>
+                            <input asp-for="NombreONG" class="form-control form-control-lg border-2" type="text" placeholder="Nombre de tu organización" style="border-radius: 12px; font-size: 0.9rem;" />
+                            <span asp-validation-for="NombreONG" class="text-danger small"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="RNC" class="form-label fw-semibold text-dark">RNC</label>
+                                    <input asp-for="RNC" class="form-control form-control-lg border-2" type="text" placeholder="Número de RNC" style="border-radius: 12px; font-size: 0.9rem;" />
+                                    <span asp-validation-for="RNC" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Telefono" class="form-label fw-semibold text-dark">Teléfono</label>
+                                    <input asp-for="Telefono" class="form-control form-control-lg border-2" type="text" placeholder="(809) 123-4567" style="border-radius: 12px; font-size: 0.9rem;" />
+                                    <span asp-validation-for="Telefono" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold text-dark">Correo electrónico</label>
+                            <input asp-for="Email" class="form-control form-control-lg border-2" type="email" placeholder="contacto@tuong.com" style="border-radius: 12px; font-size: 0.9rem;" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="Direccion" class="form-label fw-semibold text-dark">Dirección</label>
+                                    <input asp-for="Direccion" class="form-control form-control-lg border-2" type="text" placeholder="Dirección" style="border-radius: 12px; font-size: 0.9rem;" />
+                                    <span asp-validation-for="Direccion" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="Ciudad" class="form-label fw-semibold text-dark">Ciudad</label>
+                                    <input asp-for="Ciudad" class="form-control form-control-lg border-2" type="text" placeholder="Ciudad" style="border-radius: 12px; font-size: 0.9rem;" />
+                                    <span asp-validation-for="Ciudad" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="Provincia" class="form-label fw-semibold text-dark">Provincia</label>
+                                    <input asp-for="Provincia" class="form-control form-control-lg border-2" type="text" placeholder="Provincia" style="border-radius: 12px; font-size: 0.9rem;" />
+                                    <span asp-validation-for="Provincia" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="LogoONG" class="form-label fw-semibold text-dark">Logo de la ONG</label>
+                            <div class="input-group">
+                                <input asp-for="LogoONG" class="form-control form-control-lg border-2" type="file" accept="image/*" style="border-radius: 12px; font-size: 0.9rem;" />
+                            </div>
+                            <div class="form-text">Selecciona un nuevo logo (formato: JPG, PNG) o deja vacío para mantener el actual</div>
+                            <span asp-validation-for="LogoONG" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label fw-semibold text-dark">Descripción de la ONG</label>
+                            <textarea asp-for="Descripcion" class="form-control border-2" rows="3" placeholder="Describe brevemente la misión y objetivos de tu organización" style="border-radius: 12px; font-size: 0.9rem;"></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="Sector" class="form-label fw-semibold text-dark">Sector de trabajo</label>
+                            <select asp-for="Sector" class="form-select form-select-lg border-2" style="border-radius: 12px; font-size: 0.9rem;">
+                                <option value="">Selecciona un sector</option>
+                                <option value="Educación">Educación</option>
+                                <option value="Salud">Salud</option>
+                                <option value="Medio ambiente">Medio ambiente</option>
+                                <option value="Desarrollo social">Desarrollo social</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                            <span asp-validation-for="Sector" class="text-danger small"></span>
+                        </div>
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-lg flex-fill fw-semibold" style="border-radius: 12px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 25%, #dc3545 50%, #c82333 75%, #bd2130 100%); border: none; color: white;">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Guardar cambios
+                            </button>
+                            <a href="/Dashboard/ProfileONG" class="btn btn-outline-secondary btn-lg flex-fill" style="border-radius: 12px; border: 2px solid #6c757d; color: #6c757d; text-decoration: none;">
+                                <i class="bi bi-x-circle me-2"></i>
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    
+    @if (TempData["MensajeExito"] != null)
+    {
+        @await Html.PartialAsync("_Exito", TempData["MensajeExito"]?.ToString() ?? "")
+        <script>
+            // Limpiar TempData inmediatamente
+            @{ TempData.Remove("MensajeExito"); }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                var redirectUrl = '@TempData["RedirectUrl"]';
+                @{ TempData.Remove("RedirectUrl"); }
+                mostrarExito('@Html.Raw(TempData["MensajeExito"]?.ToString() ?? "")', redirectUrl);
+            });
+        </script>
+    }
+    
+    @if (TempData["MensajeError"] != null)
+    {
+        @await Html.PartialAsync("_Error", TempData["MensajeError"]?.ToString() ?? "")
+        <script>
+            // Limpiar TempData inmediatamente
+            @{ TempData.Remove("MensajeError"); }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                mostrarError('@Html.Raw(TempData["MensajeError"]?.ToString() ?? "")');
+            });
+        </script>
+    }
+} 
