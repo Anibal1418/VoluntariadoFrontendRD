@@ -201,6 +201,54 @@ namespace VoluntariosConectadosRD.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult EditarVoluntario(int id)
+        {
+            // TODO: Obtener datos del voluntario desde la API
+            // Por ahora, creamos un modelo de ejemplo
+            var model = new VoluntariosConectadosRD.Models.EditarVoluntarioViewModel
+            {
+                Id = id,
+                Nombre = "Omar Alexis",
+                Apellidos = "Reyes Medina",
+                Email = "carmendita@gmail.com",
+                Telefono = "+1 (809) 345-0789",
+                FechaNacimiento = new DateTime(1995, 6, 15),
+                Provincia = "Santo Domingo",
+                Descripcion = "Lorem ipsum dolor sit amet consectetur. Cras vitae dictumst sed amet.",
+                Disponibilidad = "Matutino",
+                FotoActual = "https://randomuser.me/api/portraits/men/32.jpg"
+            };
+            
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarVoluntario(VoluntariosConectadosRD.Models.EditarVoluntarioViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // TODO: Implementar llamada a la API para actualizar voluntario
+                    // var response = await _accountApiService.UpdateVolunteerAsync(model);
+                    
+                    // Por ahora, simulamos éxito
+                    TempData["MensajeExito"] = "¡Información del voluntario actualizada exitosamente!";
+                    TempData["RedirectUrl"] = "/Dashboard/Profile";
+                    return View(model);
+                }
+                catch (Exception ex)
+                {
+                    // Si la API no está disponible, mostrar error
+                    TempData["MensajeError"] = "Error de conexión. " + ex.Message + " Por favor, inténtalo de nuevo más tarde.";
+                    return View(model);
+                }
+            }
+            return View(model);
+        }
+
 
     }
 } 

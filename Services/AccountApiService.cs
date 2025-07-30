@@ -27,5 +27,15 @@ namespace VoluntariosConectadosRD.Services
         {
             return await _baseApiService.PostAsync<ApiResponse<RegisterResponse>>("auth/register/ong", model);
         }
+
+        public async Task<ApiResponse<RegisterResponse>?> UpdateVolunteerAsync(EditarVoluntarioViewModel model)
+        {
+            return await _baseApiService.PutAsync<ApiResponse<RegisterResponse>>("volunteer/update", model);
+        }
+
+        public async Task<ApiResponse<RegisterResponse>?> UpdateONGAsync(EditarONGViewModel model)
+        {
+            return await _baseApiService.PutAsync<ApiResponse<RegisterResponse>>("ong/update", model);
+        }
     }
 } 

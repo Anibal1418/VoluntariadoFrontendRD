@@ -691,7 +691,8 @@ html {
 
 /* Responsive adjustments for edit button */
 @media (max-width: 768px) {
-    .d-flex.justify-content-end.mb-3.gap-3 {
+    .d-flex.justify-content-end.mb-3.gap-3,
+    .d-flex.justify-content-end.mb-4.gap-3 {
         flex-direction: column;
         gap: 1rem !important;
     }
