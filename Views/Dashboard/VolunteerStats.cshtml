@@ -1,0 +1,1182 @@
+@{
+    ViewData["Title"] = "Estadísticas del Voluntario - Voluntariado Conectado RD";
+    Layout = "_DashboardLayout";
+}
+
+<div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:#7db9e8; border-radius:12px; padding:18px 32px;">ESTADÍSTICAS DEL VOLUNTARIO</h2>
+                         <a href="/Dashboard/Reportes" class="btn btn-outline-primary back-btn">
+                 <i class="bi bi-arrow-left me-2"></i>Volver al Registro
+             </a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row g-4">
+            <!-- Left Section - KPI Cards -->
+            <div class="col-lg-4">
+                <div class="row g-3">
+                    <!-- Horas de voluntariado -->
+                    <div class="col-6">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="bi bi-clock text-white"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-number">0</div>
+                                <div class="kpi-label">Horas de voluntariado</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fondos recaudados -->
+                    <div class="col-6">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="bi bi-currency-dollar text-white"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-number">0 RD$</div>
+                                <div class="kpi-label">Fondos recaudados</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voluntarios activos -->
+                    <div class="col-6">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="bi bi-people text-white"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-number">0</div>
+                                <div class="kpi-label">Voluntarios activos</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personas beneficiadas -->
+                    <div class="col-6">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="bi bi-heart text-white"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-number">0</div>
+                                <div class="kpi-label">Personas beneficiadas</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voluntarios activos (duplicate for layout) -->
+                    <div class="col-6">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="bi bi-people text-white"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-number">0</div>
+                                <div class="kpi-label">Voluntarios activos</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agenda de proyecto -->
+                    <div class="col-6">
+                        <div class="agenda-card">
+                            <div class="agenda-content">
+                                <div class="agenda-label">Agenda de proyecto</div>
+                                <div class="date-picker-container">
+                                    <input type="date" class="form-control date-picker" placeholder="mm/dd/yyyy">
+                                    <i class="bi bi-calendar date-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Section - Donations Chart -->
+            <div class="col-lg-8">
+                <div class="chart-card">
+                    <div class="chart-header">
+                                                 <div class="chart-title-section">
+                             <div class="chart-controls">
+                                 <i class="bi bi-arrows-fullscreen chart-icon" id="expandChart" title="Expandir gráfico"></i>
+                             </div>
+                             <h3 class="chart-title">Gráfico de donaciones</h3>
+                             <div class="chart-controls">
+                                 <i class="bi bi-bar-chart chart-icon chart-type-btn active" id="barChartBtn" title="Gráfico de barras"></i>
+                                 <i class="bi bi-pie-chart chart-icon chart-type-btn" id="pieChartBtn" title="Gráfico circular"></i>
+                                 <i class="bi bi-clock chart-icon" id="timeRangeBtn" title="Rango de tiempo"></i>
+                             </div>
+                         </div>
+                        <div class="chart-subtitle">Grafica</div>
+                    </div>
+                    
+                                         <div class="chart-container" id="chartContainer">
+                         <!-- Bar Chart View -->
+                         <div class="chart-view" id="barChartView">
+                             <div class="chart-bars">
+                                 <div class="chart-bar" style="height: 60%;" title="Enero: 6,000 RD$"></div>
+                                 <div class="chart-bar" style="height: 20%;" title="Febrero: 2,000 RD$"></div>
+                                 <div class="chart-bar" style="height: 90%;" title="Marzo: 9,000 RD$"></div>
+                                 <div class="chart-bar" style="height: 70%;" title="Abril: 7,000 RD$"></div>
+                             </div>
+                             <div class="chart-labels">
+                                 <span>Enero</span>
+                                 <span>Febrero</span>
+                                 <span>Marzo</span>
+                                 <span>Abril</span>
+                             </div>
+                         </div>
+                         
+                         <!-- Pie Chart View (Hidden by default) -->
+                         <div class="chart-view" id="pieChartView" style="display: none;">
+                             <div class="pie-chart-container">
+                                 <div class="pie-chart">
+                                     <div class="pie-segment" style="--percentage: 25%; --color: #7db9e8;" title="Enero: 6,000 RD$ (25%)"></div>
+                                     <div class="pie-segment" style="--percentage: 8%; --color: #5a9bd4;" title="Febrero: 2,000 RD$ (8%)"></div>
+                                     <div class="pie-segment" style="--percentage: 38%; --color: #4a8bc4;" title="Marzo: 9,000 RD$ (38%)"></div>
+                                     <div class="pie-segment" style="--percentage: 29%; --color: #28a745;" title="Abril: 7,000 RD$ (29%)"></div>
+                                 </div>
+                                 <div class="pie-legend">
+                                     <div class="legend-item">
+                                         <span class="legend-color" style="background: #7db9e8;"></span>
+                                         <span>Enero: 6,000 RD$</span>
+                                     </div>
+                                     <div class="legend-item">
+                                         <span class="legend-color" style="background: #5a9bd4;"></span>
+                                         <span>Febrero: 2,000 RD$</span>
+                                     </div>
+                                     <div class="legend-item">
+                                         <span class="legend-color" style="background: #4a8bc4;"></span>
+                                         <span>Marzo: 9,000 RD$</span>
+                                     </div>
+                                     <div class="legend-item">
+                                         <span class="legend-color" style="background: #28a745;"></span>
+                                         <span>Abril: 7,000 RD$</span>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles for Volunteer Stats Page -->
+<style>
+/* KPI Cards */
+.kpi-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.2s ease;
+    height: 100px;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.kpi-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.kpi-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+}
+
+.kpi-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 4px;
+    text-align: center;
+}
+
+/* Agenda Card */
+.agenda-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    height: 100px;
+}
+
+.agenda-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.agenda-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 8px;
+}
+
+.date-picker-container {
+    position: relative;
+}
+
+.date-picker {
+    border: 2px solid #7db9e8;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.date-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7db9e8;
+    font-size: 1rem;
+}
+
+/* Chart Card */
+.chart-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    height: 100%;
+}
+
+.chart-header {
+    margin-bottom: 30px;
+}
+
+.chart-title-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.chart-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.chart-subtitle {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-left: 40px;
+}
+
+.chart-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.chart-icon {
+    width: 32px;
+    height: 32px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chart-icon:hover {
+    background: #7db9e8;
+    color: white;
+}
+
+/* Chart Container */
+.chart-container {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 30px;
+    border: 1px solid #e9ecef;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: end;
+    justify-content: space-around;
+    height: 200px;
+    margin-bottom: 20px;
+}
+
+.chart-bar {
+    width: 60px;
+    background: linear-gradient(to top, #7db9e8, #5a9bd4);
+    border-radius: 6px 6px 0 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.chart-bar:hover {
+    background: linear-gradient(to top, #5a9bd4, #4a8bc4);
+    transform: scaleY(1.05);
+}
+
+.chart-bar::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2c3e50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.chart-bar:hover::after {
+    opacity: 1;
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-around;
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Back Button Styles */
+.back-btn {
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(125, 185, 232, 0.3);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background: linear-gradient(135deg, #5a9bd4, #4a8bc4);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(125, 185, 232, 0.4);
+}
+
+.back-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(125, 185, 232, 0.3);
+}
+
+/* Enhanced KPI Cards */
+.kpi-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(125, 185, 232, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    transition: all 0.3s ease;
+    height: 110px;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #7db9e8, #5a9bd4);
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    border-color: rgba(125, 185, 232, 0.3);
+}
+
+.kpi-icon {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    box-shadow: 0 4px 12px rgba(125, 185, 232, 0.3);
+    transition: all 0.3s ease;
+}
+
+.kpi-card:hover .kpi-icon {
+    transform: scale(1.1);
+    box-shadow: 0 6px 18px rgba(125, 185, 232, 0.4);
+}
+
+.kpi-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #2c3e50;
+    line-height: 1;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.kpi-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 6px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Enhanced Agenda Card */
+.agenda-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(125, 185, 232, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    height: 110px;
+    position: relative;
+    overflow: hidden;
+}
+
+.agenda-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.agenda-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    border-color: rgba(40, 167, 69, 0.3);
+}
+
+.agenda-label {
+    font-size: 0.9rem;
+    color: #495057;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.date-picker {
+    border: 2px solid #7db9e8;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    width: 100%;
+    background: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(125, 185, 232, 0.1);
+}
+
+.date-picker:focus {
+    border-color: #5a9bd4;
+    box-shadow: 0 4px 15px rgba(125, 185, 232, 0.2);
+    outline: none;
+}
+
+.date-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7db9e8;
+    font-size: 1.1rem;
+    pointer-events: none;
+}
+
+/* Enhanced Chart Card */
+.chart-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(125, 185, 232, 0.1);
+    border-radius: 20px;
+    padding: 35px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #7db9e8, #5a9bd4, #28a745);
+}
+
+.chart-header {
+    margin-bottom: 35px;
+}
+
+.chart-title-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.chart-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #2c3e50;
+    margin: 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.chart-subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-left: 45px;
+    font-weight: 500;
+}
+
+.chart-controls {
+    display: flex;
+    gap: 12px;
+}
+
+.chart-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(125, 185, 232, 0.1);
+}
+
+.chart-icon:hover {
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(125, 185, 232, 0.3);
+}
+
+/* Enhanced Chart Container */
+.chart-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 16px;
+    padding: 35px;
+    border: 1px solid rgba(125, 185, 232, 0.15);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.chart-bars {
+    display: flex;
+    align-items: end;
+    justify-content: space-around;
+    height: 220px;
+    margin-bottom: 25px;
+    padding: 0 10px;
+}
+
+.chart-bar {
+    width: 65px;
+    background: linear-gradient(to top, #7db9e8, #5a9bd4);
+    border-radius: 8px 8px 0 0;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(125, 185, 232, 0.3);
+}
+
+.chart-bar:hover {
+    background: linear-gradient(to top, #5a9bd4, #4a8bc4);
+    transform: scaleY(1.08);
+    box-shadow: 0 6px 18px rgba(125, 185, 232, 0.4);
+}
+
+.chart-bar::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-weight: 500;
+}
+
+.chart-bar:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-around;
+    font-size: 1rem;
+    color: #495057;
+    font-weight: 600;
+    padding: 0 10px;
+}
+
+/* Dashboard Title Enhancement */
+.dashboard-title {
+    background: linear-gradient(135deg, #7db9e8 0%, #5a9bd4 100%) !important;
+    box-shadow: 0 6px 20px rgba(125, 185, 232, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Chart Type Buttons */
+.chart-type-btn {
+    transition: all 0.3s ease;
+}
+
+.chart-type-btn.active {
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4) !important;
+    color: white !important;
+    border-color: #7db9e8 !important;
+}
+
+/* Pie Chart Styles */
+.pie-chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.pie-chart {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    position: relative;
+    background: conic-gradient(
+        #7db9e8 0deg 90deg,
+        #5a9bd4 90deg 118.8deg,
+        #4a8bc4 118.8deg 255.6deg,
+        #28a745 255.6deg 360deg
+    );
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.pie-segment {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%);
+    transform-origin: center;
+    transition: all 0.3s ease;
+}
+
+.pie-segment:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.segment-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Time Range Modal Styles */
+.time-range-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.time-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.time-option:hover {
+    border-color: #7db9e8;
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(125, 185, 232, 0.2);
+}
+
+.time-option.selected {
+    border-color: #7db9e8;
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    color: white;
+}
+
+.time-option i {
+    font-size: 1.2rem;
+    color: #7db9e8;
+}
+
+.time-option.selected i {
+    color: white;
+}
+
+/* Expanded Chart Styles */
+.expanded-chart-container {
+    min-height: 400px;
+    position: relative;
+}
+
+.expanded-chart-view {
+    width: 100%;
+    height: 100%;
+}
+
+.expanded-chart-bars {
+    display: flex;
+    align-items: end;
+    justify-content: space-around;
+    height: 300px;
+    margin-bottom: 30px;
+    padding: 0 20px;
+}
+
+.expanded-chart-bar {
+    width: 40px;
+    background: linear-gradient(to top, #7db9e8, #5a9bd4);
+    border-radius: 6px 6px 0 0;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(125, 185, 232, 0.3);
+}
+
+.expanded-chart-bar:hover {
+    background: linear-gradient(to top, #5a9bd4, #4a8bc4);
+    transform: scaleY(1.1);
+    box-shadow: 0 6px 18px rgba(125, 185, 232, 0.4);
+}
+
+.expanded-chart-labels {
+    display: flex;
+    justify-content: space-around;
+    font-size: 0.9rem;
+    color: #495057;
+    font-weight: 600;
+    padding: 0 20px;
+}
+
+.expanded-pie-chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 400px;
+}
+
+.expanded-pie-chart {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    position: relative;
+    background: conic-gradient(
+        #7db9e8 0deg 22.5deg,
+        #5a9bd4 22.5deg 40.5deg,
+        #4a8bc4 40.5deg 69deg,
+        #28a745 69deg 87deg,
+        #20c997 87deg 108deg,
+        #fd7e14 108deg 126deg,
+        #e83e8c 126deg 147deg,
+        #6f42c1 147deg 165deg,
+        #dc3545 165deg 184.5deg,
+        #ffc107 184.5deg 202.5deg,
+        #17a2b8 202.5deg 225deg,
+        #6c757d 225deg 243deg,
+        #28a745 243deg 261deg,
+        #fd7e14 261deg 279deg,
+        #e83e8c 279deg 297deg,
+        #6f42c1 297deg 315deg
+    );
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.expanded-pie-segment {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%);
+    transform-origin: center;
+    transition: all 0.3s ease;
+}
+
+.expanded-pie-segment:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.expanded-pie-legend {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.expanded-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #495057;
+    padding: 5px;
+}
+
+.expanded-legend-item .legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+}
+
+.expanded-chart-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.expanded-chart-controls .chart-type-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+/* Chart View Transitions */
+.chart-view {
+    transition: all 0.3s ease;
+}
+
+/* media queries moved to site.css */
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Chart type switching
+    const barChartBtn = document.getElementById('barChartBtn');
+    const pieChartBtn = document.getElementById('pieChartBtn');
+    const barChartView = document.getElementById('barChartView');
+    const pieChartView = document.getElementById('pieChartView');
+    
+    // Expanded chart controls
+    const expandedBarBtn = document.getElementById('expandedBarBtn');
+    const expandedPieBtn = document.getElementById('expandedPieBtn');
+    const expandedBarChart = document.getElementById('expandedBarChart');
+    const expandedPieChart = document.getElementById('expandedPieChart');
+    
+    // Chart expansion
+    const expandChartBtn = document.getElementById('expandChart');
+    const expandedChartModal = new bootstrap.Modal(document.getElementById('expandedChartModal'));
+    
+    // Time range selection
+    const timeRangeBtn = document.getElementById('timeRangeBtn');
+    const timeRangeModal = new bootstrap.Modal(document.getElementById('timeRangeModal'));
+    
+    // Chart type switching in main view
+    function switchChartType(type) {
+        if (type === 'bar') {
+            barChartView.style.display = 'block';
+            pieChartView.style.display = 'none';
+            barChartBtn.classList.add('active');
+            pieChartBtn.classList.remove('active');
+        } else {
+            barChartView.style.display = 'none';
+            pieChartView.style.display = 'block';
+            pieChartBtn.classList.add('active');
+            barChartBtn.classList.remove('active');
+        }
+    }
+    
+    // Chart type switching in expanded view
+    function switchExpandedChartType(type) {
+        if (type === 'bar') {
+            expandedBarChart.style.display = 'block';
+            expandedPieChart.style.display = 'none';
+            expandedBarBtn.classList.add('active');
+            expandedPieBtn.classList.remove('active');
+        } else {
+            expandedBarChart.style.display = 'none';
+            expandedPieChart.style.display = 'block';
+            expandedPieBtn.classList.add('active');
+            expandedBarBtn.classList.remove('active');
+        }
+    }
+    
+    // Event listeners for main chart
+    barChartBtn.addEventListener('click', () => switchChartType('bar'));
+    pieChartBtn.addEventListener('click', () => switchChartType('pie'));
+    
+    // Event listeners for expanded chart
+    expandedBarBtn.addEventListener('click', () => switchExpandedChartType('bar'));
+    expandedPieBtn.addEventListener('click', () => switchExpandedChartType('pie'));
+    
+    // Expand chart button
+    expandChartBtn.addEventListener('click', () => {
+        expandedChartModal.show();
+    });
+    
+    // Time range button
+    timeRangeBtn.addEventListener('click', () => {
+        timeRangeModal.show();
+    });
+    
+    // Time range selection
+    const timeOptions = document.querySelectorAll('.time-option');
+    timeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options
+            timeOptions.forEach(opt => opt.classList.remove('selected'));
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            
+            // Get the selected range
+            const range = this.getAttribute('data-range');
+            console.log('Selected time range:', range);
+            
+            // Here you would typically update the chart data based on the selected range
+            // For now, we'll just close the modal
+            setTimeout(() => {
+                timeRangeModal.hide();
+            }, 500);
+        });
+    });
+    
+    // Chart container click to expand
+    const chartContainer = document.getElementById('chartContainer');
+    chartContainer.addEventListener('click', (e) => {
+        // Don't expand if clicking on controls
+        if (e.target.closest('.chart-controls')) {
+            return;
+        }
+        expandedChartModal.show();
+    });
+    
+    // Add hover effect to chart container
+    chartContainer.style.cursor = 'pointer';
+    chartContainer.addEventListener('mouseenter', () => {
+        chartContainer.style.transform = 'scale(1.02)';
+        chartContainer.style.transition = 'transform 0.3s ease';
+    });
+    
+    chartContainer.addEventListener('mouseleave', () => {
+        chartContainer.style.transform = 'scale(1)';
+    });
+    
+    // Initialize with bar chart
+    switchChartType('bar');
+    switchExpandedChartType('bar');
+});
+</script>
+
+<!-- Bootstrap Icons CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Time Range Modal -->
+<div class="modal fade" id="timeRangeModal" tabindex="-1" aria-labelledby="timeRangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="timeRangeModalLabel">Seleccionar Rango de Tiempo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="time-range-options">
+                    <div class="time-option" data-range="2weeks">
+                        <i class="bi bi-calendar-week"></i>
+                        <span>Últimas 2 semanas</span>
+                    </div>
+                    <div class="time-option" data-range="1month">
+                        <i class="bi bi-calendar-month"></i>
+                        <span>Último mes</span>
+                    </div>
+                    <div class="time-option" data-range="2months">
+                        <i class="bi bi-calendar3"></i>
+                        <span>Últimos 2 meses</span>
+                    </div>
+                    <div class="time-option" data-range="4months">
+                        <i class="bi bi-calendar3"></i>
+                        <span>Últimos 4 meses</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Expanded Chart Modal -->
+<div class="modal fade" id="expandedChartModal" tabindex="-1" aria-labelledby="expandedChartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="expandedChartModalLabel">Gráfico de Donaciones - Vista Detallada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="expanded-chart-container">
+                    <!-- Expanded Bar Chart -->
+                    <div class="expanded-chart-view" id="expandedBarChart">
+                        <div class="expanded-chart-bars">
+                            <div class="expanded-chart-bar" style="height: 65%;" title="Semana 1: 6,500 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 45%;" title="Semana 2: 4,500 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 80%;" title="Semana 3: 8,000 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 55%;" title="Semana 4: 5,500 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 70%;" title="Semana 5: 7,000 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 40%;" title="Semana 6: 4,000 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 85%;" title="Semana 7: 8,500 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 60%;" title="Semana 8: 6,000 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 75%;" title="Semana 9: 7,500 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 50%;" title="Semana 10: 5,000 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 90%;" title="Semana 11: 9,000 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 35%;" title="Semana 12: 3,500 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 70%;" title="Semana 13: 7,000 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 55%;" title="Semana 14: 5,500 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 80%;" title="Semana 15: 8,000 RD$"></div>
+                            <div class="expanded-chart-bar" style="height: 45%;" title="Semana 16: 4,500 RD$"></div>
+                        </div>
+                        <div class="expanded-chart-labels">
+                            <span>S1</span><span>S2</span><span>S3</span><span>S4</span>
+                            <span>S5</span><span>S6</span><span>S7</span><span>S8</span>
+                            <span>S9</span><span>S10</span><span>S11</span><span>S12</span>
+                            <span>S13</span><span>S14</span><span>S15</span><span>S16</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Expanded Pie Chart -->
+                    <div class="expanded-chart-view" id="expandedPieChart" style="display: none;">
+                        <div class="expanded-pie-chart-container">
+                            <div class="expanded-pie-chart">
+                                <div class="expanded-pie-segment" style="--percentage: 6.25%; --color: #7db9e8;" title="Semana 1: 6,500 RD$ (6.25%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 4.5%; --color: #5a9bd4;" title="Semana 2: 4,500 RD$ (4.5%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 8.0%; --color: #4a8bc4;" title="Semana 3: 8,000 RD$ (8.0%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 5.5%; --color: #28a745;" title="Semana 4: 5,500 RD$ (5.5%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 7.0%; --color: #20c997;" title="Semana 5: 7,000 RD$ (7.0%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 4.0%; --color: #fd7e14;" title="Semana 6: 4,000 RD$ (4.0%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 8.5%; --color: #e83e8c;" title="Semana 7: 8,500 RD$ (8.5%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 6.0%; --color: #6f42c1;" title="Semana 8: 6,000 RD$ (6.0%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 7.5%; --color: #dc3545;" title="Semana 9: 7,500 RD$ (7.5%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 5.0%; --color: #ffc107;" title="Semana 10: 5,000 RD$ (5.0%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 9.0%; --color: #17a2b8;" title="Semana 11: 9,000 RD$ (9.0%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 3.5%; --color: #6c757d;" title="Semana 12: 3,500 RD$ (3.5%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 7.0%; --color: #28a745;" title="Semana 13: 7,000 RD$ (7.0%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 5.5%; --color: #fd7e14;" title="Semana 14: 5,500 RD$ (5.5%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 8.0%; --color: #e83e8c;" title="Semana 15: 8,000 RD$ (8.0%)"></div>
+                                <div class="expanded-pie-segment" style="--percentage: 4.5%; --color: #6f42c1;" title="Semana 16: 4,500 RD$ (4.5%)"></div>
+                            </div>
+                            <div class="expanded-pie-legend">
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #7db9e8;"></span><span>Semana 1: 6,500 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #5a9bd4;"></span><span>Semana 2: 4,500 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #4a8bc4;"></span><span>Semana 3: 8,000 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #28a745;"></span><span>Semana 4: 5,500 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #20c997;"></span><span>Semana 5: 7,000 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #fd7e14;"></span><span>Semana 6: 4,000 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #e83e8c;"></span><span>Semana 7: 8,500 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #6f42c1;"></span><span>Semana 8: 6,000 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #dc3545;"></span><span>Semana 9: 7,500 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #ffc107;"></span><span>Semana 10: 5,000 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #17a2b8;"></span><span>Semana 11: 9,000 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #6c757d;"></span><span>Semana 12: 3,500 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #28a745;"></span><span>Semana 13: 7,000 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #fd7e14;"></span><span>Semana 14: 5,500 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #e83e8c;"></span><span>Semana 15: 8,000 RD$</span></div>
+                                <div class="expanded-legend-item"><span class="legend-color" style="background: #6f42c1;"></span><span>Semana 16: 4,500 RD$</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="expanded-chart-controls">
+                    <button class="btn btn-outline-primary chart-type-btn active" id="expandedBarBtn">
+                        <i class="bi bi-bar-chart"></i> Barras
+                    </button>
+                    <button class="btn btn-outline-primary chart-type-btn" id="expandedPieBtn">
+                        <i class="bi bi-pie-chart"></i> Circular
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

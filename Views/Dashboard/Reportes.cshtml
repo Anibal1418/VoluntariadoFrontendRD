@@ -1,0 +1,610 @@
+@{
+    ViewData["Title"] = "Registro de Impacto - Voluntariado Conectado RD";
+    Layout = "_DashboardLayout";
+}
+
+<div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #7db9e8, #5a9bd4); border-radius:12px; padding:18px 32px; box-shadow: 0 4px 15px rgba(125, 185, 232, 0.3);">REGISTRO DE IMPACTO</h2>
+            <a href="/Dashboard/ProfileONG" class="btn btn-outline-primary back-btn">
+                <i class="bi bi-arrow-left me-2"></i>Volver al Dashboard
+            </a>
+        </div>
+        
+        <!-- Main Content Card -->
+        <div class="card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+            <div class="card-body p-4">
+                <!-- Search and Header Row -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0" style="font-weight: 700; color: #2c3e50;">Estado de Voluntarios</h4>
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Search Box -->
+                        <div class="position-relative">
+                            <input type="text" class="form-control search-input" placeholder="Buscar voluntario" style="border-radius: 12px; padding-left: 45px; border: 2px solid #e9ecef; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <i class="bi bi-search position-absolute search-icon" style="left: 15px; top: 50%; transform: translateY(-50%); color: #7db9e8; font-size: 1.1rem;"></i>
+                            <button class="btn btn-link position-absolute clear-btn" style="right: 10px; top: 50%; transform: translateY(-50%); color: #6c757d; text-decoration: none; opacity: 0; transition: opacity 0.3s ease;">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Volunteers Table -->
+                <div class="table-responsive">
+                    <table class="table table-borderless volunteers-table">
+                        <thead>
+                            <tr>
+                                <th>Voluntario</th>
+                                <th>Organización</th>
+                                <th>Teléfono</th>
+                                <th>Email</th>
+                                <th>País</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="volunteer-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/avatar1.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;">
+                                        <div>
+                                            <div class="fw-bold">María González</div>
+                                            <small class="text-muted">Voluntaria desde 2023</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Fundación Esperanza Viva</td>
+                                <td>+1 (809) 555-0123</td>
+                                <td>maria.gonzalez@email.com</td>
+                                <td>República Dominicana</td>
+                                <td><span class="badge bg-success">Activo</span></td>
+                            </tr>
+                            <tr class="volunteer-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/avatar2.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;">
+                                        <div>
+                                            <div class="fw-bold">Carlos Rodríguez</div>
+                                            <small class="text-muted">Voluntario desde 2022</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Fundación Esperanza Viva</td>
+                                <td>+1 (809) 555-0456</td>
+                                <td>carlos.rodriguez@email.com</td>
+                                <td>República Dominicana</td>
+                                <td><span class="badge bg-success">Activo</span></td>
+                            </tr>
+                            <tr class="volunteer-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/avatar3.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;">
+                                        <div>
+                                            <div class="fw-bold">Ana Martínez</div>
+                                            <small class="text-muted">Voluntaria desde 2024</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Fundación Esperanza Viva</td>
+                                <td>+1 (809) 555-0789</td>
+                                <td>ana.martinez@email.com</td>
+                                <td>República Dominicana</td>
+                                <td><span class="badge bg-warning">Pendiente</span></td>
+                            </tr>
+                            <tr class="volunteer-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/avatar4.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;">
+                                        <div>
+                                            <div class="fw-bold">Luis Pérez</div>
+                                            <small class="text-muted">Voluntario desde 2021</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Fundación Esperanza Viva</td>
+                                <td>+1 (809) 555-0321</td>
+                                <td>luis.perez@email.com</td>
+                                <td>República Dominicana</td>
+                                <td><span class="badge bg-success">Activo</span></td>
+                            </tr>
+                            <tr class="volunteer-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/avatar5.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;">
+                                        <div>
+                                            <div class="fw-bold">Sofia Herrera</div>
+                                            <small class="text-muted">Voluntaria desde 2023</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Fundación Esperanza Viva</td>
+                                <td>+1 (809) 555-0654</td>
+                                <td>sofia.herrera@email.com</td>
+                                <td>República Dominicana</td>
+                                <td><span class="badge bg-info">En formación</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="text-muted">
+                        Mostrando 1-5 de 25 voluntarios
+                    </div>
+                    <nav aria-label="Paginación de voluntarios">
+                        <ul class="pagination mb-0" id="volunteersPagination">
+                            <li class="page-item disabled" id="prevPage">
+                                <a class="page-link" href="javascript:void(0)" onclick="changePage('prev')">Anterior</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="javascript:void(0)" onclick="changePage(1)">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)" onclick="changePage(2)">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)" onclick="changePage(3)">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)" onclick="changePage(4)">4</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)" onclick="changePage(5)">5</a>
+                            </li>
+                            <li class="page-item" id="nextPage">
+                                <a class="page-link" href="javascript:void(0)" onclick="changePage('next')">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles for Reportes Page -->
+<style>
+/* Back Button Styles */
+.back-btn {
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(125, 185, 232, 0.3);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background: linear-gradient(135deg, #5a9bd4, #4a8bc4);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(125, 185, 232, 0.4);
+}
+
+/* Search Input Styles */
+.search-input:focus {
+    border-color: #7db9e8 !important;
+    box-shadow: 0 4px 15px rgba(125, 185, 232, 0.2) !important;
+    outline: none;
+}
+
+.search-input:focus + .search-icon {
+    color: #5a9bd4 !important;
+}
+
+.clear-btn:hover {
+    color: #dc3545 !important;
+}
+
+/* Table Styles */
+.volunteers-table {
+    font-size: 0.9rem;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.volunteers-table th {
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #e9ecef;
+    padding: 20px 16px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.volunteers-table td {
+    padding: 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.volunteers-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.volunteers-table tbody tr:hover {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.volunteer-row {
+    cursor: pointer;
+}
+
+.volunteer-row:hover {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+/* Badge Styles */
+.badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.badge.bg-success {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+}
+
+.badge.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+    color: #212529 !important;
+}
+
+.badge.bg-info {
+    background: linear-gradient(135deg, #17a2b8, #6f42c1) !important;
+}
+
+/* Pagination Styles */
+.pagination .page-link {
+    border: none;
+    color: #6c757d;
+    padding: 10px 16px;
+    margin: 0 2px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    color: white;
+    box-shadow: 0 4px 12px rgba(125, 185, 232, 0.3);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #adb5bd;
+    background: #f8f9fa;
+}
+    background: #f8f9fa;
+}
+
+.volunteers-table td {
+    padding: 16px 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.volunteers-table tbody tr:hover {
+    background: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+/* Badge Styles */
+.badge {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    font-weight: 500;
+}
+
+.badge.bg-success {
+    background-color: #28a745 !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+/* Search Box Styles */
+.form-control:focus {
+    border-color: #7db9e8;
+    box-shadow: 0 0 0 0.2rem rgba(125, 185, 232, 0.25);
+}
+
+/* Pagination Styles */
+.pagination .page-link {
+    border: 1px solid #e9ecef;
+    color: #6c757d;
+    padding: 8px 12px;
+    margin: 0 2px;
+    border-radius: 6px;
+}
+
+.pagination .page-link:hover {
+    background-color: #7db9e8;
+    border-color: #7db9e8;
+    color: white;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #7db9e8;
+    border-color: #7db9e8;
+    color: white;
+}
+
+/* Pagination interaction styles */
+.pagination .page-link {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination .page-item.disabled .page-link {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Volunteer Link Styles */
+.volunteer-link:hover {
+    color: #7db9e8 !important;
+    text-decoration: underline !important;
+    transition: all 0.2s ease;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.querySelector('.search-input');
+    const clearBtn = document.querySelector('.clear-btn');
+    const volunteerRows = document.querySelectorAll('.volunteer-row');
+    
+    if (searchInput && clearBtn) {
+        // Show/hide clear button based on input
+        searchInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                clearBtn.style.opacity = '1';
+            } else {
+                clearBtn.style.opacity = '0';
+            }
+            
+            // Filter volunteers
+            const searchTerm = this.value.toLowerCase();
+            volunteerRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Clear search
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            searchInput.focus();
+            this.style.opacity = '0';
+            volunteerRows.forEach(row => {
+                row.style.display = '';
+            });
+        });
+    }
+    
+    // Volunteer row click handler
+    volunteerRows.forEach(row => {
+        row.addEventListener('click', function() {
+            // Navigate to volunteer details page
+            const volunteerName = this.querySelector('.fw-bold').textContent;
+            console.log('Clicked on volunteer:', volunteerName);
+            // Redirect to volunteer details page
+            window.location.href = `/Dashboard/VolunteerDetails?name=${encodeURIComponent(volunteerName)}`;
+        });
+    });
+    
+    // Pagination functionality
+    let currentPage = 1;
+    const totalPages = 5;
+    
+    function changePage(page) {
+        console.log('Changing to page:', page);
+        
+        if (page === 'prev' && currentPage > 1) {
+            currentPage--;
+        } else if (page === 'next' && currentPage < totalPages) {
+            currentPage++;
+        } else if (typeof page === 'number' && page >= 1 && page <= totalPages) {
+            currentPage = page;
+        } else {
+            return; // Invalid page request
+        }
+        
+        // Update pagination display
+        updatePaginationDisplay();
+        
+        // Simulate loading different data (in a real app, you'd fetch from server)
+        console.log(`Loading page ${currentPage} data...`);
+        
+        // Update the "Showing X-Y of Z volunteers" text
+        const startIndex = (currentPage - 1) * 5 + 1;
+        const endIndex = Math.min(currentPage * 5, 25);
+        document.querySelector('.text-muted').textContent = `Mostrando ${startIndex}-${endIndex} de 25 voluntarios`;
+    }
+    
+    function updatePaginationDisplay() {
+        // Update active page button
+        const pageItems = document.querySelectorAll('.pagination .page-item');
+        pageItems.forEach((item, index) => {
+            if (index === 0) return; // Skip "Previous" button
+            if (index === pageItems.length - 1) return; // Skip "Next" button
+            
+            const pageNumber = index;
+            if (pageNumber === currentPage) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+        
+        // Update Previous/Next button states
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        
+        if (prevBtn) {
+            prevBtn.classList.toggle('disabled', currentPage === 1);
+        }
+        if (nextBtn) {
+            nextBtn.classList.toggle('disabled', currentPage === totalPages);
+        }
+    }
+    
+    // Make changePage function global
+    window.changePage = changePage;
+    
+    // Initialize pagination
+    updatePaginationDisplay();
+});
+</script>
+
+<script>
+// 模拟志愿者数据
+const volunteersData = [
+    // 第1页数据
+    [
+        { id: 1, name: "María González", role: "Voluntaria Activa", org: "Fundación Esperanza Viva", phone: "(809) 555-0101", email: "maria@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/women/1.jpg" },
+        { id: 2, name: "Carlos Rodríguez", role: "Voluntario Senior", org: "Fundación Esperanza Viva", phone: "(809) 555-0102", email: "carlos@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/men/2.jpg" },
+        { id: 3, name: "Ana Martínez", role: "Voluntaria", org: "Fundación Esperanza Viva", phone: "(809) 555-0103", email: "ana@fundacion.org", country: "Rep. Dom.", status: "Inactivo", image: "https://randomuser.me/api/portraits/women/3.jpg" },
+        { id: 4, name: "Luis Pérez", role: "Voluntario", org: "Fundación Esperanza Viva", phone: "(809) 555-0104", email: "luis@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/men/4.jpg" },
+        { id: 5, name: "Carmen Ruiz", role: "Voluntaria Senior", org: "Fundación Esperanza Viva", phone: "(809) 555-0105", email: "carmen@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/women/5.jpg" }
+    ],
+    // 第2页数据
+    [
+        { name: "Roberto Silva", role: "Voluntario", org: "Fundación Esperanza Viva", phone: "(809) 555-0106", email: "roberto@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/men/6.jpg" },
+        { name: "Isabel Morales", role: "Voluntaria", org: "Fundación Esperanza Viva", phone: "(809) 555-0107", email: "isabel@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/women/7.jpg" },
+        { name: "Fernando Castro", role: "Voluntario Senior", org: "Fundación Esperanza Viva", phone: "(809) 555-0108", email: "fernando@fundacion.org", country: "Rep. Dom.", status: "Inactivo", image: "https://randomuser.me/api/portraits/men/8.jpg" },
+        { name: "Patricia Vega", role: "Voluntaria", org: "Fundación Esperanza Viva", phone: "(809) 555-0109", email: "patricia@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/women/9.jpg" },
+        { name: "Miguel Torres", role: "Voluntario", org: "Fundación Esperanza Viva", phone: "(809) 555-0110", email: "miguel@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/men/10.jpg" }
+    ],
+    // 第3页数据
+    [
+        { name: "Lucía Herrera", role: "Voluntaria Senior", org: "Fundación Esperanza Viva", phone: "(809) 555-0111", email: "lucia@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/women/11.jpg" },
+        { name: "Diego Mendoza", role: "Voluntario", org: "Fundación Esperanza Viva", phone: "(809) 555-0112", email: "diego@fundacion.org", country: "Rep. Dom.", status: "Inactivo", image: "https://randomuser.me/api/portraits/men/12.jpg" },
+        { name: "Sofia Rojas", role: "Voluntaria", org: "Fundación Esperanza Viva", phone: "(809) 555-0113", email: "sofia@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/women/13.jpg" },
+        { name: "Andrés Jiménez", role: "Voluntario Senior", org: "Fundación Esperanza Viva", phone: "(809) 555-0114", email: "andres@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/men/14.jpg" },
+        { name: "Valentina Paredes", role: "Voluntaria", org: "Fundación Esperanza Viva", phone: "(809) 555-0115", email: "valentina@fundacion.org", country: "Rep. Dom.", status: "Activo", image: "https://randomuser.me/api/portraits/women/15.jpg" }
+    ]
+];
+
+let currentPage = 1;
+const totalPages = volunteersData.length;
+
+// 更新表格内容
+function updateTable(page) {
+    const tbody = document.querySelector('.volunteers-table tbody');
+    const pageData = volunteersData[page - 1];
+    
+    tbody.innerHTML = '';
+    
+    pageData.forEach(volunteer => {
+        const statusClass = volunteer.status === 'Activo' ? 'bg-success' : 'bg-danger';
+        const row = `
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <img src="${volunteer.image}" alt="Foto de perfil" class="rounded-circle me-3" width="40" height="40">
+                        <div>
+                            <div class="fw-bold">
+                                <a href="/Dashboard/VolunteerStats/${volunteer.id}" class="volunteer-link" style="color: #2c3e50; text-decoration: none; cursor: pointer;">
+                                    ${volunteer.name}
+                                </a>
+                            </div>
+                            <small class="text-muted">${volunteer.role}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>${volunteer.org}</td>
+                <td>${volunteer.phone}</td>
+                <td>${volunteer.email}</td>
+                <td>${volunteer.country}</td>
+                <td><span class="badge ${statusClass} rounded-pill">${volunteer.status}</span></td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+    
+    // 更新分页信息
+    document.querySelector('.text-muted').textContent = `Mostrando ${(page-1)*5+1}-${Math.min(page*5, 25)} de 25 voluntarios`;
+}
+
+// 更新分页按钮状态
+function updatePagination(page) {
+    const pagination = document.getElementById('volunteersPagination');
+    const pageItems = pagination.querySelectorAll('.page-item');
+    const prevBtn = document.getElementById('prevPage');
+    const nextBtn = document.getElementById('nextPage');
+    
+    // 移除所有active状态
+    pageItems.forEach(item => item.classList.remove('active'));
+    
+    // 设置当前页为active
+    pageItems[page].classList.add('active');
+    
+    // 更新前后按钮状态
+    prevBtn.classList.toggle('disabled', page === 1);
+    nextBtn.classList.toggle('disabled', page === totalPages);
+}
+
+// 分页切换函数
+function changePage(page) {
+    if (page === 'prev' && currentPage > 1) {
+        currentPage--;
+    } else if (page === 'next' && currentPage < totalPages) {
+        currentPage++;
+    } else if (typeof page === 'number' && page >= 1 && page <= totalPages) {
+        currentPage = page;
+    } else {
+        return; // 无效的分页请求
+    }
+    
+    updateTable(currentPage);
+    updatePagination(currentPage);
+}
+
+// 搜索功能
+function searchVolunteers() {
+    const searchTerm = document.querySelector('input[placeholder="Buscar voluntario"]').value.toLowerCase();
+    const allVolunteers = volunteersData.flat();
+    const filteredVolunteers = allVolunteers.filter(volunteer => 
+        volunteer.name.toLowerCase().includes(searchTerm) ||
+        volunteer.email.toLowerCase().includes(searchTerm) ||
+        volunteer.org.toLowerCase().includes(searchTerm)
+    );
+    
+    // 这里可以实现搜索结果的显示逻辑
+    console.log('搜索结果:', filteredVolunteers);
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    // 为搜索框添加事件监听
+    const searchInput = document.querySelector('input[placeholder="Buscar voluntario"]');
+    if (searchInput) {
+        searchInput.addEventListener('input', searchVolunteers);
+    }
+    
+    // 初始化表格
+    updateTable(1);
+    updatePagination(1);
+});
+</script> 

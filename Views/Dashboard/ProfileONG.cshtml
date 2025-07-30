@@ -1,0 +1,549 @@
+@{
+    ViewData["Title"] = "Dashboard ONG - Voluntariado Conectado RD";
+    Layout = "_DashboardLayout";
+}
+
+<div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
+    <div class="container">
+        <!-- Header Section with Logo and Mission -->
+        <div class="card mb-4" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <form enctype="multipart/form-data" id="uploadPhotoForm">
+                        <label for="profilePhoto" class="mb-2" style="cursor:pointer;">
+                            <img src="~/images/companylogo.jpg" alt="Foto de ONG" class="rounded-circle mb-2" width="120px" height="120px">
+                        </label>
+                        <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" style="display:none;" onchange="document.getElementById('uploadPhotoForm').submit();">
+                    </form>
+                    <div>
+                        <h1 class="mb-1" style="font-size: 2rem; font-weight: 700; color: #2c3e50;">Fundación Esperanza Viva</h1>
+                        <p class="mb-1" style="font-size: 1.1rem; color: #6c757d; max-width: 100%;">
+                            Dedicados a mejorar la calidad de vida de comunidades vulnerables a través de programas educativos y de desarrollo sostenible.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Reportes Button - Moved below organization info -->
+                <div class="d-flex justify-content-end mb-3">
+                    <button class="btn btn-primary btn-lg reportes-btn" style="border-radius: 12px; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3); transition: all 0.3s ease; text-decoration: none; border: none; background: linear-gradient(135deg, #0d6efd, #0b5ed7);" disabled>
+                        <i class="bi bi-graph-up me-2"></i>
+                        Ver Reportes
+                    </button>
+                </div>
+                
+                <!-- Key Metrics Cards -->
+                <div class="row g-3">
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card">
+                            <div class="metric-icon">
+                                <i class="bi bi-people text-white"></i>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-number">284</div>
+                                <div class="metric-label">Donantes activos</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card">
+                            <div class="metric-icon">
+                                <i class="bi bi-calendar-event text-white"></i>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-number">36</div>
+                                <div class="metric-label">Eventos realizados</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card">
+                            <div class="metric-icon">
+                                <i class="bi bi-heart-fill text-white"></i>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-number">$42,580</div>
+                                <div class="metric-label">Donaciones totales</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card">
+                            <div class="metric-icon">
+                                <i class="bi bi-bar-chart text-white"></i>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-number">8</div>
+                                <div class="metric-label">Proyectos activos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Cards -->
+        <div class="row g-4">
+            <!-- Historial de Donaciones -->
+            <div class="col-lg-4">
+                <div class="card h-100" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0" style="font-weight: 700; color: #2c3e50;">Historial de Donaciones</h4>
+                        </div>
+                        <p class="text-muted mb-2">Total recaudado este año</p>
+                        <h2 class="mb-3" style="font-size: 2.5rem; font-weight: 700; color: #2c3e50;">$42,580</h2>
+                        
+                        <div class="mb-3">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown">
+                                    Último semestre <i class="bi bi-chevron-down"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Último mes</a></li>
+                                    <li><a class="dropdown-item" href="#">Último semestre</a></li>
+                                    <li><a class="dropdown-item" href="#">Último año</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Chart Placeholder -->
+                        <div class="chart-container mb-4">
+                            <div class="chart-bars">
+                                <div class="chart-bar" style="height: 40%;" title="Ene: $4,200"></div>
+                                <div class="chart-bar" style="height: 55%;" title="Feb: $5,800"></div>
+                                <div class="chart-bar" style="height: 65%;" title="Mar: $6,900"></div>
+                                <div class="chart-bar" style="height: 75%;" title="Abr: $7,500"></div>
+                                <div class="chart-bar" style="height: 85%;" title="May: $8,200"></div>
+                                <div class="chart-bar" style="height: 100%;" title="Jun: $10,580"></div>
+                            </div>
+                            <div class="chart-labels">
+                                <span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span>
+                            </div>
+                        </div>
+
+                        <!-- Metrics Below Chart -->
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <div class="metric-mini-card">
+                                    <div class="metric-mini-number">$150</div>
+                                    <div class="metric-mini-label">Donación promedio</div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="metric-mini-card">
+                                    <div class="metric-mini-number">+24</div>
+                                    <div class="metric-mini-label">Nuevos donantes</div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="metric-mini-card">
+                                    <div class="metric-mini-number">78%</div>
+                                    <div class="metric-mini-label">Donantes recurrentes</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impacto Social -->
+            <div class="col-lg-4">
+                <div class="card h-100" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0" style="font-weight: 700; color: #2c3e50;">Impacto Social</h4>
+                            <div class="impact-growth">
+                                <i class="bi bi-arrow-up text-success"></i>
+                                <span class="text-success fw-bold">+12% este mes</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-muted mb-3">Distribución de impacto</p>
+                        
+                        <!-- Pie Chart Placeholder -->
+                        <div class="pie-chart-container mb-4">
+                            <div class="pie-chart">
+                                <div class="pie-segment education" style="--percentage: 45%; --color: #87CEEB;"></div>
+                                <div class="pie-segment health" style="--percentage: 25%; --color: #4682B4;"></div>
+                                <div class="pie-segment environment" style="--percentage: 20%; --color: #2E4A6B;"></div>
+                                <div class="pie-segment others" style="--percentage: 10%; --color: #B0C4DE;"></div>
+                            </div>
+                            <div class="pie-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #87CEEB;"></div>
+                                    <span>Educación 45%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #4682B4;"></div>
+                                    <span>Salud 25%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #2E4A6B;"></div>
+                                    <span>Medio ambiente 20%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #B0C4DE;"></div>
+                                    <span>Otros 10%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Beneficiaries and Communities -->
+                        <div class="impact-metrics">
+                            <div class="impact-metric mb-3">
+                                <div class="impact-label">Personas beneficiadas</div>
+                                <div class="impact-number">2,450</div>
+                                <div class="impact-growth-small">
+                                    <i class="bi bi-arrow-up text-success"></i>
+                                    <span class="text-success">+18% desde el año anterior</span>
+                                </div>
+                            </div>
+                            <div class="impact-metric">
+                                <div class="impact-label">Comunidades alcanzadas</div>
+                                <div class="impact-number">14</div>
+                                <div class="impact-growth-small">
+                                    <i class="bi bi-arrow-up text-success"></i>
+                                    <span class="text-success">+2 nuevas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participación en Eventos -->
+            <div class="col-lg-4">
+                <div class="card h-100" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3" style="font-weight: 700; color: #2c3e50;">Participación en Eventos</h4>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-borderless event-table">
+                                <thead>
+                                    <tr>
+                                        <th>Evento</th>
+                                        <th>Fecha</th>
+                                        <th>Ubicación</th>
+                                        <th>Participantes</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-tree me-2 text-success"></i>
+                                                <span>Reforestation Campaign</span>
+                                            </div>
+                                        </td>
+                                        <td>15 Enero 2025</td>
+                                        <td>Parque Nacional</td>
+                                        <td>45</td>
+                                        <td><span class="badge bg-success">Completado</span></td>
+                                        <td><a href="#" class="link-primary">Ver detalles</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-heart-pulse me-2 text-danger"></i>
+                                                <span>Community Health Day</span>
+                                            </div>
+                                        </td>
+                                        <td>15 Feb 2025</td>
+                                        <td>Centro Comunitario Este</td>
+                                        <td>120</td>
+                                        <td><span class="badge bg-success">Completado</span></td>
+                                        <td><a href="#" class="link-primary">Ver detalles</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-mortarboard me-2 text-info"></i>
+                                                <span>Financial Education Workshop</span>
+                                            </div>
+                                        </td>
+                                        <td>15 Mayo 2025</td>
+                                        <td>Escuela Municipal</td>
+                                        <td>65</td>
+                                        <td><span class="badge bg-success">Completado</span></td>
+                                        <td><a href="#" class="link-primary">Ver detalles</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-umbrella me-2 text-warning"></i>
+                                                <span>Beach Cleanup</span>
+                                            </div>
+                                        </td>
+                                        <td>15 Jun 2025</td>
+                                        <td>Playa El Palmar</td>
+                                        <td>35</td>
+                                        <td><span class="badge bg-primary">Próximo</span></td>
+                                        <td><a href="#" class="link-primary">Ver detalles</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles for NGO Dashboard -->
+<style>
+/* Logo Styles */
+.logo-circle {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(125, 185, 232, 0.3);
+}
+
+/* Metric Cards */
+.metric-card {
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 12px rgba(125, 185, 232, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+}
+
+.metric-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.metric-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-top: 4px;
+}
+
+/* Mini Metric Cards */
+.metric-mini-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.metric-mini-number {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #7db9e8;
+    line-height: 1;
+}
+
+.metric-mini-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 4px;
+}
+
+/* Chart Styles */
+.chart-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    height: 120px;
+    margin-bottom: 10px;
+}
+
+.chart-bar {
+    width: 30px;
+    background: linear-gradient(to top, #7db9e8, #5a9bd4);
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.chart-bar:hover {
+    background: linear-gradient(to top, #5a9bd4, #4a8bc4);
+    transform: scaleY(1.05);
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Pie Chart Styles */
+.pie-chart-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.pie-chart {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #87CEEB 0deg 162deg,
+        #4682B4 162deg 252deg,
+        #2E4A6B 252deg 324deg,
+        #B0C4DE 324deg 360deg
+    );
+    position: relative;
+}
+
+.pie-legend {
+    flex: 1;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+/* Impact Metrics */
+.impact-growth {
+    font-size: 0.85rem;
+}
+
+.impact-metric {
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.impact-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 4px;
+}
+
+.impact-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #7db9e8;
+    margin-bottom: 4px;
+}
+
+.impact-growth-small {
+    font-size: 0.75rem;
+}
+
+/* Event Table Styles */
+.event-table {
+    font-size: 0.85rem;
+}
+
+.event-table th {
+    font-weight: 600;
+    color: #6c757d;
+    border-bottom: 2px solid #e9ecef;
+    padding: 12px 8px;
+}
+
+.event-table td {
+    padding: 12px 8px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.event-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* Event Table Icon Styles - Ensure consistent sizing */
+.event-table .bi {
+    font-size: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+}
+.event-table .bi-heart-pulse {
+    font-size: 1.2rem !important;
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+}
+
+.event-table .d-flex.align-items-center {
+    align-items: center !important;
+}
+
+
+
+/* Reportes Button Styles */
+.reportes-btn {
+    font-size: 1.1rem !important;
+    padding: 15px 30px !important;
+    cursor: default !important;
+}
+.reportes-btn:hover {
+    transform: none !important;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3) !important;
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7) !important;
+}
+.reportes-btn:active {
+    transform: none !important;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3) !important;
+}
+.reportes-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed !important;
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    border: none !important;
+}
+.reportes-btn:disabled:hover {
+    transform: none !important;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3) !important;
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+}
+
+/* media queries moved to site.css */
+</style>
+
+<!-- Bootstrap Icons CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"> 

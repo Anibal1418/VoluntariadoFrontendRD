@@ -1,0 +1,61 @@
+﻿@model VoluntariosConectadosRD.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar sesión - Voluntariado Conectado RD";
+}
+
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #2522e7 0%, #5850c9 15%, #6a5cd9 30%, #8645c2 50%, #434294 60%, rgb(85, 84, 202) 75%, #5e54b6 90%, #4e38af 100%); min-height: calc(100vh - 200px); padding-top: 120px !important;">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+                <div class="row g-0">
+                    <div class="col-md-6">
+                        <div class="p-4 p-md-4">
+                            <div class="text-center mb-4">
+                                <h5 class="fw-bold text-uppercase text-muted" style="font-size: 0.9rem; letter-spacing: 0.1em;">Por un país unido a la causa</h5>
+                            </div>
+                            <form asp-action="Login" method="post" autocomplete="off">
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label fw-semibold text-dark">Correo electrónico</label>
+                                    <input asp-for="Email" class="form-control form-control-lg border-2" type="email" placeholder="tu@email.com" style="border-radius: 12px; font-size: 0.9rem;" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Password" class="form-label fw-semibold text-dark">Contraseña</label>
+                                    <input asp-for="Password" class="form-control form-control-lg border-2" type="password" placeholder="••••••••" style="border-radius: 12px; font-size: 0.9rem;" />
+                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="form-check">
+                                        <input asp-for="Remember" class="form-check-input" style="width: 1.2rem; height: 1.2rem;" />
+                                        <label asp-for="Remember" class="form-check-label text-muted">Recordarme</label>
+                                    </div>
+                                    <a href="#" class="text-decoration-none fw-semibold small" style="color: #dc3545;">¿Olvidaste tu contraseña?</a>
+                                </div>
+                                <button type="submit" class="btn btn-lg w-100 mb-3 fw-semibold" style="border-radius: 12px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 25%, #dc3545 50%, #c82333 75%, #bd2130 100%); border: none; color: white;">
+                                    Iniciar sesión
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-lg w-100 mb-3" onclick="location.href='/signin-google'" style="border-radius: 12px; border: 2px solid #dc3545; color: #dc3545;">
+                                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" style="width:18px; margin-right:8px; vertical-align: middle;"> 
+                                    Iniciar sesión con Google
+                                </button>
+                                <div class="text-center">
+                                    <span class="text-muted">¿No tienes cuenta?</span> 
+                                    <a href="/Account/Registro" class="text-decoration-none fw-semibold" style="color: #dc3545;">Regístrate aquí</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-none d-md-block" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 25%, #dc3545 50%, #c82333 75%, #bd2130 100%);">
+                        <div class="d-flex align-items-center justify-content-center h-100 p-4">
+                            <img src="~/images/voluntariosesion.jpg" alt="Voluntarios" class="img-fluid rounded-3 shadow" style="max-height: 350px; object-fit: cover;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

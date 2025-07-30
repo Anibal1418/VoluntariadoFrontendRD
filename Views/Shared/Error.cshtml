@@ -1,0 +1,97 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<style>
+    .error-bg {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #7db9e8 0%, #4a90e2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 0;
+        font-family: 'Poppins', sans-serif;
+    }
+    .error-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+        padding: 48px 32px 32px 32px;
+        max-width: 440px;
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+        border: 2px solid #b3d1f3;
+    }
+    .error-icon {
+        width: 90px;
+        height: 90px;
+        background: #dc3545;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px auto;
+    }
+    .error-icon i {
+        color: #fff;
+        font-size: 3.2rem;
+    }
+    .error-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #dc3545;
+        margin-bottom: 12px;
+    }
+    .error-message {
+        font-size: 1.15rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+        color: #222;
+    }
+    .error-requestid {
+        font-size: 0.98rem;
+        color: #6c757d;
+        margin-bottom: 1.2rem;
+    }
+    .error-btn {
+        width: 180px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 4px;
+        background: #7db9e8;
+        color: #fff;
+        border: none;
+        padding: 0.7rem 0;
+        transition: background 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 10px;
+        margin-bottom: 0;
+    }
+    .error-btn:hover {
+        background: #4a90e2;
+        color: #fff;
+    }
+</style>
+
+<div class="error-bg">
+    <div class="error-card">
+        <div class="error-icon">
+            <i class="bi bi-x-circle"></i>
+        </div>
+        <div class="error-title">¡Ha ocurrido un error!</div>
+        <div class="error-message">Lo sentimos, algo salió mal al procesar tu solicitud.</div>
+        @if (Model.ShowRequestId)
+        {
+            <div class="error-requestid">
+                <strong>ID de solicitud:</strong> <code>@Model.RequestId</code>
+            </div>
+        }
+        <a href="/Home/Index" class="btn error-btn">Volver al inicio</a>
+    </div>
+</div>
+
+<!-- Bootstrap Icons CDN for error icon -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">

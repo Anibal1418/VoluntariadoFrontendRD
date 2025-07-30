@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Registro Exitoso";
+}
+
+<style>
+    .success-bg {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #7db9e8 0%, #4a90e2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 0;
+    }
+    .success-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+        padding: 48px 32px 32px 32px;
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+        border: 2px solid #b3d1f3;
+    }
+    .success-icon {
+        width: 90px;
+        height: 90px;
+        background: #7db9e8;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px auto;
+    }
+    .success-icon i {
+        color: #fff;
+        font-size: 3.2rem;
+    }
+    .success-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #666;
+        margin-bottom: 12px;
+    }
+    .success-message {
+        font-size: 1.15rem;
+        font-weight: 500;
+        margin-bottom: 2.2rem;
+        color: #222;
+    }
+    .success-btn {
+        width: 180px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 4px;
+        background: #7db9e8;
+        color: #fff;
+        border: none;
+        padding: 0.7rem 0;
+        transition: background 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .success-btn:hover {
+        background: #4a90e2;
+        color: #fff;
+    }
+</style>
+
+<div class="success-bg">
+    <div class="success-card">
+        <div class="success-icon">
+            <i class="bi bi-check2" style="font-size: 3.2rem;"></i>
+        </div>
+        <div class="success-title">Listo</div>
+        <div class="success-message">¡Solicitud enviada con éxito!</div>
+        <a asp-controller="Dashboard" asp-action="Profile" class="btn success-btn">OK</a>
+        <a asp-controller="Dashboard" asp-action="ProfileONG" class="btn success-btn" style="margin-top: 10px;">OK(ONG)</a>
+    </div>
+</div>
+
+<!-- Bootstrap Icons CDN for check icon -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"> 

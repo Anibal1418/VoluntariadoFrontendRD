@@ -1,0 +1,368 @@
+@{
+    ViewData["Title"] = "Contacto - Voluntariado Conectado RD";
+}
+
+<!-- Hero Section -->
+<section class="hero-section" style="min-height: 50vh; padding-top: 120px;">
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">Contáctanos</h1>
+            <p class="hero-subtitle">Estamos aquí para ayudarte. Ponte en contacto con nuestro equipo</p>
+        </div>
+    </div>
+</section>
+
+<!-- Información de Contacto -->
+<section class="contact-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="contact-info">
+                    <h2 class="section-title mb-4">Información de Contacto</h2>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="contact-card">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <h4>Email General</h4>
+                                <p>info@voluntariadoconectado.com.do</p>
+                                <small>Para consultas generales sobre la plataforma</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <div class="contact-card">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <h4>Teléfono</h4>
+                                <p>+1 (809) 555-0123</p>
+                                <small>Lunes a Viernes: 8:00 AM - 6:00 PM</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <div class="contact-card">
+                                <div class="contact-icon">
+                                    <i class="fas fa-headset"></i>
+                                </div>
+                                <h4>Soporte Técnico</h4>
+                                <p>soporte@voluntariadoconectado.com.do</p>
+                                <small>Para problemas técnicos y asistencia</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <div class="contact-card">
+                                <div class="contact-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <h4>ONGs y Organizaciones</h4>
+                                <p>ong@voluntariadoconectado.com.do</p>
+                                <small>Para organizaciones que quieren registrarse</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="contact-form-card">
+                    <h3>Envíanos un Mensaje</h3>
+                    <form class="contact-form">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre Completo</label>
+                            <input type="text" class="form-control" id="nombre" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="asunto" class="form-label">Asunto</label>
+                            <select class="form-select" id="asunto" required>
+                                <option value="">Selecciona un asunto</option>
+                                <option value="consulta-general">Consulta General</option>
+                                <option value="soporte-tecnico">Soporte Técnico</option>
+                                <option value="registro-ong">Registro de ONG</option>
+                                <option value="sugerencia">Sugerencia</option>
+                                <option value="reporte-problema">Reporte de Problema</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="mensaje" class="form-label">Mensaje</label>
+                            <textarea class="form-control" id="mensaje" rows="5"
+                                placeholder="Escribe tu mensaje aquí..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Enviar Mensaje</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Horarios y Ubicación -->
+<section class="info-section" style="background: var(--light-gray);">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="info-card">
+                    <h3><i class="fas fa-clock me-2"></i>Horarios de Atención</h3>
+                    <div class="schedule-item">
+                        <strong>Lunes - Viernes:</strong> 8:00 AM - 6:00 PM
+                    </div>
+                    <div class="schedule-item">
+                        <strong>Sábados:</strong> 9:00 AM - 2:00 PM
+                    </div>
+                    <div class="schedule-item">
+                        <strong>Domingos:</strong> Cerrado
+                    </div>
+                    <div class="schedule-item">
+                        <strong>Feriados:</strong> Horario reducido
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="info-card">
+                    <h3><i class="fas fa-map-marker-alt me-2"></i>Ubicación</h3>
+                    <p><strong>Oficina Principal:</strong></p>
+                    <p>Av. Winston Churchill #123<br>
+                        Ensanche Naco, Santo Domingo<br>
+                        República Dominicana</p>
+                    <p><strong>Horario de Visitas:</strong><br>
+                        Solo con cita previa</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Preguntas Frecuentes -->
+<section class="faq-section">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Preguntas Frecuentes</h2>
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faq1">
+                                ¿Cómo puedo registrarme como voluntario?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Puedes registrarte haciendo clic en "Registrarme como Voluntario" en la página
+                                principal. Completa el formulario con tus datos personales y preferencias de
+                                voluntariado.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faq2">
+                                ¿Cómo registro mi organización?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Para registrar tu ONG, ve a "Registrar mi ONG" y completa el formulario con la
+                                información de tu organización. Necesitarás proporcionar el RNC y documentos de
+                                verificación.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faq3">
+                                ¿Es seguro hacer donaciones a través de la plataforma?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Sí, todas las donaciones se procesan a través de sistemas seguros y verificados.
+                                Trabajamos con procesadores de pago confiables para garantizar la seguridad de tus
+                                transacciones.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faq4">
+                                ¿Qué pasa si tengo problemas técnicos?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Si experimentas problemas técnicos, puedes contactarnos a través de
+                                soporte@voluntariadoconectado.com.do o llamarnos al +1 (809) 555-0123 durante nuestro
+                                horario de atención.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .contact-section {
+        padding: 5rem 0;
+    }
+
+    .contact-card {
+        background: var(--white);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        height: 100%;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+    }
+
+    .contact-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .contact-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: var(--white);
+        font-size: 1.5rem;
+    }
+
+    .contact-card h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+    }
+
+    .contact-card p {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-card small {
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+
+    .contact-form-card {
+        background: var(--white);
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        height: 100%;
+    }
+
+    .contact-form-card h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        color: var(--text-dark);
+    }
+
+    .info-section {
+        padding: 4rem 0;
+    }
+
+    .info-card {
+        background: var(--white);
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        height: 100%;
+    }
+
+    .info-card h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--text-dark);
+    }
+
+    .schedule-item {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .schedule-item:last-child {
+        border-bottom: none;
+    }
+
+    .faq-section {
+        padding: 5rem 0;
+    }
+
+    .accordion-item {
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+
+    .accordion-button {
+        background: var(--white);
+        color: var(--text-dark);
+        font-weight: 600;
+        border: none;
+        padding: 1.5rem;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: var(--primary-color);
+        color: var(--white);
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: var(--primary-color);
+    }
+
+    .accordion-body {
+        padding: 1.5rem;
+        background: var(--light-gray);
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .contact-form-card {
+            margin-top: 2rem;
+        }
+
+        .info-card {
+            margin-bottom: 2rem;
+        }
+    }
+</style>

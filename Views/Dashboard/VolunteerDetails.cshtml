@@ -1,0 +1,484 @@
+@{
+    ViewData["Title"] = "Detalles del Voluntario - Voluntariado Conectado RD";
+    Layout = "_DashboardLayout";
+}
+
+<div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #7db9e8, #5a9bd4); border-radius:12px; padding:18px 32px; box-shadow: 0 4px 15px rgba(125, 185, 232, 0.3);">DETALLES DEL VOLUNTARIO</h2>
+            <a href="/Dashboard/Reportes" class="btn btn-outline-primary back-btn">
+                <i class="bi bi-arrow-left me-2"></i>Volver a Reportes
+            </a>
+        </div>
+        
+        <!-- Volunteer Profile Section -->
+        <div class="row g-4">
+            <!-- Profile Card -->
+            <div class="col-lg-4">
+                <div class="card profile-card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <img src="~/images/avatar1.jpg" alt="Foto del voluntario" class="rounded-circle mb-3" width="120" height="120" style="object-fit: cover; border: 4px solid #7db9e8;">
+                            <h3 class="mb-1" style="font-weight: 700; color: #2c3e50;">María González</h3>
+                            <p class="text-muted mb-3">Voluntaria desde 2023</p>
+                            <span class="badge bg-success volunteer-status">Activo</span>
+                        </div>
+                        
+                        <!-- Contact Information -->
+                        <div class="contact-info mb-4">
+                            <div class="contact-item">
+                                <i class="bi bi-envelope text-primary"></i>
+                                <span>maria.gonzalez@email.com</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="bi bi-telephone text-primary"></i>
+                                <span>+1 (809) 555-0123</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="bi bi-geo-alt text-primary"></i>
+                                <span>Santo Domingo, República Dominicana</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Stats -->
+                        <div class="quick-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">24</div>
+                                <div class="stat-label">Eventos participados</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">156</div>
+                                <div class="stat-label">Horas voluntariadas</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">4.8</div>
+                                <div class="stat-label">Calificación promedio</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Skills and Experience -->
+                <div class="card mb-4" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3" style="font-weight: 700; color: #2c3e50;">Habilidades y Experiencia</h4>
+                        
+                        <!-- Skills -->
+                        <div class="mb-4">
+                            <h5 class="mb-3" style="color: #495057;">Habilidades Principales</h5>
+                            <div class="skills-container">
+                                <div class="skill-item">
+                                    <div class="skill-name">Liderazgo</div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress" style="width: 85%;"></div>
+                                    </div>
+                                    <div class="skill-percentage">85%</div>
+                                </div>
+                                <div class="skill-item">
+                                    <div class="skill-name">Comunicación</div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress" style="width: 90%;"></div>
+                                    </div>
+                                    <div class="skill-percentage">90%</div>
+                                </div>
+                                <div class="skill-item">
+                                    <div class="skill-name">Organización</div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress" style="width: 75%;"></div>
+                                    </div>
+                                    <div class="skill-percentage">75%</div>
+                                </div>
+                                <div class="skill-item">
+                                    <div class="skill-name">Trabajo en equipo</div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress" style="width: 95%;"></div>
+                                    </div>
+                                    <div class="skill-percentage">95%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Experience Areas -->
+                        <div class="mb-4">
+                            <h5 class="mb-3" style="color: #495057;">Áreas de Experiencia</h5>
+                            <div class="experience-tags">
+                                <span class="experience-tag">Educación</span>
+                                <span class="experience-tag">Salud</span>
+                                <span class="experience-tag">Medio ambiente</span>
+                                <span class="experience-tag">Comunidad</span>
+                                <span class="experience-tag">Eventos</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activities -->
+                <div class="card mb-4" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3" style="font-weight: 700; color: #2c3e50;">Actividades Recientes</h4>
+                        
+                        <div class="activity-timeline">
+                            <div class="activity-item">
+                                <div class="activity-icon bg-success">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h6 class="mb-1">Reforestation Campaign</h6>
+                                    <p class="text-muted mb-1">Participó en la campaña de reforestación en el Parque Nacional</p>
+                                    <small class="text-muted">15 Enero 2025 • 8 horas</small>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon bg-success">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h6 class="mb-1">Community Health Day</h6>
+                                    <p class="text-muted mb-1">Ayudó en la organización del día de salud comunitaria</p>
+                                    <small class="text-muted">15 Feb 2025 • 6 horas</small>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon bg-success">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h6 class="mb-1">Financial Education Workshop</h6>
+                                    <p class="text-muted mb-1">Impartió taller de educación financiera en escuela municipal</p>
+                                    <small class="text-muted">15 Mayo 2025 • 4 horas</small>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon bg-primary">
+                                    <i class="bi bi-calendar-event"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h6 class="mb-1">Beach Cleanup</h6>
+                                    <p class="text-muted mb-1">Próximo evento de limpieza de playa</p>
+                                    <small class="text-muted">15 Jun 2025 • Programado</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Performance Metrics -->
+                <div class="card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3" style="font-weight: 700; color: #2c3e50;">Métricas de Rendimiento</h4>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="metric-card-small">
+                                    <div class="metric-icon-small bg-primary">
+                                        <i class="bi bi-clock text-white"></i>
+                                    </div>
+                                    <div class="metric-content-small">
+                                        <div class="metric-number-small">156</div>
+                                        <div class="metric-label-small">Horas totales</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="metric-card-small">
+                                    <div class="metric-icon-small bg-success">
+                                        <i class="bi bi-star text-white"></i>
+                                    </div>
+                                    <div class="metric-content-small">
+                                        <div class="metric-number-small">4.8</div>
+                                        <div class="metric-label-small">Calificación</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="metric-card-small">
+                                    <div class="metric-icon-small bg-warning">
+                                        <i class="bi bi-calendar-check text-white"></i>
+                                    </div>
+                                    <div class="metric-content-small">
+                                        <div class="metric-number-small">24</div>
+                                        <div class="metric-label-small">Eventos</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="metric-card-small">
+                                    <div class="metric-icon-small bg-info">
+                                        <i class="bi bi-people text-white"></i>
+                                    </div>
+                                    <div class="metric-content-small">
+                                        <div class="metric-number-small">12</div>
+                                        <div class="metric-label-small">Proyectos</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles for Volunteer Details Page -->
+<style>
+/* Back Button Styles */
+.back-btn {
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(125, 185, 232, 0.3);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background: linear-gradient(135deg, #5a9bd4, #4a8bc4);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(125, 185, 232, 0.4);
+}
+
+/* Profile Card Styles */
+.profile-card {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+}
+
+.volunteer-status {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* Contact Information Styles */
+.contact-info {
+    border-top: 1px solid #e9ecef;
+    border-bottom: 1px solid #e9ecef;
+    padding: 20px 0;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.contact-item i {
+    margin-right: 12px;
+    font-size: 1.1rem;
+    width: 20px;
+}
+
+.contact-item span {
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Quick Stats Styles */
+.quick-stats {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.stat-item {
+    flex: 1;
+    padding: 0 8px;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Skills Styles */
+.skills-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.skill-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.skill-name {
+    width: 120px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.skill-bar {
+    flex: 1;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.skill-progress {
+    height: 100%;
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.skill-percentage {
+    width: 40px;
+    text-align: right;
+    font-weight: 600;
+    color: #7db9e8;
+}
+
+/* Experience Tags Styles */
+.experience-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.experience-tag {
+    background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Activity Timeline Styles */
+.activity-timeline {
+    position: relative;
+}
+
+.activity-timeline::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    z-index: 1;
+    position: relative;
+}
+
+.activity-content {
+    flex: 1;
+    padding-top: 4px;
+}
+
+.activity-content h6 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* Metric Cards Small Styles */
+.metric-card-small {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.metric-card-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.metric-icon-small {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+}
+
+.metric-content-small {
+    flex: 1;
+}
+
+.metric-number-small {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+
+.metric-label-small {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects to metric cards
+    const metricCards = document.querySelectorAll('.metric-card-small');
+    metricCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Add click handlers for activity items
+    const activityItems = document.querySelectorAll('.activity-item');
+    activityItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const activityTitle = this.querySelector('h6').textContent;
+            console.log('Clicked on activity:', activityTitle);
+            // You can add navigation to activity details here
+        });
+    });
+});
+</script> 
