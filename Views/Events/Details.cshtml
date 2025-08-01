@@ -1,0 +1,168 @@
+﻿@model VoluntariosConectadosRD.Models.Events
+
+@{
+    ViewData["Title"] = "Detalles del Evento";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #7db9e8, #5a9bd4); border-radius:12px; padding:18px 32px; box-shadow: 0 4px 15px rgba(125, 185, 232, 0.3);">DETALLES DEL EVENTO</h2>
+            <a asp-action="List" class="btn btn-outline-primary back-btn">
+                <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+            </a>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <!-- Event Image -->
+                    <div class="col-md-4 text-center mb-4 mb-md-0">
+                        @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+                        {
+                            <img src="@Model.ImagenUrl" alt="@Model.Nombre" class="img-fluid rounded" style="max-height: 250px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+                        }
+                        else
+                        {
+                            <div class="event-icon-large">
+                                <i class="bi bi-calendar-event"></i>
+                            </div>
+                        }
+
+                        <!-- Estado movido debajo de la imagen -->
+                        <div class="mt-3">
+                            @{
+                                var statusClass = Model.Fecha >= DateTime.Now ? "bg-success" : "bg-secondary";
+                                var statusText = Model.Fecha >= DateTime.Now ? "Próximo" : "Finalizado";
+                            }
+                            <span class="badge @statusClass">@statusText</span>
+                        </div>
+                    </div>
+
+                    <!-- Event Details -->
+                    <div class="col-md-8">
+                        <h3 class="mb-4" style="font-weight: 700; color: #2c3e50;">@Model.Nombre</h3>
+
+                        <div class="detail-item mb-3">
+                            <div class="detail-label" style="font-weight: 600; color: #495057;">Fecha del Evento</div>
+                            <div class="detail-value" style="color: #6c757d;">@Model.Fecha.ToShortDateString()</div>
+                        </div>
+
+                        <div class="detail-item mb-3">
+                            <div class="detail-label" style="font-weight: 600; color: #495057;">Ubicación</div>
+                            <div class="detail-value" style="color: #6c757d;">@Model.Ubicacion</div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.Organizador))
+                        {
+                            <div class="detail-item mb-3">
+                                <div class="detail-label" style="font-weight: 600; color: #495057;">Organizador</div>
+                                <div class="detail-value" style="color: #6c757d;">@Model.Organizador</div>
+                            </div>
+                        }
+
+                        <div class="detail-item">
+                            <div class="detail-label" style="font-weight: 600; color: #495057;">Descripción</div>
+                            <div class="detail-value" style="color: #6c757d;">@Model.Descripcion</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit button -->
+                <div class="d-flex justify-content-end mt-4 gap-3">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-action">
+                        <i class="bi bi-pencil-square me-1"></i>Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Specific details style */
+    .event-icon-large {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        margin: 0 auto;
+    }
+
+    /* Style */
+    .back-btn {
+        background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: 25px;
+        box-shadow: 0 4px 15px rgba(125, 185, 232, 0.3);
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #5a9bd4, #4a8bc4);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(125, 185, 232, 0.4);
+        }
+
+    .btn-action {
+        background: linear-gradient(135deg, #7db9e8, #5a9bd4);
+        border: none;
+        color: white;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+
+        .btn-action:hover {
+            background: linear-gradient(135deg, #5a9bd4, #7db9e8);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(125, 185, 232, 0.3);
+        }
+
+    .badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, #28a745, #20c997) !important;
+        }
+
+        .badge.bg-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057) !important;
+        }
+
+    .detail-item {
+        margin-bottom: 15px;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .detail-value {
+        color: #6c757d;
+    }
+</style>

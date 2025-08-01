@@ -1,3 +1,13 @@
+/* Elimina completamente el indicador de dropdown de Bootstrap */
+.dropdown-toggle::after {
+    content: none !important;
+}
+
+/* Opcional: Si usas 'dropdown-toggle-no-arrow' como clase */
+.dropdown-toggle-no-arrow::after {
+    content: none !important;
+}
+
 /* Global Styles */
 :root {
     --primary-color: #dc3545;

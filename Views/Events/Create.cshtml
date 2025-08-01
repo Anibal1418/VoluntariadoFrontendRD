@@ -1,0 +1,116 @@
+﻿@model VoluntariosConectadosRD.Models.Events
+
+@{
+    ViewData["Title"] = "Crear Evento";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #7db9e8, #5a9bd4); border-radius:12px; padding:18px 32px; box-shadow: 0 4px 15px rgba(125, 185, 232, 0.3);">CREAR NUEVO EVENTO</h2>
+            <a asp-action="List" class="btn back-btn" style="background: linear-gradient(135deg, #7db9e8, #5a9bd4); border: none; color: white; font-weight: 600; padding: 12px 24px; border-radius: 25px; box-shadow: 0 4px 15px rgba(125, 185, 232, 0.3); transition: all 0.3s ease; text-decoration: none;">
+                <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+            </a>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+            <div class="card-body p-4">
+                <form asp-action="Create" enctype="multipart/form-data">
+                    <div class="form-icon-header mb-4">
+                        <div class="form-icon">
+                            <i class="bi bi-calendar-plus"></i>
+                        </div>
+                        <h4 style="font-weight: 700; color: #2c3e50;">Información del Evento</h4>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="Nombre" class="form-label" style="font-weight: 600; color: #495057;"></label>
+                                <input asp-for="Nombre" class="form-control" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 10px 15px;" placeholder="Nombre del evento" />
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="Fecha" class="form-label" style="font-weight: 600; color: #495057;"></label>
+                                <input asp-for="Fecha" class="form-control" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 10px 15px;" type="date" />
+                                <span asp-validation-for="Fecha" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="Ubicacion" class="form-label" style="font-weight: 600; color: #495057;"></label>
+                                <input asp-for="Ubicacion" class="form-control" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 10px 15px;" placeholder="Ubicación del evento" />
+                                <span asp-validation-for="Ubicacion" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="Organizador" class="form-label" style="font-weight: 600; color: #495057;"></label>
+                                <input asp-for="Organizador" class="form-control" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 10px 15px;" placeholder="Organizador del evento" />
+                                <span asp-validation-for="Organizador" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Descripcion" class="form-label" style="font-weight: 600; color: #495057;"></label>
+                        <textarea asp-for="Descripcion" class="form-control" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 10px 15px; min-height: 120px;" placeholder="Descripción detallada del evento"></textarea>
+                        <span asp-validation-for="Descripcion" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label" style="font-weight: 600; color: #495057;">Imagen del Evento</label>
+                        <input type="file" name="imagenArchivo" class="form-control" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 10px 15px;" accept="image/*" />
+                        <small class="text-muted">Formatos recomendados: JPG, PNG. Tamaño máximo: 2MB</small>
+                        <div id="imagePreview" class="mt-2" style="display:none;">
+                            <img id="previewImage" src="#" alt="Vista previa de la imagen" style="max-height: 200px; border-radius: 10px; border: 1px solid #dee2e6;" />
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 mt-4">
+                        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #28a745, #20c997); border: none; color: white; font-weight: 600; padding: 10px 20px; border-radius: 25px; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); transition: all 0.3s ease;">
+                            <i class="bi bi-save me-2"></i>Guardar Evento
+                        </button>
+                        <a asp-action="List" class="btn btn-secondary" style="background: linear-gradient(135deg, #6c757d, #495057); border: none; color: white; font-weight: 600; padding: 10px 20px; border-radius: 25px; transition: all 0.3s ease;">
+                            <i class="bi bi-x-circle me-2"></i>Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preview Image
+            const fileInput = document.querySelector('input[type="file"]');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImage = document.getElementById('previewImage');
+
+            fileInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    }
+
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    imagePreview.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}

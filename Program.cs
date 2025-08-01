@@ -42,6 +42,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// Configuración para el manejo de archivos (imágenes)
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.AllowSynchronousIO = true; // Necesario para algunas operaciones de archivos
+});
+
 var app = builder.Build();
 
 // Configurar el pipeline de solicitudes HTTP.
@@ -53,7 +59,16 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+// Configuración para servir archivos estáticos (incluyendo imágenes)
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        // Cache de archivos estáticos por 1 semana (604800 segundos)
+        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=604800");
+    }
+});
 
 app.UseRouting();
 
