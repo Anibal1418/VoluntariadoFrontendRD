@@ -1,0 +1,53 @@
+﻿@model List<Oportunidad>
+
+<h2>Oportunidades de Voluntariado</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">Nueva Oportunidad</a>
+
+<!-- Formulario de filtrado -->
+<form asp-action="Filtrar" method="get" class="mb-3">
+    <div class="form-row d-flex gap-2">
+        <input type="text" name="ubicacion" class="form-control" placeholder="Ubicación" />
+        <input type="date" name="fecha" class="form-control" />
+        <button type="submit" class="btn btn-info">Filtrar</button>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Fecha</th>
+            <th>Ubicación</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Titulo</td>
+                <td>@item.Descripcion</td>
+                <td>@item.Fecha.ToShortDateString()</td>
+                <td>@item.Ubicacion</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Controles de paginación -->
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

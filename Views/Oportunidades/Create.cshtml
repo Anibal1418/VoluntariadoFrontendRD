@@ -1,0 +1,39 @@
+﻿@model Oportunidad
+
+<h2>Crear Nueva Oportunidad</h2>
+
+<form asp-action="Create">
+    @Html.ValidationSummary(true)
+
+    <div class="form-group">
+        <label>Título</label>
+        <input asp-for="Titulo" class="form-control" />
+        @Html.ValidationMessageFor(model => model.Titulo)
+    </div>
+
+    <div class="form-group">
+        <label>Descripción</label>
+        <textarea asp-for="Descripcion" class="form-control"></textarea>
+        @Html.ValidationMessageFor(model => model.Descripcion)
+    </div>
+
+    <div class="form-group">
+        <label>Fecha</label>
+        <input asp-for="Fecha" type="date" class="form-control" />
+        @Html.ValidationMessageFor(model => model.Fecha)
+    </div>
+
+    <div class="form-group">
+        <label>Ubicación</label>
+        <input asp-for="Ubicacion" class="form-control" />
+        @Html.ValidationMessageFor(model => model.Ubicacion)
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
