@@ -1,0 +1,336 @@
+@{
+    ViewData["Title"] = "Gestión de ONGs - Administración";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #28a745, #20c997); border-radius:12px; padding:18px 32px; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">GESTIÓN DE ONGs</h2>
+    </div>
+
+    <!-- Search and Actions Row -->
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Buscar ONGs por nombre, RNC o ubicación..." style="border-radius: 0 8px 8px 0;">
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-success me-2" onclick="exportarONGs()">
+                        <i class="bi bi-download me-2"></i>Exportar
+                    </button>
+                    <button class="btn btn-primary" onclick="agregarONG()">
+                        <i class="bi bi-building-add me-2"></i>Agregar ONG
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ONGs Table -->
+    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="ongsTable">
+                    <thead class="table-success">
+                        <tr>
+                            <th style="border-radius: 15px 0 0 0;">
+                                <input type="checkbox" class="form-check-input" id="selectAll">
+                            </th>
+                            <th>ONG</th>
+                            <th>RNC</th>
+                            <th>Contacto</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
+                            <th>Eventos</th>
+                            <th>Fecha Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="form-check-input ong-checkbox"></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="/images/companylogo.jpg" alt="Logo ONG" class="rounded me-3" width="50" height="50" style="object-fit: cover;">
+                                    <div>
+                                        <div class="fw-bold">Fundación Esperanza Viva</div>
+                                        <small class="text-muted">Desarrollo social</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>123456789</td>
+                            <td>
+                                <div>
+                                    <div>contacto@fundacion.org</div>
+                                    <small class="text-muted">(809) 123-4567</small>
+                                </div>
+                            </td>
+                            <td>Santo Domingo, RD</td>
+                            <td><span class="badge bg-success">Verificada</span></td>
+                            <td><span class="badge bg-primary">15 eventos</span></td>
+                            <td>10/01/2024</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarONG(1)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="verificarONG(1)">
+                                        <i class="bi bi-shield-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarONG(1)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="form-check-input ong-checkbox"></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" width="50" height="50">
+                                        <i class="bi bi-building text-muted" style="font-size: 1.5rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">ONG Ambiental RD</div>
+                                        <small class="text-muted">Medio ambiente</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>987654321</td>
+                            <td>
+                                <div>
+                                    <div>info@ongambiental.rd</div>
+                                    <small class="text-muted">(809) 987-6543</small>
+                                </div>
+                            </td>
+                            <td>Santiago, RD</td>
+                            <td><span class="badge bg-warning">Pendiente</span></td>
+                            <td><span class="badge bg-secondary">3 eventos</span></td>
+                            <td>15/01/2024</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarONG(2)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="aprobarONG(2)">
+                                        <i class="bi bi-check-circle"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarONG(2)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="form-check-input ong-checkbox"></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" width="50" height="50">
+                                        <i class="bi bi-building text-muted" style="font-size: 1.5rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Fundación Ayuda Directa</div>
+                                        <small class="text-muted">Asistencia social</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>456789123</td>
+                            <td>
+                                <div>
+                                    <div>ayuda@fundacion.org</div>
+                                    <small class="text-muted">(809) 456-7890</small>
+                                </div>
+                            </td>
+                            <td>La Romana, RD</td>
+                            <td><span class="badge bg-success">Verificada</span></td>
+                            <td><span class="badge bg-primary">8 eventos</span></td>
+                            <td>05/01/2024</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarONG(3)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="verificarONG(3)">
+                                        <i class="bi bi-shield-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarONG(3)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="form-check-input ong-checkbox"></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" width="50" height="50">
+                                        <i class="bi bi-building text-muted" style="font-size: 1.5rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Asociación Comunitaria</div>
+                                        <small class="text-muted">Desarrollo local</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>789123456</td>
+                            <td>
+                                <div>
+                                    <div>comunidad@asociacion.org</div>
+                                    <small class="text-muted">(809) 789-1234</small>
+                                </div>
+                            </td>
+                            <td>Puerto Plata, RD</td>
+                            <td><span class="badge bg-danger">Suspendida</span></td>
+                            <td><span class="badge bg-secondary">0 eventos</span></td>
+                            <td>20/12/2023</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarONG(4)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="reactivarONG(4)">
+                                        <i class="bi bi-arrow-clockwise"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarONG(4)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="text-muted">
+            Mostrando 1-4 de 89 ONGs registradas
+        </div>
+        <nav aria-label="Paginación de ONGs">
+            <ul class="pagination mb-0">
+                <li class="page-item disabled">
+                    <a class="page-link" href="javascript:void(0)">Anterior</a>
+                </li>
+                <li class="page-item active">
+                    <a class="page-link" href="javascript:void(0)">1</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)">2</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)">3</a>
+                </li>
+                <li class="page-item">
+                    <span class="page-link">...</span>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)">23</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<style>
+    .table th {
+        border-top: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .table td {
+        vertical-align: middle;
+        border-top: 1px solid #f8f9fa;
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .btn-group .btn {
+        border-radius: 6px;
+        margin: 0 1px;
+    }
+    
+    .pagination .page-link {
+        border-radius: 8px;
+        margin: 0 2px;
+        border: none;
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+    }
+</style>
+
+<script>
+    // Select all functionality
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.ong-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#ongsTable tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    function editarONG(id) {
+        alert('Función de edición de ONG ' + id + ' - En desarrollo');
+    }
+
+    function verificarONG(id) {
+        if (confirm('¿Está seguro de que desea verificar esta ONG?')) {
+            alert('ONG ' + id + ' verificada - En desarrollo');
+        }
+    }
+
+    function aprobarONG(id) {
+        if (confirm('¿Está seguro de que desea aprobar esta ONG?')) {
+            alert('ONG ' + id + ' aprobada - En desarrollo');
+        }
+    }
+
+    function reactivarONG(id) {
+        if (confirm('¿Está seguro de que desea reactivar esta ONG?')) {
+            alert('ONG ' + id + ' reactivada - En desarrollo');
+        }
+    }
+
+    function eliminarONG(id) {
+        if (confirm('¿Está seguro de que desea eliminar esta ONG? Esta acción no se puede deshacer.')) {
+            alert('ONG ' + id + ' eliminada - En desarrollo');
+        }
+    }
+
+    function agregarONG() {
+        alert('Función de agregar ONG - En desarrollo');
+    }
+
+    function exportarONGs() {
+        alert('Función de exportar ONGs - En desarrollo');
+    }
+</script> 

@@ -24,12 +24,36 @@ namespace VoluntariosConectadosRD.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(VoluntariosConectadosRD.Models.LoginViewModel model)
+        public IActionResult Login(VoluntariosConectadosRD.Models.LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Guardar el rol del usuario en una cookie de sesión
+                    HttpContext.Session.SetString("UserRole", model.UserRole ?? "Voluntario");
+                    
+                    // También guardar información básica del usuario según el rol
+                    switch (model.UserRole)
+                    {
+                        case "Voluntario":
+                            HttpContext.Session.SetString("UserName", "Omar");
+                            HttpContext.Session.SetString("UserImage", "https://randomuser.me/api/portraits/men/32.jpg");
+                            break;
+                        case "ONG":
+                            HttpContext.Session.SetString("UserName", "Fundación Esperanza Viva");
+                            HttpContext.Session.SetString("UserImage", "/images/companylogo.jpg");
+                            break;
+                        case "Admin":
+                            HttpContext.Session.SetString("UserName", "Admin");
+                            HttpContext.Session.SetString("UserImage", "");
+                            break;
+                        default:
+                            HttpContext.Session.SetString("UserName", "Usuario");
+                            HttpContext.Session.SetString("UserImage", "");
+                            break;
+                    }
+                    
                     TempData["MensajeExito"] = "¡Inicio de sesión exitoso! Bienvenido de vuelta.";
                     TempData["RedirectUrl"] = "/Dashboard/Profile";
                     return View(model);
@@ -72,7 +96,7 @@ namespace VoluntariosConectadosRD.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Registro(VoluntariosConectadosRD.Models.RegistroViewModel model)
+        public IActionResult Registro(VoluntariosConectadosRD.Models.RegistroViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -117,7 +141,7 @@ namespace VoluntariosConectadosRD.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegistroONG(VoluntariosConectadosRD.Models.RegistroONGViewModel model)
+        public IActionResult RegistroONG(VoluntariosConectadosRD.Models.RegistroONGViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -177,7 +201,7 @@ namespace VoluntariosConectadosRD.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditarONG(VoluntariosConectadosRD.Models.EditarONGViewModel model)
+        public IActionResult EditarONG(VoluntariosConectadosRD.Models.EditarONGViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -225,7 +249,7 @@ namespace VoluntariosConectadosRD.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditarVoluntario(VoluntariosConectadosRD.Models.EditarVoluntarioViewModel model)
+        public IActionResult EditarVoluntario(VoluntariosConectadosRD.Models.EditarVoluntarioViewModel model)
         {
             if (ModelState.IsValid)
             {

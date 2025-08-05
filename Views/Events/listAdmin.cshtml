@@ -1,0 +1,294 @@
+@model IEnumerable<VoluntariosConectadosRD.Models.Events>
+
+@{
+    ViewData["Title"] = "Administración del Sistema";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #dc3545, #c82333); border-radius:12px; padding:18px 32px; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);">ADMINISTRACIÓN DEL SISTEMA</h2>
+        </div>
+
+        <!-- Admin Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                    <div class="card-body text-center p-3">
+                        <i class="bi bi-people-fill text-primary" style="font-size: 2rem;"></i>
+                        <h4 class="fw-bold text-primary mb-1">1,247</h4>
+                        <small class="text-muted">Usuarios Registrados</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                    <div class="card-body text-center p-3">
+                        <i class="bi bi-building text-success" style="font-size: 2rem;"></i>
+                        <h4 class="fw-bold text-success mb-1">89</h4>
+                        <small class="text-muted">ONGs Activas</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                    <div class="card-body text-center p-3">
+                        <i class="bi bi-calendar-event text-warning" style="font-size: 2rem;"></i>
+                        <h4 class="fw-bold text-warning mb-1">156</h4>
+                        <small class="text-muted">Eventos Activos</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                    <div class="card-body text-center p-3">
+                        <i class="bi bi-graph-up text-info" style="font-size: 2rem;"></i>
+                        <h4 class="fw-bold text-info mb-1">2,891</h4>
+                        <small class="text-muted">Oportunidades</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+            <div class="card-body p-4">
+                <!-- Search and Header Row -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 class="mb-0" style="font-weight: 700; color: #2c3e50;">Gestión de Eventos</h4>
+                        <small class="text-muted">Administración completa del sistema</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-outline-primary" onclick="gestionarUsuarios()">
+                            <i class="bi bi-people me-2"></i>Gestionar Usuarios
+                        </button>
+                        <a href="/Events/Create" class="btn btn-danger create-btn">
+                            <i class="bi bi-plus-circle me-2"></i>Crear Evento
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Events Table -->
+                <div class="table-responsive">
+                    <table class="table table-borderless events-table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Organizador</th>
+                                <th>Fecha</th>
+                                <th>Ubicación</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var evento in Model)
+                            {
+                                <tr class="event-row">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="event-image-container me-3">
+                                                @if (!string.IsNullOrEmpty(evento.ImagenUrl))
+                                                {
+                                                    <img src="@evento.ImagenUrl" alt="@evento.Nombre" class="event-image" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="event-icon">
+                                                        <i class="bi bi-calendar-event"></i>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">@evento.Nombre</div>
+                                                <small class="text-muted">ID: @evento.Id</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@evento.Organizador</span>
+                                    </td>
+                                    <td>@evento.Fecha.ToShortDateString()</td>
+                                    <td>@evento.Ubicacion</td>
+                                    <td>
+                                        @{
+                                            var statusClass = evento.Fecha >= DateTime.Now ? "bg-success" : "bg-secondary";
+                                            var statusText = evento.Fecha >= DateTime.Now ? "Activo" : "Finalizado";
+                                        }
+                                        <span class="badge @statusClass">@statusText</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="/Events/Details/@evento.Id" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye me-1"></i>Ver
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-warning" onclick="editarEvento(@evento.Id)">
+                                                <i class="bi bi-pencil me-1"></i>Editar
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarEvento(@evento.Id)">
+                                                <i class="bi bi-trash me-1"></i>Eliminar
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="text-muted">
+                        Mostrando @Model.Count() eventos de todos los organizadores
+                    </div>
+                    <nav aria-label="Paginación de eventos">
+                        <ul class="pagination mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:void(0)">Anterior</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="javascript:void(0)">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dashboard-bg {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+    
+    .back-btn {
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .create-btn {
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .create-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+    
+    .events-table {
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+    
+    .event-row {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .event-row:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    
+    .event-row td {
+        padding: 16px;
+        border: none;
+        vertical-align: middle;
+    }
+    
+    .event-row td:first-child {
+        border-radius: 12px 0 0 12px;
+    }
+    
+    .event-row td:last-child {
+        border-radius: 0 12px 12px 0;
+    }
+    
+    .event-image-container {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+    }
+    
+    .event-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .event-icon {
+        font-size: 1.5rem;
+        color: #6c757d;
+    }
+    
+    .btn-action {
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-1px);
+    }
+    
+    .pagination .page-link {
+        border-radius: 8px;
+        margin: 0 2px;
+        border: none;
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        border: none;
+    }
+</style>
+
+<script>
+    function gestionarUsuarios() {
+        alert('Función de gestión de usuarios - En desarrollo');
+    }
+    
+    function gestionarONGs() {
+        alert('Función de gestión de ONGs - En desarrollo');
+    }
+    
+    function editarEvento(id) {
+        alert('Función de edición de evento ' + id + ' - En desarrollo');
+    }
+    
+    function eliminarEvento(id) {
+        if (confirm('¿Está seguro de que desea eliminar este evento?')) {
+            alert('Evento ' + id + ' eliminado - En desarrollo');
+        }
+    }
+</script> 

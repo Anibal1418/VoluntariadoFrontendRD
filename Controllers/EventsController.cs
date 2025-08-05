@@ -29,6 +29,7 @@ namespace VoluntariosConectadosRD.Controllers
                     Fecha = DateTime.Today.AddDays(5),
                     Ubicacion = "Jarabacoa",
                     Descripcion = "Ayuda a reforestar zonas afectadas por la tala.",
+                    Organizador = "Fundación Esperanza Viva",
                     ImagenUrl = "/images/eventos/reforestacion.jpg",
                     ImagenNombre = "reforestacion.jpg"
                 });
@@ -40,8 +41,21 @@ namespace VoluntariosConectadosRD.Controllers
                     Fecha = DateTime.Today.AddDays(10),
                     Ubicacion = "Santo Domingo",
                     Descripcion = "Entrega de ropa a comunidades vulnerables.",
+                    Organizador = "Fundación Esperanza Viva",
                     ImagenUrl = "/images/eventos/donacion-ropa.jpg",
                     ImagenNombre = "donacion-ropa.jpg"
+                });
+
+                _eventos.Add(new Events
+                {
+                    Id = _nextId++,
+                    Nombre = "Limpieza de playas",
+                    Fecha = DateTime.Today.AddDays(15),
+                    Ubicacion = "Boca Chica",
+                    Descripcion = "Campaña de limpieza de playas para preservar el medio ambiente.",
+                    Organizador = "ONG Ambiental RD",
+                    ImagenUrl = "/images/eventos/reforestacion.jpg",
+                    ImagenNombre = "reforestacion.jpg"
                 });
             }
         }
@@ -50,6 +64,28 @@ namespace VoluntariosConectadosRD.Controllers
         {
             var eventosOrdenados = _eventos.OrderByDescending(e => e.Fecha).ToList();
             return View(eventosOrdenados);
+        }
+
+        public IActionResult ListONG()
+        {
+            var userRole = HttpContext.Session.GetString("UserRole");
+            var userName = HttpContext.Session.GetString("UserName");
+            
+            // Filtrar eventos por ONG si no es admin
+            var eventos = userRole == "Admin" 
+                ? _eventos.OrderByDescending(e => e.Fecha).ToList()
+                : _eventos.Where(e => e.Organizador == userName).OrderByDescending(e => e.Fecha).ToList();
+            
+            ViewData["UserRole"] = userRole;
+            ViewData["UserName"] = userName;
+            return View(eventos);
+        }
+
+        public IActionResult ListAdmin()
+        {
+            var eventos = _eventos.OrderByDescending(e => e.Fecha).ToList();
+            ViewData["UserRole"] = "Admin";
+            return View(eventos);
         }
 
         public IActionResult Details(int? id)

@@ -1,0 +1,299 @@
+@{
+    ViewData["Title"] = "Gestión de Usuarios - Administración";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #dc3545, #c82333); border-radius:12px; padding:18px 32px; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);">GESTIÓN DE USUARIOS</h2>
+    </div>
+
+    <!-- Search and Actions Row -->
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Buscar usuarios por nombre, email o rol..." style="border-radius: 0 8px 8px 0;">
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-success me-2" onclick="exportarUsuarios()">
+                        <i class="bi bi-download me-2"></i>Exportar
+                    </button>
+                    <button class="btn btn-primary" onclick="agregarUsuario()">
+                        <i class="bi bi-person-plus me-2"></i>Agregar Usuario
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="usersTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="border-radius: 15px 0 0 0;">
+                                <input type="checkbox" class="form-check-input" id="selectAll">
+                            </th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Fecha Registro</th>
+                            <th>Último Acceso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="form-check-input user-checkbox"></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40">
+                                    <div>
+                                        <div class="fw-bold">Omar Alexis Reyes</div>
+                                        <small class="text-muted">Voluntario Activo</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>omar@email.com</td>
+                            <td><span class="badge bg-primary">Voluntario</span></td>
+                            <td><span class="badge bg-success">Activo</span></td>
+                            <td>15/01/2024</td>
+                            <td>Hace 2 horas</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario(1)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="bloquearUsuario(1)">
+                                        <i class="bi bi-lock"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario(1)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="form-check-input user-checkbox"></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="/images/companylogo.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40">
+                                    <div>
+                                        <div class="fw-bold">Fundación Esperanza Viva</div>
+                                        <small class="text-muted">ONG Verificada</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>contacto@fundacion.org</td>
+                            <td><span class="badge bg-success">ONG</span></td>
+                            <td><span class="badge bg-success">Activo</span></td>
+                            <td>10/01/2024</td>
+                            <td>Hace 1 día</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario(2)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="bloquearUsuario(2)">
+                                        <i class="bi bi-lock"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario(2)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="form-check-input user-checkbox"></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-gear text-danger me-3" style="font-size: 1.5rem;"></i>
+                                    <div>
+                                        <div class="fw-bold">Admin Sistema</div>
+                                        <small class="text-muted">Administrador</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>admin@voluntariadoconectado.rd</td>
+                            <td><span class="badge bg-danger">Admin</span></td>
+                            <td><span class="badge bg-success">Activo</span></td>
+                            <td>01/01/2024</td>
+                            <td>Hace 30 min</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario(3)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" disabled>
+                                        <i class="bi bi-shield-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" disabled>
+                                        <i class="bi bi-shield-check"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="form-check-input user-checkbox"></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40">
+                                    <div>
+                                        <div class="fw-bold">María González</div>
+                                        <small class="text-muted">Voluntaria</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>maria@email.com</td>
+                            <td><span class="badge bg-primary">Voluntario</span></td>
+                            <td><span class="badge bg-warning">Bloqueado</span></td>
+                            <td>20/01/2024</td>
+                            <td>Hace 5 días</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario(4)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="desbloquearUsuario(4)">
+                                        <i class="bi bi-unlock"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario(4)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="text-muted">
+            Mostrando 1-4 de 1,247 usuarios
+        </div>
+        <nav aria-label="Paginación de usuarios">
+            <ul class="pagination mb-0">
+                <li class="page-item disabled">
+                    <a class="page-link" href="javascript:void(0)">Anterior</a>
+                </li>
+                <li class="page-item active">
+                    <a class="page-link" href="javascript:void(0)">1</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)">2</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)">3</a>
+                </li>
+                <li class="page-item">
+                    <span class="page-link">...</span>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)">312</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<style>
+    .table th {
+        border-top: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .table td {
+        vertical-align: middle;
+        border-top: 1px solid #f8f9fa;
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .btn-group .btn {
+        border-radius: 6px;
+        margin: 0 1px;
+    }
+    
+    .pagination .page-link {
+        border-radius: 8px;
+        margin: 0 2px;
+        border: none;
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        border: none;
+    }
+</style>
+
+<script>
+    // Select all functionality
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.user-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#usersTable tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    function editarUsuario(id) {
+        alert('Función de edición de usuario ' + id + ' - En desarrollo');
+    }
+
+    function bloquearUsuario(id) {
+        if (confirm('¿Está seguro de que desea bloquear este usuario?')) {
+            alert('Usuario ' + id + ' bloqueado - En desarrollo');
+        }
+    }
+
+    function desbloquearUsuario(id) {
+        if (confirm('¿Está seguro de que desea desbloquear este usuario?')) {
+            alert('Usuario ' + id + ' desbloqueado - En desarrollo');
+        }
+    }
+
+    function eliminarUsuario(id) {
+        if (confirm('¿Está seguro de que desea eliminar este usuario? Esta acción no se puede deshacer.')) {
+            alert('Usuario ' + id + ' eliminado - En desarrollo');
+        }
+    }
+
+    function agregarUsuario() {
+        alert('Función de agregar usuario - En desarrollo');
+    }
+
+    function exportarUsuarios() {
+        alert('Función de exportar usuarios - En desarrollo');
+    }
+</script> 

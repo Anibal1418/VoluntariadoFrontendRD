@@ -15,10 +15,10 @@ namespace VoluntariosConectadosRD.Services
         {
             var response = await _httpClient.GetAsync("api/oportunidades");
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<Oportunidad>>();
+            return await response.Content.ReadFromJsonAsync<List<Oportunidad>>() ?? new List<Oportunidad>();
         }
 
-        public async Task<Oportunidad> GetByIdAsync(int id)
+        public async Task<Oportunidad?> GetByIdAsync(int id)
         {
             var response = await _httpClient.GetAsync($"api/oportunidades/{id}");
             response.EnsureSuccessStatusCode();
