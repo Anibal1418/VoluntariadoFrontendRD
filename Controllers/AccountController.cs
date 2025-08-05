@@ -30,18 +30,17 @@ namespace VoluntariosConectadosRD.Controllers
             {
                 try
                 {
-                    TempData["MensajeExito"] = "¡Inicio de sesión exitoso! Bienvenido de vuelta.";
-                    TempData["RedirectUrl"] = "/Dashboard/Profile";
-                    return View(model);
-
-                    // Intentar llamar a la API primero
-                    /*var response = await _accountApiService.LoginAsync(model);
+                    // Llamar a la API
+                    var response = await _accountApiService.LoginAsync(model);
                     
                     if (response?.Success == true && response.Data != null)
                     {
-                        // Almacenar token en sesión/cookie
+                        // Almacenar token en sesión
                         HttpContext.Session.SetString("JWTToken", response.Data.Token);
                         HttpContext.Session.SetString("UserInfo", System.Text.Json.JsonSerializer.Serialize(response.Data.User));
+                        
+                        // Configurar header de autorización para futuras llamadas a la API
+                        _logger.LogInformation("Usuario {Email} inició sesión exitosamente", model.Email);
                         
                         TempData["MensajeExito"] = "¡Inicio de sesión exitoso! Bienvenido de vuelta.";
                         TempData["RedirectUrl"] = "/Dashboard/Profile";
@@ -49,15 +48,16 @@ namespace VoluntariosConectadosRD.Controllers
                     }
                     else
                     {
-                        // Si la API falla, mostrar error
+                        // La llamada a la API falló, mostrar error
                         TempData["MensajeError"] = "Credenciales inválidas. " + (response?.Message ?? "Por favor, verifica tu email y contraseña.");
                         return View(model);
-                    }*/
+                    }
                 }
                 catch (Exception ex)
                 {
-                    // Si la API no está disponible, mostrar error
-                    TempData["MensajeError"] = "Error de conexión. " + ex.Message + " Por favor, inténtalo de nuevo más tarde.";
+                    // API no disponible, mostrar error
+                    _logger.LogError(ex, "Error durante el login para {Email}", model.Email);
+                    TempData["MensajeError"] = "Error de conexión. Por favor, inténtalo de nuevo más tarde.";
                     return View(model);
                 }
             }
@@ -78,14 +78,10 @@ namespace VoluntariosConectadosRD.Controllers
             {
                 try
                 {
-                    TempData["MensajeExito"] = "¡Registro exitoso! Tu cuenta ha sido creada correctamente. Ya puedes iniciar sesión.";
-                    TempData["RedirectUrl"] = "/Account/Login";
-                    return View(model);
-
-                    // PENDIENTE Intentar llamar a la API primero, poner cuando haya API
-                    //var response = await _accountApiService.RegisterVolunteerAsync(model);
+                    // Llamar a la API para registrar voluntario
+                    var response = await _accountApiService.RegisterVolunteerAsync(model);
                     
-                    /*if (response?.Success == true)
+                    if (response?.Success == true)
                     {
                         TempData["MensajeExito"] = "¡Registro exitoso! Tu cuenta ha sido creada correctamente. Ya puedes iniciar sesión.";
                         TempData["RedirectUrl"] = "/Account/Login";
@@ -97,12 +93,12 @@ namespace VoluntariosConectadosRD.Controllers
                         TempData["MensajeError"] = "Error en el registro. " + (response?.Message ?? "Por favor, verifica los datos e inténtalo de nuevo.");
                         return View(model);
                     }
-                    */
                 }
                 catch (Exception ex)
                 {
                     // Si la API no está disponible, mostrar error
-                    TempData["MensajeError"] = "Error de conexión. " + ex.Message + " Por favor, inténtalo de nuevo más tarde.";
+                    _logger.LogError(ex, "Error durante el registro de voluntario para {Email}", model.Email);
+                    TempData["MensajeError"] = "Error de conexión. Por favor, inténtalo de nuevo más tarde.";
                     return View(model);
                 }
             }
@@ -123,11 +119,9 @@ namespace VoluntariosConectadosRD.Controllers
             {
                 try
                 {
-                    TempData["MensajeExito"] = "¡Registro de ONG exitoso! Tu organización ha sido registrada correctamente.";
-                        TempData["RedirectUrl"] = "/Account/Login";
-                        return View(model);// Intentar llamar a la API primero
-                    //var response = await _accountApiService.RegisterONGAsync(model);
-                    /*
+                    // Llamar a la API para registrar organización
+                    var response = await _accountApiService.RegisterONGAsync(model);
+                    
                     if (response?.Success == true)
                     {
                         TempData["MensajeExito"] = "¡Registro de ONG exitoso! Tu organización ha sido registrada correctamente.";
@@ -140,12 +134,12 @@ namespace VoluntariosConectadosRD.Controllers
                         TempData["MensajeError"] = "Error en el registro de la ONG. " + (response?.Message ?? "Por favor, verifica los datos e inténtalo de nuevo.");
                         return View(model);
                     }
-                    */
                 }
                 catch (Exception ex)
                 {
                     // Si la API no está disponible, mostrar error
-                    TempData["MensajeError"] = "Error de conexión. " + ex.Message + " Por favor, inténtalo de nuevo más tarde.";
+                    _logger.LogError(ex, "Error durante el registro de ONG para {Email}", model.Email);
+                    TempData["MensajeError"] = "Error de conexión. Por favor, inténtalo de nuevo más tarde.";
                     return View(model);
                 }
             }
@@ -153,26 +147,43 @@ namespace VoluntariosConectadosRD.Controllers
         }
 
         [HttpGet]
-        public IActionResult EditarONG(int id)
+        public async Task<IActionResult> EditarONG(int id)
         {
-            // TODO: Obtener datos de la ONG desde la API
-            // Por ahora, creamos un modelo de ejemplo
-            var model = new VoluntariosConectadosRD.Models.EditarONGViewModel
+            try
             {
-                Id = id,
-                NombreONG = "Fundación Esperanza Viva",
-                RNC = "123456789",
-                Telefono = "(809) 123-4567",
-                Email = "contacto@fundacionesperanza.com",
-                Direccion = "Calle Principal #123",
-                Ciudad = "Santo Domingo",
-                Provincia = "Distrito Nacional",
-                Descripcion = "Dedicados a mejorar la calidad de vida de comunidades vulnerables",
-                Sector = "Desarrollo social",
-                LogoActual = "~/images/companylogo.jpg"
-            };
-            
-            return View(model);
+                // Obtener datos de la organización desde la API
+                var response = await _accountApiService.GetOrganizationProfileAsync(id);
+                
+                if (response?.Success == true && response.Data != null)
+                {
+                    var profile = response.Data;
+                    var model = new VoluntariosConectadosRD.Models.EditarONGViewModel
+                    {
+                        Id = profile.Id,
+                        NombreONG = profile.Nombre,
+                        RNC = profile.NumeroRegistro,
+                        Telefono = profile.Telefono,
+                        Email = profile.Email,
+                        Direccion = profile.Direccion,
+                        Descripcion = profile.Descripcion,
+                        Sector = profile.TipoOrganizacion,
+                        LogoActual = profile.LogoUrl
+                    };
+                    
+                    return View(model);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "No se pudo cargar el perfil de la organización.";
+                    return View(new VoluntariosConectadosRD.Models.EditarONGViewModel { Id = id });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener datos de la organización {Id}", id);
+                ViewBag.ErrorMessage = "Error de conexión al cargar los datos de la organización.";
+                return View(new VoluntariosConectadosRD.Models.EditarONGViewModel { Id = id });
+            }
         }
 
         [HttpPost]
@@ -183,44 +194,85 @@ namespace VoluntariosConectadosRD.Controllers
             {
                 try
                 {
-                    // TODO: Implementar llamada a la API para actualizar ONG
-                    // var response = await _accountApiService.UpdateONGAsync(model);
+                    // Llamar a la API para actualizar ONG
+                    var response = await _accountApiService.UpdateONGAsync(model);
                     
-                    // Por ahora, simulamos éxito
-                    TempData["MensajeExito"] = "¡Información de la ONG actualizada exitosamente!";
-                    TempData["RedirectUrl"] = "/Dashboard/ProfileONG";
-                    return View(model);
+                    if (response?.Success == true)
+                    {
+                        // Respuesta JSON para notificación no invasiva
+                        return Json(new { 
+                            success = true, 
+                            message = response.Message ?? "¡Información de la organización actualizada exitosamente!",
+                            redirectUrl = "/Dashboard/ProfileONG"
+                        });
+                    }
+                    else
+                    {
+                        // Error de la API
+                        return Json(new { 
+                            success = false, 
+                            message = response?.Message ?? "Error al actualizar el perfil de la organización. Por favor, verifica los datos e inténtalo de nuevo."
+                        });
+                    }
                 }
                 catch (Exception ex)
                 {
-                    // Si la API no está disponible, mostrar error
-                    TempData["MensajeError"] = "Error de conexión. " + ex.Message + " Por favor, inténtalo de nuevo más tarde.";
-                    return View(model);
+                    // Error de conexión
+                    _logger.LogError(ex, "Error durante la actualización de ONG para ID {Id}", model.Id);
+                    return Json(new { 
+                        success = false, 
+                        message = "Error de conexión. Por favor, inténtalo de nuevo más tarde."
+                    });
                 }
             }
-            return View(model);
+            
+            // Errores de validación
+            var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
+            return Json(new { 
+                success = false, 
+                message = "Por favor, corrige los errores en el formulario.",
+                errors = errors
+            });
         }
 
         [HttpGet]
-        public IActionResult EditarVoluntario(int id)
+        public async Task<IActionResult> EditarVoluntario(int id)
         {
-            // TODO: Obtener datos del voluntario desde la API
-            // Por ahora, creamos un modelo de ejemplo
-            var model = new VoluntariosConectadosRD.Models.EditarVoluntarioViewModel
+            try
             {
-                Id = id,
-                Nombre = "Omar Alexis",
-                Apellidos = "Reyes Medina",
-                Email = "carmendita@gmail.com",
-                Telefono = "+1 (809) 345-0789",
-                FechaNacimiento = new DateTime(1995, 6, 15),
-                Provincia = "Santo Domingo",
-                Descripcion = "Lorem ipsum dolor sit amet consectetur. Cras vitae dictumst sed amet.",
-                Disponibilidad = "Matutino",
-                FotoActual = "https://randomuser.me/api/portraits/men/32.jpg"
-            };
-            
-            return View(model);
+                // Obtener datos del voluntario desde la API
+                var response = await _accountApiService.GetUserProfileByIdAsync(id);
+                
+                if (response?.Success == true && response.Data != null)
+                {
+                    var profile = response.Data;
+                    var model = new VoluntariosConectadosRD.Models.EditarVoluntarioViewModel
+                    {
+                        Id = profile.Id,
+                        Nombre = profile.Nombre,
+                        Apellidos = profile.Apellido,
+                        Email = profile.Email,
+                        Telefono = profile.Telefono,
+                        FechaNacimiento = profile.FechaNacimiento ?? DateTime.Now.AddYears(-18),
+                        Descripcion = profile.Biografia,
+                        Disponibilidad = profile.Disponibilidad,
+                        FotoActual = profile.ImagenUrl
+                    };
+                    
+                    return View(model);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "No se pudo cargar el perfil del usuario.";
+                    return View(new VoluntariosConectadosRD.Models.EditarVoluntarioViewModel { Id = id });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener datos del voluntario {Id}", id);
+                ViewBag.ErrorMessage = "Error de conexión al cargar los datos del usuario.";
+                return View(new VoluntariosConectadosRD.Models.EditarVoluntarioViewModel { Id = id });
+            }
         }
 
         [HttpPost]
@@ -231,22 +283,45 @@ namespace VoluntariosConectadosRD.Controllers
             {
                 try
                 {
-                    // TODO: Implementar llamada a la API para actualizar voluntario
-                    // var response = await _accountApiService.UpdateVolunteerAsync(model);
+                    // Llamar a la API para actualizar voluntario
+                    var response = await _accountApiService.UpdateVolunteerAsync(model);
                     
-                    // Por ahora, simulamos éxito
-                    TempData["MensajeExito"] = "¡Información del voluntario actualizada exitosamente!";
-                    TempData["RedirectUrl"] = "/Dashboard/Profile";
-                    return View(model);
+                    if (response?.Success == true)
+                    {
+                        // Respuesta JSON para notificación no invasiva
+                        return Json(new { 
+                            success = true, 
+                            message = response.Message ?? "¡Información del voluntario actualizada exitosamente!",
+                            redirectUrl = "/Dashboard/Profile"
+                        });
+                    }
+                    else
+                    {
+                        // Error de la API
+                        return Json(new { 
+                            success = false, 
+                            message = response?.Message ?? "Error al actualizar el perfil. Por favor, verifica los datos e inténtalo de nuevo."
+                        });
+                    }
                 }
                 catch (Exception ex)
                 {
-                    // Si la API no está disponible, mostrar error
-                    TempData["MensajeError"] = "Error de conexión. " + ex.Message + " Por favor, inténtalo de nuevo más tarde.";
-                    return View(model);
+                    // Error de conexión
+                    _logger.LogError(ex, "Error durante la actualización de voluntario para ID {Id}", model.Id);
+                    return Json(new { 
+                        success = false, 
+                        message = "Error de conexión. Por favor, inténtalo de nuevo más tarde."
+                    });
                 }
             }
-            return View(model);
+            
+            // Errores de validación
+            var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
+            return Json(new { 
+                success = false, 
+                message = "Por favor, corrige los errores en el formulario.",
+                errors = errors
+            });
         }
 
 

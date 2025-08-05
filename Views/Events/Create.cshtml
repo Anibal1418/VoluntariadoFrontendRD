@@ -18,7 +18,7 @@
         <!-- Main Content Card -->
         <div class="card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
             <div class="card-body p-4">
-                <form asp-action="Create" enctype="multipart/form-data">
+                <form asp-action="Create" enctype="multipart/form-data" class="ajax-form">
                     <div class="form-icon-header mb-4">
                         <div class="form-icon">
                             <i class="bi bi-calendar-plus"></i>
@@ -97,20 +97,50 @@
             const imagePreview = document.getElementById('imagePreview');
             const previewImage = document.getElementById('previewImage');
 
-            fileInput.addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
+            if (fileInput && imagePreview && previewImage) {
+                fileInput.addEventListener('change', function(e) {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
 
-                    reader.onload = function(e) {
-                        previewImage.src = e.target.result;
-                        imagePreview.style.display = 'block';
+                        reader.onload = function(e) {
+                            previewImage.src = e.target.result;
+                            imagePreview.style.display = 'block';
+                        }
+
+                        reader.readAsDataURL(this.files[0]);
+                    } else {
+                        imagePreview.style.display = 'none';
                     }
+                });
+            }
 
-                    reader.readAsDataURL(this.files[0]);
-                } else {
-                    imagePreview.style.display = 'none';
-                }
-            });
+            // Validación de fecha en tiempo real
+            const dateInput = document.querySelector('input[name="Fecha"]');
+            if (dateInput) {
+                // Establecer fecha mínima como hoy
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.min = today;
+
+                dateInput.addEventListener('change', function() {
+                    const selectedDate = new Date(this.value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    if (selectedDate < today) {
+                        this.setCustomValidity('La fecha del evento no puede ser anterior a hoy.');
+                        Toast.error('La fecha del evento no puede ser anterior a hoy.');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+
+                // Validar fechas inválidas (como 31/09)
+                dateInput.addEventListener('invalid', function() {
+                    if (this.validity.badInput || this.validity.rangeUnderflow) {
+                        Toast.error('Por favor, selecciona una fecha válida.');
+                    }
+                });
+            }
         });
     </script>
 }

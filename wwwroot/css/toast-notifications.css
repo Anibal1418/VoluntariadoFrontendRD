@@ -1,0 +1,87 @@
+/* Estilos para notificaciones toast no invasivas */
+
+.toast-container {
+    z-index: 1055;
+}
+
+.toast {
+    min-width: 350px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border: none;
+}
+
+.toast-header {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+.toast-header.bg-success {
+    background-color: #198754 !important;
+}
+
+.toast-header.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.toast-body {
+    padding: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Animaciones suaves */
+.toast.show {
+    animation: slideInRight 0.3s ease-out;
+}
+
+.toast.hide {
+    animation: slideOutRight 0.3s ease-in;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Spinner para botones de carga */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Estados de botones */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .toast {
+        min-width: 300px;
+        margin: 0 1rem;
+    }
+    
+    .toast-container {
+        left: 0;
+        right: 0;
+        padding: 1rem;
+    }
+}

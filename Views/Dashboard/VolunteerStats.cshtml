@@ -1,6 +1,10 @@
+@using VoluntariosConectadosRD.Models.DTOs
 @{
     ViewData["Title"] = "Estadísticas del Voluntario - Voluntariado Conectado RD";
     Layout = "_DashboardLayout";
+    var applications = ViewBag.VolunteerApplications;
+    var hasApplications = applications != null;
+    var volunteerId = ViewData["VolunteerId"] as int? ?? 0;
 }
 
 <div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
@@ -25,7 +29,7 @@
                                 <i class="bi bi-clock text-white"></i>
                             </div>
                             <div class="kpi-content">
-                                <div class="kpi-number">0</div>
+                                <div class="kpi-number">@(hasApplications ? "--" : "0")</div>
                                 <div class="kpi-label">Horas de voluntariado</div>
                             </div>
                         </div>
@@ -38,21 +42,21 @@
                                 <i class="bi bi-currency-dollar text-white"></i>
                             </div>
                             <div class="kpi-content">
-                                <div class="kpi-number">0 RD$</div>
+                                <div class="kpi-number">@(hasApplications ? "--" : "0") RD$</div>
                                 <div class="kpi-label">Fondos recaudados</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Voluntarios activos -->
+                    <!-- Eventos aplicados -->
                     <div class="col-6">
                         <div class="kpi-card">
                             <div class="kpi-icon">
                                 <i class="bi bi-people text-white"></i>
                             </div>
                             <div class="kpi-content">
-                                <div class="kpi-number">0</div>
-                                <div class="kpi-label">Voluntarios activos</div>
+                                <div class="kpi-number">@(hasApplications ? "--" : "0")</div>
+                                <div class="kpi-label">Eventos aplicados</div>
                             </div>
                         </div>
                     </div>
@@ -64,21 +68,21 @@
                                 <i class="bi bi-heart text-white"></i>
                             </div>
                             <div class="kpi-content">
-                                <div class="kpi-number">0</div>
+                                <div class="kpi-number">@(hasApplications ? "--" : "0")</div>
                                 <div class="kpi-label">Personas beneficiadas</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Voluntarios activos (duplicate for layout) -->
+                    <!-- Estado del voluntario -->
                     <div class="col-6">
                         <div class="kpi-card">
                             <div class="kpi-icon">
-                                <i class="bi bi-people text-white"></i>
+                                <i class="bi bi-person-check text-white"></i>
                             </div>
                             <div class="kpi-content">
-                                <div class="kpi-number">0</div>
-                                <div class="kpi-label">Voluntarios activos</div>
+                                <div class="kpi-number">@(hasApplications ? "Activo" : "--")</div>
+                                <div class="kpi-label">Estado</div>
                             </div>
                         </div>
                     </div>
@@ -102,67 +106,57 @@
             <div class="col-lg-8">
                 <div class="chart-card">
                     <div class="chart-header">
-                                                 <div class="chart-title-section">
-                             <div class="chart-controls">
-                                 <i class="bi bi-arrows-fullscreen chart-icon" id="expandChart" title="Expandir gráfico"></i>
-                             </div>
-                             <h3 class="chart-title">Gráfico de donaciones</h3>
-                             <div class="chart-controls">
-                                 <i class="bi bi-bar-chart chart-icon chart-type-btn active" id="barChartBtn" title="Gráfico de barras"></i>
-                                 <i class="bi bi-pie-chart chart-icon chart-type-btn" id="pieChartBtn" title="Gráfico circular"></i>
-                                 <i class="bi bi-clock chart-icon" id="timeRangeBtn" title="Rango de tiempo"></i>
-                             </div>
-                         </div>
-                        <div class="chart-subtitle">Grafica</div>
+                        <div class="chart-title-section">
+                            <div class="chart-controls">
+                                <i class="bi bi-arrows-fullscreen chart-icon" id="expandChart" title="Expandir gráfico"></i>
+                            </div>
+                            <h3 class="chart-title">Estadísticas del Voluntario</h3>
+                            <div class="chart-controls">
+                                <i class="bi bi-bar-chart chart-icon chart-type-btn active" id="barChartBtn" title="Gráfico de barras"></i>
+                                <i class="bi bi-pie-chart chart-icon chart-type-btn" id="pieChartBtn" title="Gráfico circular"></i>
+                                <i class="bi bi-clock chart-icon" id="timeRangeBtn" title="Rango de tiempo"></i>
+                            </div>
+                        </div>
+                        <div class="chart-subtitle">@(hasApplications ? "Datos disponibles desde la API" : "Conectando con el servidor...")</div>
                     </div>
                     
-                                         <div class="chart-container" id="chartContainer">
-                         <!-- Bar Chart View -->
-                         <div class="chart-view" id="barChartView">
-                             <div class="chart-bars">
-                                 <div class="chart-bar" style="height: 60%;" title="Enero: 6,000 RD$"></div>
-                                 <div class="chart-bar" style="height: 20%;" title="Febrero: 2,000 RD$"></div>
-                                 <div class="chart-bar" style="height: 90%;" title="Marzo: 9,000 RD$"></div>
-                                 <div class="chart-bar" style="height: 70%;" title="Abril: 7,000 RD$"></div>
-                             </div>
-                             <div class="chart-labels">
-                                 <span>Enero</span>
-                                 <span>Febrero</span>
-                                 <span>Marzo</span>
-                                 <span>Abril</span>
-                             </div>
-                         </div>
+                    <div class="chart-container" id="chartContainer">
+                        @if (hasApplications)
+                        {
+                            <div class="alert alert-info" role="alert">
+                                <h5 class="alert-heading"><i class="bi bi-info-circle me-2"></i>Datos del Backend Disponibles</h5>
+                                <p class="mb-0">Las estadísticas del voluntario se cargarán dinámicamente cuando se implementen los endpoints específicos de métricas.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning" role="alert">
+                                <h5 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>Conectando con el Servidor</h5>
+                                <p class="mb-0">Las estadísticas del voluntario se cargarán desde la API. Verifica la conexión con el servidor.</p>
+                            </div>
+                        }
+                        
+                        <!-- Chart views will be dynamically populated -->
+                        <div class="chart-view" id="barChartView" style="display: none;">
+                            <div class="chart-bars">
+                                <!-- Dynamic chart bars will be populated here -->
+                            </div>
+                            <div class="chart-labels">
+                                <!-- Dynamic chart labels will be populated here -->
+                            </div>
+                        </div>
                          
-                         <!-- Pie Chart View (Hidden by default) -->
-                         <div class="chart-view" id="pieChartView" style="display: none;">
-                             <div class="pie-chart-container">
-                                 <div class="pie-chart">
-                                     <div class="pie-segment" style="--percentage: 25%; --color: #7db9e8;" title="Enero: 6,000 RD$ (25%)"></div>
-                                     <div class="pie-segment" style="--percentage: 8%; --color: #5a9bd4;" title="Febrero: 2,000 RD$ (8%)"></div>
-                                     <div class="pie-segment" style="--percentage: 38%; --color: #4a8bc4;" title="Marzo: 9,000 RD$ (38%)"></div>
-                                     <div class="pie-segment" style="--percentage: 29%; --color: #28a745;" title="Abril: 7,000 RD$ (29%)"></div>
-                                 </div>
-                                 <div class="pie-legend">
-                                     <div class="legend-item">
-                                         <span class="legend-color" style="background: #7db9e8;"></span>
-                                         <span>Enero: 6,000 RD$</span>
-                                     </div>
-                                     <div class="legend-item">
-                                         <span class="legend-color" style="background: #5a9bd4;"></span>
-                                         <span>Febrero: 2,000 RD$</span>
-                                     </div>
-                                     <div class="legend-item">
-                                         <span class="legend-color" style="background: #4a8bc4;"></span>
-                                         <span>Marzo: 9,000 RD$</span>
-                                     </div>
-                                     <div class="legend-item">
-                                         <span class="legend-color" style="background: #28a745;"></span>
-                                         <span>Abril: 7,000 RD$</span>
-                                     </div>
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
+                        <!-- Pie Chart View (Hidden by default) -->
+                        <div class="chart-view" id="pieChartView" style="display: none;">
+                            <div class="pie-chart-container">
+                                <!-- Dynamic pie chart will be populated here -->
+                                <div class="text-center text-muted">
+                                    <i class="bi bi-pie-chart" style="font-size: 3rem;"></i>
+                                    <div class="mt-2">Gráfico circular se generará con datos del backend</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

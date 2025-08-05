@@ -1,13 +1,19 @@
 using VoluntariosConectadosRD.Models;
+using VoluntariosConectadosRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Services
 {
     public interface IAccountApiService
     {
-        Task<ApiResponse<LoginResponse>?> LoginAsync(LoginViewModel model);
-        Task<ApiResponse<RegisterResponse>?> RegisterVolunteerAsync(RegistroViewModel model);
-        Task<ApiResponse<RegisterResponse>?> RegisterONGAsync(RegistroONGViewModel model);
-        Task<ApiResponse<RegisterResponse>?> UpdateVolunteerAsync(EditarVoluntarioViewModel model);
-        Task<ApiResponse<RegisterResponse>?> UpdateONGAsync(EditarONGViewModel model);
+        Task<ApiResponseDto<LoginResponseDto>?> LoginAsync(LoginViewModel model);
+        Task<ApiResponseDto<UserInfoDto>?> RegisterVolunteerAsync(RegistroViewModel model);
+        Task<ApiResponseDto<UserInfoDto>?> RegisterONGAsync(RegistroONGViewModel model);
+        Task<ApiResponseDto<UserProfileDto>?> UpdateVolunteerAsync(EditarVoluntarioViewModel model);
+        Task<ApiResponseDto<OrganizationProfileDto>?> UpdateONGAsync(EditarONGViewModel model);
+        Task<ApiResponseDto<UserInfoDto>?> GetUserProfileAsync();
+        Task<ApiResponseDto<EnhancedUserProfileDto>?> GetUserProfileByIdAsync(int userId);
+        Task<ApiResponseDto<OrganizationProfileDto>?> GetOrganizationProfileAsync(int orgId);
+        Task<ApiResponseDto<bool>?> ValidateEmailAsync(string email);
+        Task<ApiResponseDto<bool>?> ChangePasswordAsync(string currentPassword, string newPassword);
     }
 } 

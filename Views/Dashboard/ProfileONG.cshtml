@@ -1,6 +1,14 @@
+@using VoluntariosConectadosRD.Models.DTOs
 @{
     ViewData["Title"] = "Dashboard ONG - Voluntariado Conectado RD";
     Layout = "_DashboardLayout";
+    var orgProfile = ViewBag.OrganizationProfile as OrganizationProfileDto;
+    var userInfo = ViewBag.UserInfo as UserInfoDto;
+    var orgStats = ViewBag.OrganizationStats as OrganizationStatsDto;
+    var orgEvents = ViewBag.OrganizationEvents as IEnumerable<OrganizationEventDto>;
+    var hasOrgProfile = orgProfile != null;
+    var hasOrgStats = orgStats != null;
+    var hasOrgEvents = orgEvents != null;
 }
 
 <div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
@@ -11,21 +19,21 @@
                 <div class="d-flex align-items-center mb-3">
                     <form enctype="multipart/form-data" id="uploadPhotoForm">
                         <label for="profilePhoto" class="mb-2" style="cursor:pointer;">
-                            <img src="~/images/companylogo.jpg" alt="Foto de ONG" class="rounded-circle mb-2" width="120px" height="120px">
+                            <img src="@(hasOrgProfile && !string.IsNullOrEmpty(orgProfile.LogoUrl) ? orgProfile.LogoUrl : "~/images/companylogo.jpg")" alt="Logo de @(hasOrgProfile ? orgProfile.Nombre : "Organización")" class="rounded-circle mb-2" width="120px" height="120px">
                         </label>
                         <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" style="display:none;" onchange="document.getElementById('uploadPhotoForm').submit();">
                     </form>
                     <div>
-                        <h1 class="mb-1" style="font-size: 2rem; font-weight: 700; color: #2c3e50;">Fundación Esperanza Viva</h1>
+                        <h1 class="mb-1" style="font-size: 2rem; font-weight: 700; color: #2c3e50;">@(hasOrgProfile ? orgProfile.Nombre : userInfo?.Organizacion?.Nombre ?? "Mi Organización")</h1>
                         <p class="mb-1" style="font-size: 1.1rem; color: #6c757d; max-width: 100%;">
-                            Dedicados a mejorar la calidad de vida de comunidades vulnerables a través de programas educativos y de desarrollo sostenible.
+                            @(hasOrgProfile && !string.IsNullOrEmpty(orgProfile.Descripcion) ? orgProfile.Descripcion : "Agrega una descripción para tu organización.")
                         </p>
                     </div>
                 </div>
                 
                 <!-- Action Buttons -->
                 <div class="d-flex justify-content-end mb-3 gap-3">
-                    <a href="/Account/EditarONG/1" class="btn btn-outline-primary btn-lg" style="border-radius: 12px; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2); transition: all 0.3s ease; text-decoration: none; border: 2px solid #0d6efd; color: #0d6efd;">
+                    <a href="/Account/EditarONG/@(hasOrgProfile ? orgProfile.Id : userInfo?.Organizacion?.Id ?? 1)" class="btn btn-outline-primary btn-lg" style="border-radius: 12px; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2); transition: all 0.3s ease; text-decoration: none; border: 2px solid #0d6efd; color: #0d6efd;">
                         <i class="bi bi-pencil-square me-2"></i>
                         Editar Perfil
                     </a>
@@ -43,7 +51,7 @@
                                 <i class="bi bi-people text-white"></i>
                             </div>
                             <div class="metric-content">
-                                <div class="metric-number">284</div>
+                                <div class="metric-number">@(hasOrgStats ? orgStats.ActiveDonors : 0)</div>
                                 <div class="metric-label">Donantes activos</div>
                             </div>
                         </div>
@@ -54,7 +62,7 @@
                                 <i class="bi bi-calendar-event text-white"></i>
                             </div>
                             <div class="metric-content">
-                                <div class="metric-number">36</div>
+                                <div class="metric-number">@(hasOrgStats ? orgStats.EventsRealized : 0)</div>
                                 <div class="metric-label">Eventos realizados</div>
                             </div>
                         </div>
@@ -65,7 +73,7 @@
                                 <i class="bi bi-heart-fill text-white"></i>
                             </div>
                             <div class="metric-content">
-                                <div class="metric-number">$42,580</div>
+                                <div class="metric-number">$@(hasOrgStats ? orgStats.TotalDonations.ToString("N0") : "0")</div>
                                 <div class="metric-label">Donaciones totales</div>
                             </div>
                         </div>
@@ -76,7 +84,7 @@
                                 <i class="bi bi-bar-chart text-white"></i>
                             </div>
                             <div class="metric-content">
-                                <div class="metric-number">8</div>
+                                <div class="metric-number">@(hasOrgStats ? orgStats.ActiveProjects : 0)</div>
                                 <div class="metric-label">Proyectos activos</div>
                             </div>
                         </div>
@@ -95,7 +103,7 @@
                             <h4 class="mb-0" style="font-weight: 700; color: #2c3e50;">Historial de Donaciones</h4>
                         </div>
                         <p class="text-muted mb-2">Total recaudado este año</p>
-                        <h2 class="mb-3" style="font-size: 2.5rem; font-weight: 700; color: #2c3e50;">$42,580</h2>
+                        <h2 class="mb-3" style="font-size: 2.5rem; font-weight: 700; color: #2c3e50;">$@(hasOrgStats ? orgStats.TotalDonations.ToString("N0") : "0")</h2>
                         
                         <div class="mb-3">
                             <div class="dropdown">
@@ -113,15 +121,37 @@
                         <!-- Chart Placeholder -->
                         <div class="chart-container mb-4">
                             <div class="chart-bars">
-                                <div class="chart-bar" style="height: 40%;" title="Ene: $4,200"></div>
-                                <div class="chart-bar" style="height: 55%;" title="Feb: $5,800"></div>
-                                <div class="chart-bar" style="height: 65%;" title="Mar: $6,900"></div>
-                                <div class="chart-bar" style="height: 75%;" title="Abr: $7,500"></div>
-                                <div class="chart-bar" style="height: 85%;" title="May: $8,200"></div>
-                                <div class="chart-bar" style="height: 100%;" title="Jun: $10,580"></div>
+                                @if (hasOrgStats && orgStats.MonthlyDonations.Any())
+                                {
+                                    var maxAmount = orgStats.MonthlyDonations.Max(d => d.Amount);
+                                    foreach (var donation in orgStats.MonthlyDonations)
+                                    {
+                                        var heightPercentage = maxAmount > 0 ? (double)(donation.Amount / maxAmount) * 100 : 0;
+                                        <div class="chart-bar" style="height: @(heightPercentage)%;" title="@donation.Month: $@(donation.Amount.ToString("N0"))"></div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="chart-bar" style="height: 0%;" title="No data"></div>
+                                    <div class="chart-bar" style="height: 0%;" title="No data"></div>
+                                    <div class="chart-bar" style="height: 0%;" title="No data"></div>
+                                    <div class="chart-bar" style="height: 0%;" title="No data"></div>
+                                    <div class="chart-bar" style="height: 0%;" title="No data"></div>
+                                    <div class="chart-bar" style="height: 0%;" title="No data"></div>
+                                }
                             </div>
                             <div class="chart-labels">
-                                <span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span>
+                                @if (hasOrgStats && orgStats.MonthlyDonations.Any())
+                                {
+                                    foreach (var donation in orgStats.MonthlyDonations)
+                                    {
+                                        <span>@donation.Month</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span>
+                                }
                             </div>
                         </div>
 
@@ -129,19 +159,19 @@
                         <div class="row g-2">
                             <div class="col-4">
                                 <div class="metric-mini-card">
-                                    <div class="metric-mini-number">$150</div>
+                                    <div class="metric-mini-number">$@(hasOrgStats ? orgStats.AverageDonation.ToString("N0") : "0")</div>
                                     <div class="metric-mini-label">Donación promedio</div>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="metric-mini-card">
-                                    <div class="metric-mini-number">+24</div>
+                                    <div class="metric-mini-number">+@(hasOrgStats ? orgStats.NewDonors : 0)</div>
                                     <div class="metric-mini-label">Nuevos donantes</div>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="metric-mini-card">
-                                    <div class="metric-mini-number">78%</div>
+                                    <div class="metric-mini-number">@(hasOrgStats ? orgStats.RecurrentDonorsPercentage.ToString("N0") : "0")%</div>
                                     <div class="metric-mini-label">Donantes recurrentes</div>
                                 </div>
                             </div>
@@ -158,7 +188,7 @@
                             <h4 class="mb-0" style="font-weight: 700; color: #2c3e50;">Impacto Social</h4>
                             <div class="impact-growth">
                                 <i class="bi bi-arrow-up text-success"></i>
-                                <span class="text-success fw-bold">+12% este mes</span>
+                                <span class="text-success fw-bold">+@(hasOrgStats ? orgStats.GrowthPercentage : 0)% este mes</span>
                             </div>
                         </div>
                         
@@ -173,22 +203,35 @@
                                 <div class="pie-segment others" style="--percentage: 10%; --color: #B0C4DE;"></div>
                             </div>
                             <div class="pie-legend">
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background: #87CEEB;"></div>
-                                    <span>Educación 45%</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background: #4682B4;"></div>
-                                    <span>Salud 25%</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background: #2E4A6B;"></div>
-                                    <span>Medio ambiente 20%</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background: #B0C4DE;"></div>
-                                    <span>Otros 10%</span>
-                                </div>
+                                @if (hasOrgStats && orgStats.ImpactDistribution.Any())
+                                {
+                                    foreach (var impact in orgStats.ImpactDistribution)
+                                    {
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: @impact.Color;"></div>
+                                            <span>@impact.Category @(impact.Percentage.ToString("N0"))%</span>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background: #87CEEB;"></div>
+                                        <span>Educación 45%</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background: #4682B4;"></div>
+                                        <span>Salud 25%</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background: #2E4A6B;"></div>
+                                        <span>Medio ambiente 20%</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background: #B0C4DE;"></div>
+                                        <span>Otros 10%</span>
+                                    </div>
+                                }
                             </div>
                         </div>
 
@@ -196,7 +239,7 @@
                         <div class="impact-metrics">
                             <div class="impact-metric mb-3">
                                 <div class="impact-label">Personas beneficiadas</div>
-                                <div class="impact-number">2,450</div>
+                                <div class="impact-number">@(hasOrgStats ? orgStats.PeopleBenefited.ToString("N0") : "0")</div>
                                 <div class="impact-growth-small">
                                     <i class="bi bi-arrow-up text-success"></i>
                                     <span class="text-success">+18% desde el año anterior</span>
@@ -204,10 +247,10 @@
                             </div>
                             <div class="impact-metric">
                                 <div class="impact-label">Comunidades alcanzadas</div>
-                                <div class="impact-number">14</div>
+                                <div class="impact-number">@(hasOrgStats ? orgStats.CommunitiesReached : 0)</div>
                                 <div class="impact-growth-small">
                                     <i class="bi bi-arrow-up text-success"></i>
-                                    <span class="text-success">+2 nuevas</span>
+                                    <span class="text-success">+@(hasOrgStats ? orgStats.NewCommunities : 0) nuevas</span>
                                 </div>
                             </div>
                         </div>
@@ -234,58 +277,44 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-tree me-2 text-success"></i>
-                                                <span>Reforestation Campaign</span>
-                                            </div>
-                                        </td>
-                                        <td>15 Enero 2025</td>
-                                        <td>Parque Nacional</td>
-                                        <td>45</td>
-                                        <td><span class="badge bg-success">Completado</span></td>
-                                        <td><a href="#" class="link-primary">Ver detalles</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-heart-pulse me-2 text-danger"></i>
-                                                <span>Community Health Day</span>
-                                            </div>
-                                        </td>
-                                        <td>15 Feb 2025</td>
-                                        <td>Centro Comunitario Este</td>
-                                        <td>120</td>
-                                        <td><span class="badge bg-success">Completado</span></td>
-                                        <td><a href="#" class="link-primary">Ver detalles</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-mortarboard me-2 text-info"></i>
-                                                <span>Financial Education Workshop</span>
-                                            </div>
-                                        </td>
-                                        <td>15 Mayo 2025</td>
-                                        <td>Escuela Municipal</td>
-                                        <td>65</td>
-                                        <td><span class="badge bg-success">Completado</span></td>
-                                        <td><a href="#" class="link-primary">Ver detalles</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-umbrella me-2 text-warning"></i>
-                                                <span>Beach Cleanup</span>
-                                            </div>
-                                        </td>
-                                        <td>15 Jun 2025</td>
-                                        <td>Playa El Palmar</td>
-                                        <td>35</td>
-                                        <td><span class="badge bg-primary">Próximo</span></td>
-                                        <td><a href="#" class="link-primary">Ver detalles</a></td>
-                                    </tr>
+                                    @if (hasOrgEvents && orgEvents.Any())
+                                    {
+                                        foreach (var eventItem in orgEvents)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="@eventItem.Icon me-2 @eventItem.IconColor"></i>
+                                                        <span>@eventItem.Name</span>
+                                                    </div>
+                                                </td>
+                                                <td>@eventItem.Date.ToString("dd MMM yyyy")</td>
+                                                <td>@eventItem.Location</td>
+                                                <td>@eventItem.Participants</td>
+                                                <td>
+                                                    @if (eventItem.Status == "Completado")
+                                                    {
+                                                        <span class="badge bg-success">@eventItem.Status</span>
+                                                    }
+                                                    else if (eventItem.Status == "Próximo")
+                                                    {
+                                                        <span class="badge bg-primary">@eventItem.Status</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-secondary">@eventItem.Status</span>
+                                                    }
+                                                </td>
+                                                <td><a href="#" class="link-primary">Ver detalles</a></td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">No hay eventos disponibles</td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>

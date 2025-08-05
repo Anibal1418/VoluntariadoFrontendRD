@@ -1,6 +1,11 @@
+@using VoluntariosConectadosRD.Models.DTOs
 @{
     ViewData["Title"] = "Detalles del Voluntario - Voluntariado Conectado RD";
     Layout = "_DashboardLayout";
+    var volunteerProfile = ViewBag.VolunteerProfile as EnhancedUserProfileDto;
+    var applications = ViewBag.VolunteerApplications;
+    var hasProfile = volunteerProfile != null;
+    var volunteerId = ViewData["VolunteerId"] as int? ?? 0;
 }
 
 <div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
@@ -20,40 +25,40 @@
                 <div class="card profile-card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
-                            <img src="~/images/avatar1.jpg" alt="Foto del voluntario" class="rounded-circle mb-3" width="120" height="120" style="object-fit: cover; border: 4px solid #7db9e8;">
-                            <h3 class="mb-1" style="font-weight: 700; color: #2c3e50;">María González</h3>
-                            <p class="text-muted mb-3">Voluntaria desde 2023</p>
-                            <span class="badge bg-success volunteer-status">Activo</span>
+                            <img src="@(hasProfile && !string.IsNullOrEmpty(volunteerProfile.ImagenUrl) ? volunteerProfile.ImagenUrl : "~/images/avatar1.jpg")" alt="Foto del voluntario" class="rounded-circle mb-3" width="120" height="120" style="object-fit: cover; border: 4px solid #7db9e8;">
+                            <h3 class="mb-1" style="font-weight: 700; color: #2c3e50;">@(hasProfile ? volunteerProfile.Nombre + " " + volunteerProfile.Apellido : "Voluntario")</h3>
+                            <p class="text-muted mb-3">Voluntario desde @(hasProfile ? volunteerProfile.FechaRegistro.Year : DateTime.Now.Year)</p>
+                            <span class="badge @(hasProfile && volunteerProfile.Estado == UserStatus.Activo ? "bg-success" : "bg-warning") volunteer-status">@(hasProfile && volunteerProfile.Estado == UserStatus.Activo ? "Activo" : "Inactivo")</span>
                         </div>
                         
                         <!-- Contact Information -->
                         <div class="contact-info mb-4">
                             <div class="contact-item">
                                 <i class="bi bi-envelope text-primary"></i>
-                                <span>maria.gonzalez@email.com</span>
+                                <span>@(hasProfile ? volunteerProfile.Email : "email@ejemplo.com")</span>
                             </div>
                             <div class="contact-item">
                                 <i class="bi bi-telephone text-primary"></i>
-                                <span>+1 (809) 555-0123</span>
+                                <span>@(hasProfile && !string.IsNullOrEmpty(volunteerProfile.Telefono) ? volunteerProfile.Telefono : "No disponible")</span>
                             </div>
                             <div class="contact-item">
                                 <i class="bi bi-geo-alt text-primary"></i>
-                                <span>Santo Domingo, República Dominicana</span>
+                                <span>@(hasProfile && !string.IsNullOrEmpty(volunteerProfile.Ubicacion) ? volunteerProfile.Ubicacion : "República Dominicana")</span>
                             </div>
                         </div>
                         
                         <!-- Quick Stats -->
                         <div class="quick-stats">
                             <div class="stat-item">
-                                <div class="stat-number">24</div>
+                                <div class="stat-number">@(hasProfile ? volunteerProfile.EventosParticipados : 0)</div>
                                 <div class="stat-label">Eventos participados</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number">156</div>
+                                <div class="stat-number">@(hasProfile ? volunteerProfile.HorasVoluntariado : 0)</div>
                                 <div class="stat-label">Horas voluntariadas</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number">4.8</div>
+                                <div class="stat-number">@(hasProfile ? volunteerProfile.CalificacionPromedio.ToString("F1") : "0.0")</div>
                                 <div class="stat-label">Calificación promedio</div>
                             </div>
                         </div>
@@ -72,34 +77,26 @@
                         <div class="mb-4">
                             <h5 class="mb-3" style="color: #495057;">Habilidades Principales</h5>
                             <div class="skills-container">
-                                <div class="skill-item">
-                                    <div class="skill-name">Liderazgo</div>
-                                    <div class="skill-bar">
-                                        <div class="skill-progress" style="width: 85%;"></div>
+                                @if (hasProfile && volunteerProfile.Habilidades != null && volunteerProfile.Habilidades.Any())
+                                {
+                                    @foreach (var habilidad in volunteerProfile.Habilidades)
+                                    {
+                                        <div class="skill-item">
+                                            <div class="skill-name">@habilidad.Nombre</div>
+                                            <div class="skill-bar">
+                                                <div class="skill-progress" style="width: @(habilidad.Nivel)%;"></div>
+                                            </div>
+                                            <div class="skill-percentage">@(habilidad.Nivel)%</div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        Las habilidades del voluntario se cargarán desde la API del backend.
                                     </div>
-                                    <div class="skill-percentage">85%</div>
-                                </div>
-                                <div class="skill-item">
-                                    <div class="skill-name">Comunicación</div>
-                                    <div class="skill-bar">
-                                        <div class="skill-progress" style="width: 90%;"></div>
-                                    </div>
-                                    <div class="skill-percentage">90%</div>
-                                </div>
-                                <div class="skill-item">
-                                    <div class="skill-name">Organización</div>
-                                    <div class="skill-bar">
-                                        <div class="skill-progress" style="width: 75%;"></div>
-                                    </div>
-                                    <div class="skill-percentage">75%</div>
-                                </div>
-                                <div class="skill-item">
-                                    <div class="skill-name">Trabajo en equipo</div>
-                                    <div class="skill-bar">
-                                        <div class="skill-progress" style="width: 95%;"></div>
-                                    </div>
-                                    <div class="skill-percentage">95%</div>
-                                </div>
+                                }
                             </div>
                         </div>
                         
@@ -107,11 +104,19 @@
                         <div class="mb-4">
                             <h5 class="mb-3" style="color: #495057;">Áreas de Experiencia</h5>
                             <div class="experience-tags">
-                                <span class="experience-tag">Educación</span>
-                                <span class="experience-tag">Salud</span>
-                                <span class="experience-tag">Medio ambiente</span>
-                                <span class="experience-tag">Comunidad</span>
-                                <span class="experience-tag">Eventos</span>
+                                @if (hasProfile && volunteerProfile.AreasInteres != null && volunteerProfile.AreasInteres.Any())
+                                {
+                                    @foreach (var area in volunteerProfile.AreasInteres)
+                                    {
+                                        <span class="experience-tag">@area</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info mb-0">
+                                        <small><i class="bi bi-info-circle me-1"></i>Las áreas de experiencia se cargarán desde la API.</small>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -123,49 +128,21 @@
                         <h4 class="mb-3" style="font-weight: 700; color: #2c3e50;">Actividades Recientes</h4>
                         
                         <div class="activity-timeline">
-                            <div class="activity-item">
-                                <div class="activity-icon bg-success">
-                                    <i class="bi bi-check-circle"></i>
+                            @if (applications != null)
+                            {
+                                <!-- Dynamic activities will be displayed here when API provides data -->
+                                <div class="alert alert-info" role="alert">
+                                    <h6 class="alert-heading"><i class="bi bi-info-circle me-2"></i>Actividades Disponibles</h6>
+                                    <p class="mb-0">Las actividades del voluntario se cargarán dinámicamente desde la API del backend.</p>
                                 </div>
-                                <div class="activity-content">
-                                    <h6 class="mb-1">Reforestation Campaign</h6>
-                                    <p class="text-muted mb-1">Participó en la campaña de reforestación en el Parque Nacional</p>
-                                    <small class="text-muted">15 Enero 2025 • 8 horas</small>
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning" role="alert">
+                                    <h6 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>Conectando con el Servidor</h6>
+                                    <p class="mb-0">Las actividades del voluntario se cargarán desde la API. Verifica la conexión con el servidor.</p>
                                 </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon bg-success">
-                                    <i class="bi bi-check-circle"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6 class="mb-1">Community Health Day</h6>
-                                    <p class="text-muted mb-1">Ayudó en la organización del día de salud comunitaria</p>
-                                    <small class="text-muted">15 Feb 2025 • 6 horas</small>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon bg-success">
-                                    <i class="bi bi-check-circle"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6 class="mb-1">Financial Education Workshop</h6>
-                                    <p class="text-muted mb-1">Impartió taller de educación financiera en escuela municipal</p>
-                                    <small class="text-muted">15 Mayo 2025 • 4 horas</small>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon bg-primary">
-                                    <i class="bi bi-calendar-event"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6 class="mb-1">Beach Cleanup</h6>
-                                    <p class="text-muted mb-1">Próximo evento de limpieza de playa</p>
-                                    <small class="text-muted">15 Jun 2025 • Programado</small>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -182,7 +159,7 @@
                                         <i class="bi bi-clock text-white"></i>
                                     </div>
                                     <div class="metric-content-small">
-                                        <div class="metric-number-small">156</div>
+                                        <div class="metric-number-small">@(hasProfile ? volunteerProfile.HorasVoluntariado : 0)</div>
                                         <div class="metric-label-small">Horas totales</div>
                                     </div>
                                 </div>
@@ -193,7 +170,7 @@
                                         <i class="bi bi-star text-white"></i>
                                     </div>
                                     <div class="metric-content-small">
-                                        <div class="metric-number-small">4.8</div>
+                                        <div class="metric-number-small">@(hasProfile ? volunteerProfile.CalificacionPromedio.ToString("F1") : "0.0")</div>
                                         <div class="metric-label-small">Calificación</div>
                                     </div>
                                 </div>
@@ -204,7 +181,7 @@
                                         <i class="bi bi-calendar-check text-white"></i>
                                     </div>
                                     <div class="metric-content-small">
-                                        <div class="metric-number-small">24</div>
+                                        <div class="metric-number-small">@(hasProfile ? volunteerProfile.EventosParticipados : 0)</div>
                                         <div class="metric-label-small">Eventos</div>
                                     </div>
                                 </div>
@@ -215,7 +192,7 @@
                                         <i class="bi bi-people text-white"></i>
                                     </div>
                                     <div class="metric-content-small">
-                                        <div class="metric-number-small">12</div>
+                                        <div class="metric-number-small">@(hasProfile ? volunteerProfile.ProyectosParticipados : 0)</div>
                                         <div class="metric-label-small">Proyectos</div>
                                     </div>
                                 </div>

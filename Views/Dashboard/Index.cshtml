@@ -1,0 +1,342 @@
+@using VoluntariosConectadosRD.Models.DTOs
+@{
+    ViewData["Title"] = "Dashboard - Voluntariado Conectado RD";
+    Layout = "_DashboardLayout";
+    var userInfo = ViewBag.UserInfo as UserInfoDto;
+    var dashboardStats = ViewBag.DashboardStats as DashboardStatsDto;
+    var userDashboard = ViewBag.UserDashboard as UserDashboardDto;
+    var orgDashboard = ViewBag.OrganizationDashboard as OrganizationDashboardDto;
+    var recentActivities = ViewBag.RecentActivities as IEnumerable<RecentActivityDto>;
+    var myOpportunities = ViewBag.MyOpportunities as IEnumerable<OpportunityListDto>;
+    
+    var isOrganization = userInfo?.Rol == UserRole.Organizacion;
+    var isVolunteer = userInfo?.Rol == UserRole.Voluntario;
+}
+
+<div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #7db9e8, #5a9bd4); border-radius:12px; padding:18px 32px; box-shadow: 0 4px 15px rgba(125, 185, 232, 0.3);">
+                        ¡Bienvenido @(userInfo?.Nombre ?? "Usuario")!
+                    </h1>
+                    <div class="d-flex gap-3">
+                        @if (isVolunteer)
+                        {
+                            <a href="/Events/List" class="btn btn-primary">
+                                <i class="bi bi-search me-2"></i>Explorar Oportunidades
+                            </a>
+                        }
+                        else if (isOrganization)
+                        {
+                            <a href="/Events/Create" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Crear Oportunidad
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Stats Cards -->
+        @if (dashboardStats != null)
+        {
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card h-100" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                        <div class="card-body text-center p-4">
+                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                <div class="stat-icon bg-primary">
+                                    <i class="bi bi-people-fill text-white"></i>
+                                </div>
+                            </div>
+                            <h3 class="mb-1" style="color: #2c3e50; font-weight: 700;">@dashboardStats.TotalUsers.ToString("N0")</h3>
+                            <p class="text-muted mb-0">Voluntarios Registrados</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card h-100" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                        <div class="card-body text-center p-4">
+                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                <div class="stat-icon bg-success">
+                                    <i class="bi bi-building text-white"></i>
+                                </div>
+                            </div>
+                            <h3 class="mb-1" style="color: #2c3e50; font-weight: 700;">@dashboardStats.TotalOrganizations.ToString("N0")</h3>
+                            <p class="text-muted mb-0">Organizaciones</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card h-100" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                        <div class="card-body text-center p-4">
+                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                <div class="stat-icon bg-warning">
+                                    <i class="bi bi-calendar-event text-white"></i>
+                                </div>
+                            </div>
+                            <h3 class="mb-1" style="color: #2c3e50; font-weight: 700;">@dashboardStats.ActiveOpportunities.ToString("N0")</h3>
+                            <p class="text-muted mb-0">Oportunidades Activas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card h-100" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                        <div class="card-body text-center p-4">
+                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                <div class="stat-icon bg-info">
+                                    <i class="bi bi-clock-history text-white"></i>
+                                </div>
+                            </div>
+                            <h3 class="mb-1" style="color: #2c3e50; font-weight: 700;">@dashboardStats.TotalVolunteerHours.ToString("N0")</h3>
+                            <p class="text-muted mb-0">Horas de Voluntariado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- User-specific Dashboard -->
+        @if (isVolunteer && userDashboard != null)
+        {
+            <div class="row mb-4">
+                <!-- User Stats -->
+                <div class="col-lg-8">
+                    <div class="card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4">
+                            <h5 class="mb-0" style="font-weight: 700; color: #2c3e50;">Tu Progreso como Voluntario</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-primary mb-1">@userDashboard.ApplicationsCount</h4>
+                                        <small class="text-muted">Aplicaciones</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-success mb-1">@userDashboard.ApprovedApplications</h4>
+                                        <small class="text-muted">Aprobadas</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-warning mb-1">@userDashboard.VolunteerHours</h4>
+                                        <small class="text-muted">Horas</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-info mb-1">@userDashboard.AverageRating.ToString("F1")</h4>
+                                        <small class="text-muted">Calificación</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="col-lg-4">
+                    <div class="card h-100" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4">
+                            <h5 class="mb-0" style="font-weight: 700; color: #2c3e50;">Acciones Rápidas</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-grid gap-2">
+                                <a href="/Events/List" class="btn btn-outline-primary">
+                                    <i class="bi bi-search me-2"></i>Buscar Oportunidades
+                                </a>
+                                <a href="/Dashboard/Profile" class="btn btn-outline-secondary">
+                                    <i class="bi bi-person me-2"></i>Editar Perfil
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            @if (recentActivities != null && recentActivities.Any())
+            {
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                                <h5 class="mb-0" style="font-weight: 700; color: #2c3e50;">Actividades Recientes</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                @foreach (var activity in recentActivities.Take(5))
+                                {
+                                    <div class="d-flex align-items-start mb-3 @(activity != recentActivities.Last() ? "border-bottom pb-3" : "")">
+                                        <div class="activity-icon me-3">
+                                            @if (activity.ActivityType == "applied")
+                                            {
+                                                <i class="bi bi-plus-circle text-primary"></i>
+                                            }
+                                            else if (activity.ActivityType == "approved")
+                                            {
+                                                <i class="bi bi-check-circle text-success"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-info-circle text-info"></i>
+                                            }
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">@activity.Title</h6>
+                                            <p class="text-muted mb-1 small">@activity.Description</p>
+                                            <small class="text-muted">@activity.Date.ToString("dd/MM/yyyy HH:mm") - @activity.OrganizationName</small>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        <!-- Organization-specific Dashboard -->
+        @if (isOrganization && orgDashboard != null)
+        {
+            <div class="row mb-4">
+                <!-- Organization Stats -->
+                <div class="col-lg-8">
+                    <div class="card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4">
+                            <h5 class="mb-0" style="font-weight: 700; color: #2c3e50;">Estadísticas de tu Organización</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-primary mb-1">@orgDashboard.OpportunitiesCreated</h4>
+                                        <small class="text-muted">Oportunidades Creadas</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-success mb-1">@orgDashboard.ActiveOpportunities</h4>
+                                        <small class="text-muted">Activas</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-warning mb-1">@orgDashboard.TotalApplications</h4>
+                                        <small class="text-muted">Aplicaciones</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-info mb-1">@orgDashboard.TotalVolunteers</h4>
+                                        <small class="text-muted">Voluntarios</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="col-lg-4">
+                    <div class="card h-100" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4">
+                            <h5 class="mb-0" style="font-weight: 700; color: #2c3e50;">Gestión</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-grid gap-2">
+                                <a href="/Events/Create" class="btn btn-outline-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>Nueva Oportunidad
+                                </a>
+                                <a href="/Dashboard/ProfileONG" class="btn btn-outline-secondary">
+                                    <i class="bi bi-building me-2"></i>Perfil Organización
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Applications -->
+            @if (orgDashboard.RecentApplications != null && orgDashboard.RecentApplications.Any())
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card" style="border-radius:16px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+                            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                                <h5 class="mb-0" style="font-weight: 700; color: #2c3e50;">Aplicaciones Recientes</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>Voluntario</th>
+                                                <th>Oportunidad</th>
+                                                <th>Fecha</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var application in orgDashboard.RecentApplications.Take(5))
+                                            {
+                                                <tr>
+                                                    <td>@application.VolunteerName</td>
+                                                    <td>@application.OpportunityTitle</td>
+                                                    <td>@application.ApplicationDate.ToString("dd/MM/yyyy")</td>
+                                                    <td>
+                                                        @{
+                                                            var statusClass = application.Status switch
+                                                            {
+                                                                ApplicationStatus.Pendiente => "bg-warning",
+                                                                ApplicationStatus.Aceptada => "bg-success",
+                                                                ApplicationStatus.Rechazada => "bg-danger",
+                                                                _ => "bg-secondary"
+                                                            };
+                                                        }
+                                                        <span class="badge @statusClass">@application.Status</span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    .activity-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+    
+    .dashboard-bg {
+        background: linear-gradient(135deg, #f6f8fa 0%, #e9ecef 100%);
+    }
+</style>
