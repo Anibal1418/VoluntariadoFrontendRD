@@ -1,0 +1,148 @@
+@{
+    ViewData["Title"] = "Sección de Voluntarios - Voluntariado Conectado RD";
+    Layout = "_DashboardLayout";
+}
+
+    <style>
+      body {
+        margin: 10px;
+        font-family: "Rubik", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        color: #15384e;
+        background-color: #ececec;
+      }
+
+      .actividades {
+        padding-left: 10px;
+        margin-left: 6px;
+        margin-right: 6px;
+        margin: 20px;
+        border: solid 2px;
+        border-color: #62b6cb;
+        border-radius: 4px;
+        color: #1b4965;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        padding: 0;
+      }
+      .horarios {
+        padding-left: 10px;
+        margin-left: 6px;
+        margin-right: 6px;
+        margin: 20px;
+        border: solid 2px;
+        border-color: #62b6cb;
+        border-radius: 4px;
+        color: #1b4965;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        padding: 0;
+      }
+      .main {
+        background-color: #cae9ff;
+        border-color: #62b6cb;
+      }
+      .pt,
+      .pt1,
+      .pt2,
+      .pt3 {
+        padding: 8px;
+      }
+      .pt1 + .pt2 {
+        margin-top: 5px;
+      }
+      .pt2 + .pt3 {
+        margin-top: 5px;
+      }
+      .actividades .ext-boton{
+        padding-left: 10px;
+        margin-left: 12px;
+        margin-right: 6px;
+        margin-top: 7px;
+      
+      }
+      .actividades .int-boton{
+        
+        padding: 15px;
+        border-radius: 5px;
+        background-color:#1b4965;
+        color: #fff;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+      }
+      .actividades .int-boton:hover{
+        background-color: #17394f;
+      }
+
+
+
+    </style>
+  <body>
+    <h2 style="border-bottom: 4px solid; width: 100%; border-color: #62b6cb">
+      Tu sección
+    </h2>
+    <h4>Nombre: Omar</h4>
+    <div class="actividades main">
+      <h2
+        style="
+          display: flex;
+          justify-content: center;
+          border: solid 3px #5fa8d3;
+          background-color: #7dc7f1;
+          padding: 10px;
+          border-radius: 10px;
+          margin-left: 6px;
+          margin-right: 6px;
+        "
+      >
+        Actividades asignadas
+      </h2>
+      <div class="actividades pt1" style="font-weight: bold">
+        Actividad a corto plazo:
+        <li style="font-weight: normal">
+          Reclutar y capacitar voluntarios
+        </li>
+      </div>
+
+      <div class="actividades pt2" style="font-weight: bold">
+        Actividad a mediano plazo:
+        <li style="font-weight: normal">Reclutar y capacitar voluntarios</li>
+      </div>
+      <div class="actividades pt3" style="font-weight: bold">
+        Actividad a largo plazo:
+        <li style="font-weight: normal">Reclutar y capacitar voluntarios</li>
+      </div>
+      <form class="ext-boton">
+        <button class="int-boton"> + Agregar nueva actividad</button>
+      </form>
+    </div>
+    <div class="horarios main">
+      <h2
+        style="
+          display: flex;
+          justify-content: center;
+          border: solid 3px #5fa8d3;
+          background-color: #7dc7f1;
+          padding: 10px;
+          border-radius: 10px;
+          margin-left: 6px;
+          margin-right: 6px;
+        "
+      >
+        Horarios
+      </h2>
+      <div class="horarios pt">
+        <p style="font-weight: bold; margin-top: 1px">Horarios activos:</p>
+        <li style="margin-top: -12px">Lunes: 1pm-6pm</li>
+        <li>Martes: 1pm-6pm</li>
+        <li>Miércoles: 1pm-6pm</li>
+      </div>
+    </div>
+    <div></div>
+  </body>
+</html>
