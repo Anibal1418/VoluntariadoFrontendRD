@@ -15,12 +15,12 @@ jobs:
       FRONTEND_PORT: 5009
       ASPNETCORE_ENVIRONMENT: Development
       
-      # Frontend Environment Variables
+      # Frontend Envi ronment Variables
       JWT__Key: VoluntariadoConectadoRD-Super-Secret-Key-256-bits-long-for-security
       JWT__Issuer: VoluntariadoConectadoRD
       JWT__Audience: VoluntariadoConectadoRD-Users
       JWT__ExpirationMinutes: 60
-      ApiSettings__BaseUrl: https://fo-administrators-impose-determine.trycloudflare.com
+      ApiSettings__BaseUrl: https://created-compile-saves-introducing.trycloudflare.com/api/
       ApiSettings__Timeout: 30
 
     steps:
