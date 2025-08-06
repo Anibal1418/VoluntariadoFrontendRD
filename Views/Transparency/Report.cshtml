@@ -1,0 +1,317 @@
+@model VoluntariadoConectadoRD.Models.DTOs.FinancialReportDetailDto
+
+@{
+    ViewData["Title"] = $"Reporte: {Model.Titulo}";
+}
+
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index")">Transparencia</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Organization", new { id = Model.OrganizacionId })">@Model.OrganizacionNombre</a></li>
+            <li class="breadcrumb-item active">@Model.Titulo</li>
+        </ol>
+    </nav>
+
+    <!-- Report Header -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h1 class="h2 mb-2">@Model.Titulo</h1>
+                            <h4 class="text-muted mb-3">@Model.OrganizacionNombre</h4>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-primary fs-6 me-3">Q@Model.Trimestre @Model.Año</span>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Creado: @Model.FechaCreacion.ToString("dd/MM/yyyy")
+                                    @if (Model.FechaActualizacion.HasValue)
+                                    {
+                                        <text> | Actualizado: @Model.FechaActualizacion.Value.ToString("dd/MM/yyyy")</text>
+                                    }
+                                </small>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Resumen))
+                            {
+                                <div class="alert alert-info">
+                                    <h6><i class="fas fa-info-circle"></i> Resumen Ejecutivo</h6>
+                                    <p class="mb-0">@Model.Resumen</p>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-4 text-end">
+                            @if (!string.IsNullOrEmpty(Model.DocumentoUrl))
+                            {
+                                <a href="@Model.DocumentoUrl" target="_blank" class="btn btn-outline-primary">
+                                    <i class="fas fa-download"></i> Descargar PDF
+                                </a>
+                            }
+                            <a href="@Url.Action("Organization", new { id = Model.OrganizacionId })" class="btn btn-primary">
+                                <i class="fas fa-building"></i> Ver Organización
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-arrow-up fa-2x mb-2"></i>
+                    <h4>@Model.TotalIngresos.ToString("C", new System.Globalization.CultureInfo("es-DO"))</h4>
+                    <small>Total Ingresos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-arrow-down fa-2x mb-2"></i>
+                    <h4>@Model.TotalGastos.ToString("C", new System.Globalization.CultureInfo("es-DO"))</h4>
+                    <small>Total Gastos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card @(Model.Balance >= 0 ? "bg-primary" : "bg-warning") text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-balance-scale fa-2x mb-2"></i>
+                    <h4>@Model.Balance.ToString("C", new System.Globalization.CultureInfo("es-DO"))</h4>
+                    <small>Balance Final</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-percentage fa-2x mb-2"></i>
+                    <h4>@((Model.TotalIngresos > 0 ? (Model.TotalGastos / Model.TotalIngresos * 100) : 0).ToString("F1"))%</h4>
+                    <small>Ratio de Gastos</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breakdown Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie"></i>
+                        Desglose de Gastos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border rounded p-3 mb-2">
+                                <h5 class="text-warning">@Model.TotalGastosOperativos.ToString("C", new System.Globalization.CultureInfo("es-DO"))</h5>
+                                <small>Operativo</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-3 mb-2">
+                                <h5 class="text-primary">@Model.TotalGastosPrograma.ToString("C", new System.Globalization.CultureInfo("es-DO"))</h5>
+                                <small>Programa</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-3 mb-2">
+                                <h5 class="text-info">@Model.TotalGastosAdministrativos.ToString("C", new System.Globalization.CultureInfo("es-DO"))</h5>
+                                <small>Administrativo</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-heart"></i>
+                        Desglose de Donaciones
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="border rounded p-3 mb-2">
+                                <h5 class="text-success">@Model.TotalDonacionesMonetarias.ToString("C", new System.Globalization.CultureInfo("es-DO"))</h5>
+                                <small>Monetarias</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-3 mb-2">
+                                <h5 class="text-secondary">@Model.TotalDonacionesEspecie.ToString("C", new System.Globalization.CultureInfo("es-DO"))</h5>
+                                <small>En Especie</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Tables -->
+    <div class="row">
+        <!-- Donations Table -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        Donaciones (@Model.Donaciones.Count)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Donaciones.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Donante</th>
+                                        <th>Tipo</th>
+                                        <th class="text-end">Monto</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var donation in Model.Donaciones.OrderByDescending(d => d.Fecha))
+                                    {
+                                        <tr>
+                                            <td>
+                                                @donation.Donante
+                                                @if (donation.EsRecurrente)
+                                                {
+                                                    <span class="badge bg-info ms-1">Recurrente</span>
+                                                }
+                                            </td>
+                                            <td><span class="badge bg-secondary">@donation.Tipo</span></td>
+                                            <td class="text-end fw-bold text-success">
+                                                @donation.Monto.ToString("C", new System.Globalization.CultureInfo("es-DO"))
+                                            </td>
+                                            <td>@donation.Fecha.ToString("dd/MM/yyyy")</td>
+                                        </tr>
+                                        @if (!string.IsNullOrEmpty(donation.Proposito))
+                                        {
+                                            <tr>
+                                                <td colspan="4" class="text-muted">
+                                                    <small><i class="fas fa-info-circle"></i> @donation.Proposito</small>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <i class="fas fa-heart-broken text-muted fa-2x"></i>
+                            <p class="text-muted mt-2">No hay donaciones registradas</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Expenses Table -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-receipt"></i>
+                        Gastos (@Model.Gastos.Count)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Gastos.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Descripción</th>
+                                        <th>Categoría</th>
+                                        <th class="text-end">Monto</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var expense in Model.Gastos.OrderByDescending(e => e.Fecha))
+                                    {
+                                        <tr>
+                                            <td>
+                                                @expense.Descripcion
+                                                @if (!string.IsNullOrEmpty(expense.DocumentoUrl))
+                                                {
+                                                    <a href="@expense.DocumentoUrl" target="_blank" class="ms-1">
+                                                        <i class="fas fa-paperclip text-primary"></i>
+                                                    </a>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge @(expense.Categoria switch {
+                                                    "Operativo" => "bg-warning",
+                                                    "Programa" => "bg-primary", 
+                                                    "Administrativo" => "bg-info",
+                                                    _ => "bg-secondary"
+                                                })">@expense.Categoria</span>
+                                            </td>
+                                            <td class="text-end fw-bold text-danger">
+                                                @expense.Monto.ToString("C", new System.Globalization.CultureInfo("es-DO"))
+                                            </td>
+                                            <td>@expense.Fecha.ToString("dd/MM/yyyy")</td>
+                                        </tr>
+                                        @if (!string.IsNullOrEmpty(expense.Justificacion))
+                                        {
+                                            <tr>
+                                                <td colspan="4" class="text-muted">
+                                                    <small><i class="fas fa-comment"></i> @expense.Justificacion</small>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <i class="fas fa-receipt text-muted fa-2x"></i>
+                            <p class="text-muted mt-2">No hay gastos registrados</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .table th {
+            border-top: none;
+            font-size: 0.875rem;
+        }
+        .table td {
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+        .card-header h5 {
+            margin-bottom: 0;
+        }
+    </style>
+}

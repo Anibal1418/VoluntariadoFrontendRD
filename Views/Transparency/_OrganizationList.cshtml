@@ -1,0 +1,144 @@
+@model List<VoluntariadoConectadoRD.Models.DTOs.OrganizationTransparencyDto>
+
+<div class="row">
+    @foreach (var org in Model)
+    {
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card organization-card h-100">
+                <div class="card-body">
+                    <!-- Organization Header -->
+                    <div class="d-flex align-items-center mb-3">
+                        @if (!string.IsNullOrEmpty(org.LogoUrl))
+                        {
+                            <img src="@org.LogoUrl" alt="@org.Nombre" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                <i class="fas fa-building text-white"></i>
+                            </div>
+                        }
+                        <div class="flex-grow-1">
+                            <h5 class="card-title mb-0">@org.Nombre</h5>
+                            <div class="d-flex align-items-center">
+                                @if (!string.IsNullOrEmpty(org.TipoOrganizacion))
+                                {
+                                    <span class="badge bg-secondary me-2">@org.TipoOrganizacion</span>
+                                }
+                                @if (org.Verificada)
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle"></i> Verificada
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Statistics -->
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <div class="financial-stat income-stat">
+                                <div class="text-success fw-bold">@org.TotalIngresosPeriodo.ToString("C", new System.Globalization.CultureInfo("es-DO"))</div>
+                                <small class="text-muted">Ingresos</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="financial-stat expense-stat">
+                                <div class="text-danger fw-bold">@org.TotalGastosPeriodo.ToString("C", new System.Globalization.CultureInfo("es-DO"))</div>
+                                <small class="text-muted">Gastos</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="financial-stat balance-stat">
+                                <div class="@(org.BalanceActual >= 0 ? "text-primary" : "text-warning") fw-bold">
+                                    @org.BalanceActual.ToString("C", new System.Globalization.CultureInfo("es-DO"))
+                                </div>
+                                <small class="text-muted">Balance</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Reports -->
+                    @if (org.ReportesRecientes.Any())
+                    {
+                        <div class="mb-3">
+                            <h6 class="text-muted mb-2">
+                                <i class="fas fa-file-alt me-1"></i>
+                                Reportes Recientes (@org.TotalReportes total)
+                            </h6>
+                            @foreach (var report in org.ReportesRecientes.Take(2))
+                            {
+                                <div class="border rounded p-2 mb-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small class="fw-semibold">@report.Titulo</small>
+                                            <br>
+                                            <small class="text-muted">Q@report.Trimestre @report.Año</small>
+                                        </div>
+                                        <div class="text-end">
+                                            <small class="@(report.Balance >= 0 ? "text-success" : "text-danger") fw-bold">
+                                                @report.Balance.ToString("C", new System.Globalization.CultureInfo("es-DO"))
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- Organization Info -->
+                    <div class="row text-center text-muted mb-3">
+                        <div class="col-6">
+                            <small>
+                                <i class="fas fa-calendar-alt"></i>
+                                Registrada: @org.FechaRegistro.ToString("MMM yyyy")
+                            </small>
+                        </div>
+                        <div class="col-6">
+                            <small>
+                                @if (org.UltimoReporte.HasValue)
+                                {
+                                    <i class="fas fa-clock"></i>
+                                    <text>Actualizada: @org.UltimoReporte.Value.ToString("MMM yyyy")</text>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                                    <text>Sin reportes</text>
+                                }
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card Footer -->
+                <div class="card-footer bg-transparent">
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="@Url.Action("Organization", new { id = org.Id })" class="btn btn-primary btn-sm flex-fill">
+                            <i class="fas fa-eye"></i> Ver Detalles
+                        </a>
+                        @if (org.ReportesRecientes.Any())
+                        {
+                            <a href="@Url.Action("Report", new { id = org.ReportesRecientes.First().Id })" class="btn btn-outline-primary btn-sm flex-fill">
+                                <i class="fas fa-file-alt"></i> Último Reporte
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h4 class="text-muted">No se encontraron organizaciones</h4>
+        <p class="text-muted">Intenta ajustar los filtros para ver más resultados.</p>
+        <a href="@Url.Action("Index")" class="btn btn-primary">
+            <i class="fas fa-refresh"></i> Ver Todas las Organizaciones
+        </a>
+    </div>
+}

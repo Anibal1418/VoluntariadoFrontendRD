@@ -1,0 +1,198 @@
+@model List<VoluntariadoConectadoRD.Models.DTOs.OrganizationTransparencyDto>
+
+@{
+    ViewData["Title"] = "Transparencia Financiera";
+    var filters = ViewBag.Filters as VoluntariadoConectadoRD.Models.DTOs.TransparencyFiltersDto;
+    var availableYears = ViewBag.AvailableYears as List<int> ?? new List<int>();
+    var organizationTypes = ViewBag.OrganizationTypes as List<string> ?? new List<string>();
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h2 mb-0">
+                        <i class="fas fa-chart-line text-success me-2"></i>
+                        Transparencia Financiera
+                    </h1>
+                    <p class="text-muted">Información financiera pública de todas las organizaciones</p>
+                </div>
+                <div>
+                    <span class="badge bg-primary fs-6">@Model.Count organizaciones</span>
+                </div>
+            </div>
+
+            <!-- Platform Overview Chart -->
+            @if (ViewBag.PlatformOverview != null)
+            {
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-globe text-info me-2"></i>
+                            Resumen General de la Plataforma
+                        </h5>
+                        <canvas id="platformOverviewChart" height="100"></canvas>
+                    </div>
+                </div>
+            }
+
+            <!-- Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-filter text-secondary me-2"></i>
+                        Filtros
+                    </h5>
+                    <form method="get" id="filtersForm" class="row g-3">
+                        <div class="col-md-2">
+                            <label for="year" class="form-label">Año</label>
+                            <select name="Año" id="year" class="form-select">
+                                <option value="">Todos</option>
+                                @foreach (var year in availableYears)
+                                {
+                                    <option value="@year" selected="@(filters?.Año == year)">@year</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="quarter" class="form-label">Trimestre</label>
+                            <select name="Trimestre" id="quarter" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="1" selected="@(filters?.Trimestre == 1)">Q1</option>
+                                <option value="2" selected="@(filters?.Trimestre == 2)">Q2</option>
+                                <option value="3" selected="@(filters?.Trimestre == 3)">Q3</option>
+                                <option value="4" selected="@(filters?.Trimestre == 4)">Q4</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="orgType" class="form-label">Tipo</label>
+                            <select name="TipoOrganizacion" id="orgType" class="form-select">
+                                <option value="">Todos</option>
+                                @foreach (var type in organizationTypes)
+                                {
+                                    <option value="@type" selected="@(filters?.TipoOrganizacion == type)">@type</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="sortBy" class="form-label">Ordenar por</label>
+                            <select name="OrdenPor" id="sortBy" class="form-select">
+                                <option value="nombre" selected="@(filters?.OrdenPor == "nombre")">Nombre</option>
+                                <option value="ingresos" selected="@(filters?.OrdenPor == "ingresos")">Ingresos</option>
+                                <option value="gastos" selected="@(filters?.OrdenPor == "gastos")">Gastos</option>
+                                <option value="balance" selected="@(filters?.OrdenPor == "balance")">Balance</option>
+                                <option value="fecha" selected="@(filters?.OrdenPor == "fecha")">Última actualización</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" name="SoloVerificadas" id="verifiedOnly" checked="@(filters?.SoloVerificadas == true)">
+                                <label class="form-check-label" for="verifiedOnly">
+                                    Solo verificadas
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-search"></i> Filtrar
+                            </button>
+                            <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Organizations List -->
+            <div id="organizationsContainer">
+                @await Html.PartialAsync("_OrganizationList", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Platform Overview Chart
+        @if (ViewBag.PlatformOverview != null)
+        {
+            var chartData = @Html.Raw(Json.Serialize(ViewBag.PlatformOverview));
+            <text>
+            const ctx = document.getElementById('platformOverviewChart').getContext('2d');
+            const platformChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: 'Balance Neto (RD$)',
+                        data: chartData.values,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'RD$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+
+        // Format currency function
+        function formatCurrency(amount) {
+            return 'RD$' + amount.toLocaleString('es-DO', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // Auto-submit form on filter changes
+        document.getElementById('filtersForm').addEventListener('change', function() {
+            this.submit();
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .organization-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .organization-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .financial-stat {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 0.25rem;
+        }
+        .income-stat {
+            background-color: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+        .expense-stat {
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+        .balance-stat {
+            background-color: rgba(0, 123, 255, 0.1);
+            border: 1px solid rgba(0, 123, 255, 0.2);
+        }
+    </style>
+}
