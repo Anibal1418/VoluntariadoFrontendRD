@@ -20,7 +20,7 @@ jobs:
       JWT__Issuer: VoluntariadoConectadoRD
       JWT__Audience: VoluntariadoConectadoRD-Users
       JWT__ExpirationMinutes: 60
-      ApiSettings__BaseUrl: ${{ secrets.BACKEND_API_URL }}
+      ApiSettings__BaseUrl: https://fo-administrators-impose-determine.trycloudflare.com
       ApiSettings__Timeout: 30
 
     steps:
