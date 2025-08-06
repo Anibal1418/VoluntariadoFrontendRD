@@ -22,7 +22,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IOportunidadApiService, OportunidadApiService>(client =>
 {
-    client.BaseAddress = new Uri("https://tu-api.com/");
+    client.BaseAddress = new Uri("https://leaving-brussels-boulder-superintendent.trycloudflare.com/api/");
 });
 
 // Configuraciones
