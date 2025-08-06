@@ -14,6 +14,7 @@ namespace VoluntariosConectadosRD.Models
         [Required(ErrorMessage = "La fecha es obligatoria")]
         [DataType(DataType.Date)]
         [Display(Name = "Fecha del Evento")]
+        [FutureDate(ErrorMessage = "La fecha del evento debe ser futura")]
         public DateTime Fecha { get; set; }
 
         [Required(ErrorMessage = "La ubicación es obligatoria")]

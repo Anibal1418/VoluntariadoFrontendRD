@@ -1,5 +1,11 @@
-﻿@{
+@using VoluntariosConectadosRD.Services
+@using VoluntariosConectadosRD.Models.DTOs
+@{
     ViewData["Title"] = "Voluntariado Conectado RD - Conectamos personas con causas que importan";
+    var platformStats = ViewBag.PlatformStats;
+    var featuredOpportunities = ViewBag.FeaturedOpportunities as IEnumerable<OpportunityListDto>;
+    var hasStats = platformStats != null;
+    var hasOpportunities = featuredOpportunities != null && featuredOpportunities.Any();
 }
 
 <!-- Hero Section -->
@@ -17,6 +23,41 @@
         </div>
     </div>
 </section>
+
+<!-- Platform Statistics -->
+@if (hasStats)
+{
+    <section class="stats-section py-5" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-number">@(hasStats ? "Loading..." : "0")</div>
+                        <div class="stat-label">Voluntarios Activos</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-number">@(hasStats ? "Loading..." : "0")</div>
+                        <div class="stat-label">Organizaciones</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-number">@(hasStats ? "Loading..." : "0")</div>
+                        <div class="stat-label">Proyectos Activos</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-number">@(hasStats ? "Loading..." : "0")</div>
+                        <div class="stat-label">Horas Donadas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
 
 <!-- Descripción del Proyecto -->
 <section class="about-section">
@@ -135,6 +176,48 @@
     </div>
 </section>
 
+<!-- Featured Opportunities -->
+@if (hasOpportunities)
+{
+    <section class="opportunities-section py-5">
+        <div class="container">
+            <h2 class="section-title text-center mb-5">Oportunidades Destacadas</h2>
+            <div class="row">
+                @foreach (var opportunity in featuredOpportunities.Take(3))
+                {
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="opportunity-card">
+                            <div class="opportunity-header">
+                                <h4 class="opportunity-title">@opportunity.Titulo</h4>
+                                <span class="opportunity-organization">@opportunity.OrganizacionNombre</span>
+                            </div>
+                            <div class="opportunity-body">
+                                <p class="opportunity-description">@(opportunity.Descripcion.Length > 100 ? opportunity.Descripcion.Substring(0, 100) + "..." : opportunity.Descripcion)</p>
+                                <div class="opportunity-details">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        @opportunity.FechaInicio.ToString("dd/MM/yyyy")
+                                    </small>
+                                    <small class="text-muted ms-3">
+                                        <i class="fas fa-users me-1"></i>
+                                        @opportunity.VoluntariosRegistrados/@opportunity.VoluntariosNecesarios voluntarios
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="opportunity-footer">
+                                <a href="/Account/Registro" class="btn btn-primary btn-sm">Únete como voluntario</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-4">
+                <a href="/Account/Registro" class="btn btn-outline-primary">Ver todas las oportunidades</a>
+            </div>
+        </div>
+    </section>
+}
+
 <!-- CTA Section -->
 <section class="cta-section">
     <div class="container">
@@ -147,3 +230,110 @@
         </div>
     </div>
 </section>
+
+<style>
+/* Statistics Section Styles */
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #7db9e8;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Opportunity Cards Styles */
+.opportunity-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.opportunity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.opportunity-header {
+    margin-bottom: 1rem;
+}
+
+.opportunity-title {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.opportunity-organization {
+    color: #7db9e8;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.opportunity-body {
+    flex: 1;
+    margin-bottom: 1rem;
+}
+
+.opportunity-description {
+    color: #6c757d;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.opportunity-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.opportunity-footer {
+    display: flex;
+    justify-content: center;
+}
+
+.opportunity-footer .btn {
+    border-radius: 25px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 768px) {
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .opportunity-details {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .opportunity-details small {
+        margin: 0 !important;
+    }
+}
+</style>

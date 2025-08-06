@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using VoluntariosConectadosRD.Services;
+using VoluntariosConectadosRD.Middleware;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,8 @@ builder.Services.AddHttpClient<IOportunidadApiService, OportunidadApiService>(cl
 // Agregar servicios de API
 builder.Services.AddScoped<IBaseApiService, BaseApiService>();
 builder.Services.AddScoped<IAccountApiService, AccountApiService>();
+builder.Services.AddScoped<IVolunteerApiService, VolunteerApiService>();
+builder.Services.AddScoped<IDashboardApiService, DashboardApiService>();
 
 // Configuración JWT para autenticación
 var jwtSettings = builder.Configuration.GetSection("JWT");
@@ -77,6 +80,9 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseRouting();
 
 app.UseSession();
+
+// Middleware personalizado para JWT
+app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

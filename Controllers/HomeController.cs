@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using VoluntariosConectadosRD.Models;
+using VoluntariosConectadosRD.Services;
 
 namespace VoluntariosConectadosRD.Controllers
 {
@@ -9,14 +10,37 @@ namespace VoluntariosConectadosRD.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IVolunteerApiService _volunteerApiService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IVolunteerApiService volunteerApiService)
         {
             _logger = logger;
+            _volunteerApiService = volunteerApiService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            try
+            {
+                // Obtener estadísticas generales de la plataforma
+                var statsResponse = await _volunteerApiService.GetAdminStatsAsync();
+                if (statsResponse?.Success == true && statsResponse.Data != null)
+                {
+                    ViewBag.PlatformStats = statsResponse.Data;
+                }
+
+                // Obtener oportunidades destacadas
+                var opportunitiesResponse = await _volunteerApiService.GetVolunteerOpportunitiesAsync();
+                if (opportunitiesResponse?.Success == true && opportunitiesResponse.Data != null)
+                {
+                    ViewBag.FeaturedOpportunities = opportunitiesResponse.Data.Take(3).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener datos para la página de inicio");
+            }
+
             return View();
         }
 

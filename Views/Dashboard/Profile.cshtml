@@ -1,6 +1,10 @@
+@using VoluntariosConectadosRD.Models.DTOs
 @{
     ViewData["Title"] = "Mi Perfil - Voluntariado Conectado RD";
     Layout = "_DashboardLayout";
+    var userProfile = ViewBag.UserProfile as UserProfileDto;
+    var userInfo = ViewBag.UserInfo as UserInfoDto;
+    var hasProfile = userProfile != null;
 }
 
 <div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
@@ -9,7 +13,7 @@
 
         <!-- Action Buttons -->
         <div class="d-flex justify-content-end mb-4 gap-3">
-            <a href="/Account/EditarVoluntario/1" class="btn btn-outline-primary btn-lg" style="border-radius: 12px; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2); transition: all 0.3s ease; text-decoration: none; border: 2px solid #0d6efd; color: #0d6efd;">
+            <a href="/Account/EditarVoluntario/@(userInfo?.Id ?? 1)" class="btn btn-outline-primary btn-lg" style="border-radius: 12px; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2); transition: all 0.3s ease; text-decoration: none; border: 2px solid #0d6efd; color: #0d6efd;">
                 <i class="bi bi-pencil-square me-2"></i>
                 Editar Perfil
             </a>
@@ -24,42 +28,43 @@
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 p-3" style="border-radius:16px;">
                     <div class="d-flex flex-column align-items-center">
-                        <div class="profile-image-container mb-2">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Foto de perfil" class="rounded-circle profile-image" width="80" height="80" id="currentProfileImage">
-                            <button type="button" class="btn btn-outline-primary btn-sm upload-photo-btn" data-bs-toggle="modal" data-bs-target="#uploadImageModal">
-                                <i class="bi bi-camera me-1"></i>Subir foto
-                                    </button>
-                        </div>
+                        <form enctype="multipart/form-data" id="uploadPhotoForm">
+                            <label for="profilePhoto" class="mb-2" style="cursor:pointer;">
+                                <img src="@(userProfile?.ProfileImageUrl ?? "/images/default-avatar.jpg")" alt="Foto de perfil" class="rounded-circle mb-2" width="80" height="80">
+                                <div class="btn btn-outline-secondary btn-sm" style="margin-left: 10px;">Subir foto</div>
+                            </label>
+                            <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" style="display:none;" onchange="document.getElementById('uploadPhotoForm').submit();">
+                        </form>
                         <div class="mt-2 w-100">
                             <div class="card border" style="border-radius:16px; padding:10px; margin-top: 10px;">
                                 <div class="mb-1"><strong>Tu nombre</strong></div>
                                 <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <span>Omar Alexis Reyes Medina</span>
+                                    <span>@(hasProfile ? userProfile.Nombre + " " + userProfile.Apellido : userInfo?.Nombre + " " + userInfo?.Apellido)</span>
                                     <button class="btn btn-link p-0 ms-2"><i class="bi bi-pencil-square"></i> Editar</button>
                                 </div>
                                 <div class="mb-1"><strong>Correo Electrónico</strong></div>
                                 <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <span>carmendita@gmail.com</span>
+                                    <span>@(hasProfile ? userProfile.Email : userInfo?.Email)</span>
                                     <button class="btn btn-link p-0 ms-2"><i class="bi bi-pencil-square"></i> Editar</button>
                                 </div>
                                 <div class="mb-1"><strong>Número</strong></div>
                                 <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <span>+1 (809) 345-0789</span>
+                                    <span>@(hasProfile ? userProfile.Telefono ?? "No especificado" : userInfo?.Telefono ?? "No especificado")</span>
                                     <button class="btn btn-link p-0 ms-2"><i class="bi bi-pencil-square"></i> Editar</button>
                                 </div>
                             </div>
                             <div class="card border" style="border-radius:16px; padding:10px; margin-top: 10px;">
-                                <div class="mb-1"><strong>Descripción de Omar</strong></div>
+                                <div class="mb-1"><strong>Biografía</strong></div>
                                 <div class="d-flex align-items-start justify-content-between mb-2">
-                                    <span class="p-1" style="flex: 1; max-width: calc(100% - 80px);">Lorem ipsum dolor sit amet consectetur. Cras vitae dictumst sed amet.</span>
+                                    <span class="p-1" style="flex: 1; max-width: calc(100% - 80px);">@(hasProfile && !string.IsNullOrEmpty(userProfile.Biografia) ? userProfile.Biografia : "Agrega una biografía para contar más sobre ti.")</span>
                                     <button class="btn btn-link p-0 flex-shrink-0"><i class="bi bi-pencil-square"></i> Editar</button>
                                 </div>
                             </div>
                             <div class="card border" style="border-radius:16px; padding:10px; margin-top: 10px;">
                                 <div class="mb-1"><strong>Disponibilidad</strong></div>
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <span style="margin-left: 10px;">Horario</span>
-                                    <button class="btn btn-outline-success btn-sm ms-2">Matutino</button>
+                                    <span style="margin-left: 10px;">@(hasProfile && !string.IsNullOrEmpty(userProfile.Disponibilidad) ? userProfile.Disponibilidad : "No especificada")</span>
+                                    <button class="btn btn-outline-success btn-sm ms-2">@(hasProfile && !string.IsNullOrEmpty(userProfile.Disponibilidad) ? userProfile.Disponibilidad : "Por definir")</button>
                                 </div>
                             </div>
                         </div>
@@ -79,12 +84,17 @@
                     <div class="mb-3">
                         <strong>Habilidades</strong>
                         <div class="mt-2">
-                            <span class="badge bg-light text-dark border me-1 mb-1" style="margin: 10px;">Resiliencia</span>
-                            <span class="badge bg-light text-dark border me-1 mb-1" style="margin: 10px;">Responsabilidad</span>
-                            <span class="badge bg-light text-dark border me-1 mb-1" style="margin: 10px;">Gestión del tiempo</span>
-                            <span class="badge bg-light text-dark border me-1 mb-1" style="margin: 10px;">Iniciativa</span>
-                            <span class="badge bg-light text-dark border me-1 mb-1" style="margin: 10px;">Adaptabilidad</span>
-                            <span class="badge bg-light text-dark border me-1 mb-1">Resolución de problemas</span>
+                            @if (hasProfile && userProfile.Habilidades.Any())
+                            {
+                                @foreach (var habilidad in userProfile.Habilidades)
+                                {
+                                    <span class="badge bg-light text-dark border me-1 mb-1" style="margin: 5px;">@habilidad</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Agrega habilidades para mostrar tus fortalezas</span>
+                            }
                         </div>
                     </div>
 
@@ -93,7 +103,7 @@
                         <div class="card mt-2" style="border-radius: 12px; border: 1px solid #e9ecef;">
                             <div class="d-flex align-items-center justify-content-between p-3">
                                 <div>
-                                    <span class="fw-bold">7 años</span><br>
+                                    <span class="fw-bold">@(hasProfile ? userProfile.ExperienciaAnios : 0) años</span><br>
                                     <span style="font-size:0.9rem; color:#888;"> de experiencia total</span>
                                 </div>
                                 <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
@@ -108,8 +118,8 @@
                         <div class="card mt-2" style="border-radius: 12px; border: 1px solid #e9ecef;">
                             <div class="d-flex align-items-center justify-content-between p-3">
                                 <div>
-                                    <span class="fw-bold">60 reseñas</span><br>
-                                    <span style="font-size:0.9rem; color:#888;"> de 30 fundaciones</span>
+                                    <span class="fw-bold">@(hasProfile ? userProfile.TotalResenas : 0) reseñas</span><br>
+                                    <span style="font-size:0.9rem; color:#888;">Calificación: @(hasProfile ? userProfile.CalificacionPromedio.ToString("F1") : "0.0")/5</span>
                                 </div>
                                 <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                     <i class="bi bi-star-fill text-white"></i>
@@ -118,17 +128,35 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <strong>Reseña del voluntario</strong>
-                        <div class="card mt-2" style="border-radius: 12px; border: 1px solid #e9ecef;">
-                            <div class="p-3">
-                                <div class="fw-bold mb-1" style="color: #0d6efd;">Voluntariado UNIBE</div>
-                                <div style="font-size:0.95rem; color:#666;">¡El voluntario perfecto! Nos ayudó en todo lo que necesitábamos. Siempre dispuesto a colaborar.</div>
-                            </div>
+                    @if (hasProfile && userProfile.UltimasResenas.Any())
+                    {
+                        <div class="mb-3">
+                            <strong>Reseñas recientes</strong>
+                            @foreach (var resena in userProfile.UltimasResenas.Take(2))
+                            {
+                                <div class="card mt-2" style="border-radius: 12px; border: 1px solid #e9ecef;">
+                                    <div class="p-3">
+                                        <div class="fw-bold mb-1" style="color: #0d6efd;">@resena.OrganizacionNombre</div>
+                                        <div class="mb-1">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="bi bi-star@(i <= resena.Calificacion ? "-fill" : "") text-warning"></i>
+                                            }
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(resena.Comentario))
+                                        {
+                                            <div style="font-size:0.95rem; color:#666;">@resena.Comentario</div>
+                                        }
+                                    </div>
+                                </div>
+                            }
                         </div>
-                    </div>
-
-                                            <a href="#" class="link-danger" style="font-size:0.98rem;">Ver todas las reseñas</a>
+                        <a href="#" class="link-danger" style="font-size:0.98rem;">Ver todas las reseñas</a>
+                    }
+                    else
+                    {
+                        <div class="text-muted small">No hay reseñas aún</div>
+                    }
                 </div>
             </div>
 
@@ -145,36 +173,40 @@
                     <div class="mb-3">
                         <strong>Participaciones Recientes</strong>
                         <div class="mt-2">
-                            <div class="card mb-2" style="border-radius: 8px; border: 1px solid #e9ecef;">
-                                <div class="d-flex align-items-center p-2">
-                                    <i class="bi bi-heart me-2" style="color: #dc3545; font-size: 1.1rem;"></i>
-                                    <div class="flex-grow-1">
-                                        <div class="fw-bold">Fundación Nido para Ángeles</div>
-                                        <div style="font-size:0.85rem; color:#888;">Jornada navideña</div>
+                            @{
+                                var recentActivities = ViewBag.RecentActivities as IEnumerable<RecentActivityDto>;
+                            }
+                            @if (recentActivities != null && recentActivities.Any())
+                            {
+                                @foreach (var activity in recentActivities.Take(3))
+                                {
+                                    <div class="card mb-2" style="border-radius: 8px; border: 1px solid #e9ecef;">
+                                        <div class="d-flex align-items-center p-2">
+                                            @if (activity.ActivityType == "applied")
+                                            {
+                                                <i class="bi bi-plus-circle me-2" style="color: #0d6efd; font-size: 1.1rem;"></i>
+                                            }
+                                            else if (activity.ActivityType == "approved")
+                                            {
+                                                <i class="bi bi-check-circle me-2" style="color: #198754; font-size: 1.1rem;"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-heart me-2" style="color: #dc3545; font-size: 1.1rem;"></i>
+                                            }
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold">@activity.OrganizationName</div>
+                                                <div style="font-size:0.85rem; color:#888;">@activity.OpportunityTitle</div>
+                                            </div>
+                                            <span class="badge bg-light text-dark border">@activity.Date.ToString("MMM yyyy")</span>
+                                        </div>
                                     </div>
-                                    <span class="badge bg-light text-dark border">Dic 2024</span>
-                                </div>
-                            </div>
-                            <div class="card mb-2" style="border-radius: 8px; border: 1px solid #e9ecef;">
-                                <div class="d-flex align-items-center p-2">
-                                    <i class="bi bi-plus-circle me-2" style="color: #dc3545; font-size: 1.1rem;"></i>
-                                    <div class="flex-grow-1">
-                                        <div class="fw-bold">Cruz Roja Dominicana</div>
-                                        <div style="font-size:0.85rem; color:#888;">Brigada de salud</div>
-                                    </div>
-                                    <span class="badge bg-light text-dark border">Nov 2024</span>
-                                </div>
-                            </div>
-                            <div class="card mb-2" style="border-radius: 8px; border: 1px solid #e9ecef;">
-                                <div class="d-flex align-items-center p-2">
-                                    <i class="bi bi-house me-2" style="color: #dc3545; font-size: 1.1rem;"></i>
-                                    <div class="flex-grow-1">
-                                        <div class="fw-bold">Fundación MIR</div>
-                                        <div style="font-size:0.85rem; color:#888;">Brigada de salud</div>
-                                    </div>
-                                    <span class="badge bg-light text-dark border">Sep 2024</span>
-                                </div>
-                            </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-muted small">No hay actividades recientes aún</div>
+                            }
                         </div>
                         <a href="#" class="link-danger" style="font-size:0.98rem;">Ver historial completo</a>
                     </div>
@@ -182,54 +214,27 @@
                     <div class="mt-3">
                         <strong>Logros/Badges</strong>
                         <div class="d-flex flex-wrap gap-2 mt-2">
-                            <div class="badge bg-primary d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 12px; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-check-circle text-white mb-1"></i>
-                                <span class="text-white text-center">PRIMER VOLUNTARIADO</span>
-                            </div>
-                            <div class="badge bg-primary d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 50%; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-clock text-white mb-1"></i>
-                                <span class="text-white text-center">100 HORAS TIEMPO DEDICADO</span>
-                            </div>
-                            <div class="badge bg-info d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 12px; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-person text-white mb-1"></i>
-                                <span class="text-white text-center">MENTOR GUÍA ACTIVO</span>
-                            </div>
-                            <div class="badge bg-danger d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 12px; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-plus-circle text-white mb-1"></i>
-                                <span class="text-white text-center">ESPECIALISTA CUIDADO INFANTIL</span>
-                            </div>
-                            <div class="badge bg-warning d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 12px; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-person text-white mb-1"></i>
-                                <span class="text-white text-center">LÍDER COORDINADOR</span>
-                            </div>
-                            <div class="badge bg-primary d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 12px; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-star text-white mb-1"></i>
-                                <span class="text-white text-center">DESTACADO</span>
-                            </div>
-                            <div class="badge bg-info d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 12px; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-diagram-3 text-white mb-1"></i>
-                                <span class="text-white text-center">MULTICAUSA VERSÁTIL</span>
-                            </div>
-                            <div class="badge bg-danger d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 50%; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-eye text-white mb-1"></i>
-                                <span class="text-white text-center">IMPACTO 100+ BENEFICIADOS</span>
-                            </div>
-                            <div class="badge bg-primary d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 8px; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-three-dots text-white mb-1"></i>
-                                <span class="text-white text-center">CONSTANTE 3 MESES ACTIVO</span>
-                            </div>
-                            <div class="badge bg-danger d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 12px; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-people text-white mb-1"></i>
-                                <span class="text-white text-center">EMERGENCIA RESPUESTA RÁPIDA</span>
-                            </div>
-                            <div class="badge bg-info d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 8px; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-three-dots text-white mb-1"></i>
-                                <span class="text-white text-center">EDUCACIÓN ALFABETIZACIÓN</span>
-                            </div>
-                            <div class="badge bg-success d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 12px; font-size: 0.65rem; line-height: 1;">
-                                <i class="bi bi-tree text-white mb-1"></i>
-                                <span class="text-white text-center">ECO-AMIGO REFORESTACIÓN</span>
-                            </div>
+                            @if (hasProfile && userProfile.Badges.Any())
+                            {
+                                @foreach (var badge in userProfile.Badges)
+                                {
+                                    <div class="badge bg-@badge.Color d-flex flex-column align-items-center justify-content-center text-wrap" style="width: 80px; height: 80px; border-radius: 12px; font-size: 0.65rem; line-height: 1;" title="@badge.Descripcion">
+                                        @if (!string.IsNullOrEmpty(badge.IconoUrl))
+                                        {
+                                            <img src="@badge.IconoUrl" alt="@badge.Nombre" class="mb-1" style="width: 20px; height: 20px;" />
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star text-white mb-1"></i>
+                                        }
+                                        <span class="text-white text-center">@badge.Nombre.ToUpper()</span>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-muted small">Comienza a participar en eventos para ganar badges</div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -269,74 +274,55 @@
             <!-- List View (Default) -->
             <div class="calendar-list-view">
                 <div class="row">
-                    <!-- Evento 1 -->
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100 event-card">
-                            <div class="event-card-image" style="background-image: url('https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60');">
-                                <div class="event-card-date">JUL 1</div>
-                                <span class="event-status-badge bg-success text-white">Próximo</span>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">Voluntariado DREAM</h5>
-                                <p class="card-text text-muted mb-2">Dominican Dream Project</p>
-                                <p class="card-text small text-muted"><i class="bi bi-calendar-event me-1"></i> 1 de Julio, 2025</p>
-                                <p class="card-text small text-muted"><i class="bi bi-geo-alt me-1"></i> Santo Domingo</p>
-                                <div class="mt-auto">
-                                    <button class="btn btn-primary w-100 details-btn" data-event-id="1">
-                                        <i class="bi bi-eye me-1"></i>Ver Detalles
-                                    </button>
+                    @{
+                        var userEvents = ViewBag.UserEvents as IEnumerable<UserEventDto>;
+                    }
+                    @if (userEvents != null && userEvents.Any())
+                    {
+                        @foreach (var userEvent in userEvents)
+                        {
+                            var statusBadgeClass = userEvent.Status == ApplicationStatus.Aceptada ? "bg-success" : 
+                                                  userEvent.Status == ApplicationStatus.Pendiente ? "bg-warning" : "bg-secondary";
+                            var eventStatus = userEvent.Status == ApplicationStatus.Aceptada ? "Aceptado" : 
+                                            userEvent.Status == ApplicationStatus.Pendiente ? "Pendiente" : "Rechazado";
+                            var dateFormatted = userEvent.Date.ToString("MMM d", new System.Globalization.CultureInfo("es-ES")).ToUpper();
+                            
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100 event-card">
+                                    <div class="event-card-image" style="background-image: url('@(userEvent.ImageUrl ?? "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60")');">
+                                        <div class="event-card-date">@dateFormatted</div>
+                                        <span class="event-status-badge @statusBadgeClass text-white">@eventStatus</span>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">@userEvent.Title</h5>
+                                        <p class="card-text text-muted mb-2">@userEvent.OrganizationName</p>
+                                        <p class="card-text small text-muted"><i class="bi bi-calendar-event me-1"></i> @userEvent.Date.ToString("d 'de' MMMM, yyyy", new System.Globalization.CultureInfo("es-ES"))</p>
+                                        <p class="card-text small text-muted"><i class="bi bi-geo-alt me-1"></i> @userEvent.Location</p>
+                                        <div class="mt-auto">
+                                            <button class="btn btn-primary w-100 details-btn" data-event-id="@userEvent.Id">
+                                                <i class="bi bi-eye me-1"></i>Ver Detalles
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Evento 2 -->
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100 event-card">
-                            <div class="event-card-image" style="background-image: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60');">
-                                <div class="event-card-date">JUL 4</div>
-                                <span class="event-status-badge bg-success text-white">Próximo</span>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">Programa de Voluntariado Universitario</h5>
-                                <p class="card-text text-muted mb-2">Universidad Autónoma de Santo Domingo</p>
-                                <p class="card-text small text-muted"><i class="bi bi-calendar-event me-1"></i> 4 de Julio, 2025</p>
-                                <p class="card-text small text-muted"><i class="bi bi-geo-alt me-1"></i> Santo Domingo</p>
-                                <div class="mt-auto">
-                                    <button class="btn btn-primary w-100 details-btn" data-event-id="2">
-                                        <i class="bi bi-eye me-1"></i>Ver Detalles
-                                    </button>
-                                </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12 text-center">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                No tienes eventos programados actualmente. ¡Aplica a oportunidades de voluntariado para comenzar!
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Evento 3 -->
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100 event-card">
-                            <div class="event-card-image" style="background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60');">
-                                <div class="event-card-date">JUL 6</div>
-                                <span class="event-status-badge bg-success text-white">Próximo</span>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">Jornada de Construcción de Viviendas</h5>
-                                <p class="card-text text-muted mb-2">Techo República Dominicana</p>
-                                <p class="card-text small text-muted"><i class="bi bi-calendar-event me-1"></i> 6 de Julio, 2025</p>
-                                <p class="card-text small text-muted"><i class="bi bi-geo-alt me-1"></i> Santo Domingo</p>
-                                <div class="mt-auto">
-                                    <button class="btn btn-primary w-100 details-btn" data-event-id="3">
-                                        <i class="bi bi-eye me-1"></i>Ver Detalles
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
 
             <!-- Month View -->
             <div class="calendar-month-view d-none">
-                <div class="text-muted mb-3" style="font-size: 1.1rem;">Julio 2025</div>
+                <div class="text-muted mb-3" style="font-size: 1.1rem;">@DateTime.Now.ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-ES"))</div>
                 <div class="calendar-container">
                     <div class="calendar-header">
                         <div class="calendar-day-header">DOM</div>
@@ -348,174 +334,87 @@
                         <div class="calendar-day-header">SÁB</div>
                     </div>
 
-                    <div class="calendar-grid">
-                        <!-- Week 1 -->
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day">
-                            <div class="date-number">1</div>
-                            <div class="event-block event-green">
-                                <div class="event-title">Voluntariado DREAM</div>
-                            </div>
-                        </div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day">
-                            <div class="date-number">4</div>
-                            <div class="event-block event-blue">
-                                <div class="event-title">Voluntariado Universitario</div>
-                            </div>
-                        </div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day">
-                            <div class="date-number">6</div>
-                            <div class="event-block event-yellow">
-                                <div class="event-title">Construcción Viviendas</div>
-                            </div>
-                        </div>
-
-                        <!-- Week 2 -->
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day">
-                            <div class="date-number">8</div>
-                        </div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-
-                        <!-- Week 3 -->
-                        <div class="calendar-day">
-                            <div class="date-number">14</div>
-                        </div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day">
-                            <div class="date-number">18</div>
-                        </div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day">
-                            <div class="date-number">20</div>
-                        </div>
-
-                        <!-- Week 4 -->
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day">
-                            <div class="date-number">23</div>
-                        </div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day">
-                            <div class="date-number">26</div>
-                        </div>
-                        <div class="calendar-day empty"></div>
-
-                        <!-- Week 5 -->
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day">
-                            <div class="date-number">29</div>
-                        </div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
+                    <div class="calendar-grid" id="calendar-grid">
+                        <!-- Calendar will be populated by JavaScript for better dynamic rendering -->
                     </div>
                 </div>
             </div>
 
             <!-- Week View -->
             <div class="calendar-week-view d-none">
-                <div class="text-muted mb-3" style="font-size: 1.1rem;">Semana del 1 al 7 de Julio 2025</div>
-                <div class="week-container">
-                    <!-- Monday -->
-                    <div class="week-day">
-                        <div class="week-day-header">LUNES<br>1 JULIO 2025</div>
-                        <div class="week-events">
-                            <div class="week-event">
-                                <div class="week-event-time">9:00 AM</div>
-                                <div class="week-event-content d-flex align-items-center">
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex flex-wrap align-items-center">
-                                            <h5 class="mb-0 me-3">Voluntariado DREAM</h5>
-                                            <span class="badge bg-success text-white me-2">Próximo</span>
-                                            <span class="text-muted small me-3"><i class="bi bi-geo-alt me-1"></i>Santo Domingo</span>
+                <div class="text-muted mb-3" style="font-size: 1.1rem;" id="week-header">Esta semana</div>
+                <div class="week-container" id="week-container">
+                    @if (userEvents != null && userEvents.Any())
+                    {
+                        @foreach (var userEvent in userEvents.Where(e => e.Date >= DateTime.Now && e.Date <= DateTime.Now.AddDays(7)))
+                        {
+                            var statusBadgeClass = userEvent.Status == ApplicationStatus.Aceptada ? "bg-success" : 
+                                                  userEvent.Status == ApplicationStatus.Pendiente ? "bg-warning" : "bg-secondary";
+                            var eventStatus = userEvent.Status == ApplicationStatus.Aceptada ? "Aceptado" : 
+                                            userEvent.Status == ApplicationStatus.Pendiente ? "Pendiente" : "Rechazado";
+                            
+                            <div class="week-day">
+                                <div class="week-day-header">@userEvent.Date.ToString("dddd", new System.Globalization.CultureInfo("es-ES")).ToUpper()<br>@userEvent.Date.ToString("d MMM yyyy", new System.Globalization.CultureInfo("es-ES")).ToUpper()</div>
+                                <div class="week-events">
+                                    <div class="week-event">
+                                        <div class="week-event-time">9:00 AM</div>
+                                        <div class="week-event-content d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex flex-wrap align-items-center">
+                                                    <h5 class="mb-0 me-3">@userEvent.Title</h5>
+                                                    <span class="badge @statusBadgeClass text-white me-2">@eventStatus</span>
+                                                    <span class="text-muted small me-3"><i class="bi bi-geo-alt me-1"></i>@userEvent.Location</span>
+                                                </div>
+                                                <p class="mb-0 text-muted small">@userEvent.OrganizationName</p>
+                                            </div>
+                                            <button class="btn btn-primary btn-sm ms-3 details-btn" data-event-id="@userEvent.Id">
+                                                <i class="bi bi-eye me-1"></i>Detalles
+                                            </button>
                                         </div>
-                                        <p class="mb-0 text-muted small">Dominican Dream Project</p>
                                     </div>
-                                    <button class="btn btn-primary btn-sm ms-3 details-btn" data-event-id="1">
-                                        <i class="bi bi-eye me-1"></i>Detalles
-                                    </button>
                                 </div>
                             </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center p-4">
+                            <div class="alert alert-info">No hay eventos programados para esta semana.</div>
                         </div>
-                    </div>
-
-                    <!-- Thursday -->
-                    <div class="week-day">
-                        <div class="week-day-header">JUEVES<br>4 JULIO 2025</div>
-                        <div class="week-events">
-                            <div class="week-event">
-                                <div class="week-event-time">10:00 AM</div>
-                                <div class="week-event-content d-flex align-items-center">
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex flex-wrap align-items-center">
-                                            <h5 class="mb-0 me-3">Programa de Voluntariado Universitario</h5>
-                                            <span class="badge bg-success text-white me-2">Próximo</span>
-                                            <span class="text-muted small me-3"><i class="bi bi-geo-alt me-1"></i>Santo Domingo</span>
-                                        </div>
-                                        <p class="mb-0 text-muted small">Universidad Autónoma de Santo Domingo</p>
-                                    </div>
-                                    <button class="btn btn-primary btn-sm ms-3 details-btn" data-event-id="2">
-                                        <i class="bi bi-eye me-1"></i>Detalles
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Saturday -->
-                    <div class="week-day">
-                        <div class="week-day-header">SÁBADO<br>6 JULIO 2025</div>
-                        <div class="week-events">
-                            <div class="week-event">
-                                <div class="week-event-time">8:00 AM</div>
-                                <div class="week-event-content d-flex align-items-center">
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex flex-wrap align-items-center">
-                                            <h5 class="mb-0 me-3">Jornada de Construcción de Viviendas</h5>
-                                            <span class="badge bg-success text-white me-2">Próximo</span>
-                                            <span class="text-muted small me-3"><i class="bi bi-geo-alt me-1"></i>Santo Domingo</span>
-                                        </div>
-                                        <p class="mb-0 text-muted small">Techo República Dominicana</p>
-                                    </div>
-                                    <button class="btn btn-primary btn-sm ms-3 details-btn" data-event-id="3">
-                                        <i class="bi bi-eye me-1"></i>Detalles
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
 
             <!-- Day View -->
             <div class="calendar-day-view d-none">
-                <div class="text-muted mb-3" style="font-size: 1.1rem;">Lunes, 1 de Julio 2025</div>
-                <div class="day-events">
-                    <div class="day-event-card">
-                        <div class="day-event-time">9:00 AM - 5:00 PM</div>
-                        <div class="day-event-content">
-                            <h5>Voluntariado DREAM</h5>
-                            <p class="text-muted mb-2">Dominican Dream Project</p>
-                            <p class="small text-muted"><i class="bi bi-geo-alt me-1"></i> Santo Domingo</p>
-                            <button class="btn btn-primary btn-sm mt-2 details-btn" data-event-id="1">
-                                <i class="bi bi-eye me-1"></i>Ver Detalles
-                            </button>
+                <div class="text-muted mb-3" style="font-size: 1.1rem;" id="day-header">@DateTime.Now.ToString("dddd, d 'de' MMMM yyyy", new System.Globalization.CultureInfo("es-ES"))</div>
+                <div class="day-events" id="day-events">
+                    @{
+                        var todayEvents = userEvents?.Where(e => e.Date.Date == DateTime.Now.Date);
+                    }
+                    @if (todayEvents != null && todayEvents.Any())
+                    {
+                        @foreach (var userEvent in todayEvents)
+                        {
+                            <div class="day-event-card">
+                                <div class="day-event-time">9:00 AM - @(userEvent.EndDate.HasValue ? userEvent.EndDate.Value.ToString("h:mm tt") : "5:00 PM")</div>
+                                <div class="day-event-content">
+                                    <h5>@userEvent.Title</h5>
+                                    <p class="text-muted mb-2">@userEvent.OrganizationName</p>
+                                    <p class="small text-muted"><i class="bi bi-geo-alt me-1"></i> @userEvent.Location</p>
+                                    <button class="btn btn-primary btn-sm mt-2 details-btn" data-event-id="@userEvent.Id">
+                                        <i class="bi bi-eye me-1"></i>Ver Detalles
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center p-4">
+                            <div class="alert alert-info">No hay eventos programados para hoy.</div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
 
@@ -565,126 +464,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal de Subida de Imagen -->
-<div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold" id="uploadImageModalLabel">
-                    <i class="bi bi-camera-fill me-2 text-primary"></i>
-                    <span id="modalTitle">Cambiar Foto de Perfil</span>
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body px-4">
-                <!-- Alertas -->
-                <div id="uploadAlerts" class="mb-3"></div>
-                
-                <!-- Contenedor Principal -->
-                <div class="row g-4">
-                    <!-- Columna Izquierda - Imagen Actual -->
-                    <div class="col-md-4">
-                        <div class="current-image-card text-center p-4">
-                            <h6 class="text-muted mb-3 fw-semibold">
-                                <i class="bi bi-image me-2"></i>
-                                <span id="currentImageLabel">Imagen Actual</span>
-                            </h6>
-                            <div class="current-image-wrapper position-relative d-inline-block">
-                                <img src="https://randomuser.me/api/portraits/men/32.jpg" 
-                                     alt="Imagen actual" 
-                                     class="rounded-circle shadow-sm" 
-                                     width="120" height="120" 
-                                     id="modalCurrentImage"
-                                     style="object-fit: cover;">
-                                <div class="current-image-overlay">
-                                    <span class="badge bg-secondary">Actual</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Columna Central - Área de Subida -->
-                    <div class="col-md-4">
-                        <div class="upload-section">
-                            <h6 class="text-muted mb-3 fw-semibold text-center">
-                                <i class="bi bi-cloud-upload me-2"></i>
-                                Subir Nueva Imagen
-                            </h6>
-                            
-                            <!-- Área de Drag & Drop -->
-                            <div class="upload-zone" id="uploadZone">
-                                <div class="upload-content text-center">
-                                    <div class="upload-icon mb-3">
-                                        <i class="bi bi-cloud-arrow-up display-4 text-primary"></i>
-                                    </div>
-                                    <h6 class="text-muted mb-2">Arrastra y suelta aquí</h6>
-                                    <p class="text-muted small mb-3">o</p>
-                                    <button type="button" class="btn btn-primary btn-lg px-4" id="selectFileBtn">
-                                        <i class="bi bi-folder2-open me-2"></i>
-                                        Seleccionar Archivo
-                                    </button>
-                                    <input type="file" id="imageFileInput" accept=".jpg,.jpeg,.png" style="display: none;">
-                                    <div class="mt-3">
-                                        <small class="text-muted">
-                                            <i class="bi bi-info-circle me-1"></i>
-                                            JPG, JPEG, PNG • Máx. 2MB
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Spinner de Carga -->
-                            <div class="upload-spinner text-center" id="uploadSpinner" style="display: none;">
-                                <div class="spinner-border text-primary mb-2" role="status">
-                                    <span class="visually-hidden">Procesando...</span>
-                                </div>
-                                <p class="text-muted small">Procesando imagen...</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Columna Derecha - Preview -->
-                    <div class="col-md-4">
-                        <div class="preview-section">
-                            <h6 class="text-muted mb-3 fw-semibold text-center">
-                                <i class="bi bi-eye me-2"></i>
-                                <span id="previewLabel">Vista Previa</span>
-                            </h6>
-                            
-                            <div class="preview-container" id="previewContainer">
-                                <div class="preview-placeholder text-center p-4">
-                                    <i class="bi bi-image display-4 text-muted mb-3"></i>
-                                    <p class="text-muted small">Selecciona una imagen para ver la vista previa</p>
-                                </div>
-                                
-                                <div class="preview-image-wrapper position-relative" id="previewImageWrapper" style="display: none;">
-                                    <img src="" alt="Preview" class="rounded-circle shadow-sm" width="120" height="120" id="imagePreview" style="object-fit: cover;">
-                                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0" id="removeImageBtn" style="border-radius: 50%; width: 32px; height: 32px; padding: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-                                        <i class="bi bi-x"></i>
-                                    </button>
-                                    <div class="preview-overlay">
-                                        <span class="badge bg-success">Nueva</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal" id="cancelBtn">
-                    <i class="bi bi-x-circle me-2"></i>
-                    Cancelar
-                </button>
-                <button type="button" class="btn btn-primary px-4" id="saveImageBtn" disabled>
-                    <i class="bi bi-check-circle me-2"></i>
-                    Guardar Cambios
-                </button>
             </div>
         </div>
     </div>
@@ -958,165 +737,6 @@
                 width: 100%;
             }
     }
-
-    /* Estilos para el Modal de Subida de Imagen */
-    .profile-image-container {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .upload-photo-btn {
-        transition: all 0.3s ease;
-        background-color: #fff !important;
-        border-color: #0d6efd !important;
-        color: #0d6efd !important;
-        font-weight: 500;
-        padding: 8px 16px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .upload-photo-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
-        background-color: #0d6efd !important;
-        color: #fff !important;
-    }
-
-    /* Nuevos estilos para el modal moderno */
-    .current-image-card,
-    .upload-section,
-    .preview-section {
-        background: #f8f9fa;
-        border-radius: 16px;
-        border: 1px solid #e9ecef;
-        transition: all 0.3s ease;
-    }
-
-    .current-image-card:hover,
-    .upload-section:hover,
-    .preview-section:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    .current-image-wrapper {
-        position: relative;
-        display: inline-block;
-    }
-
-    .current-image-overlay,
-    .preview-overlay {
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .upload-zone {
-        border: 2px dashed #dee2e6;
-        border-radius: 16px;
-        padding: 40px 20px;
-        text-align: center;
-        transition: all 0.3s ease;
-        background: #ffffff;
-        cursor: pointer;
-        min-height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .upload-zone:hover {
-        border-color: #0d6efd;
-        background: #f8f9ff;
-        transform: translateY(-2px);
-    }
-
-    .upload-zone.dragover {
-        border-color: #0d6efd;
-        background: #e3f2fd;
-        transform: scale(1.02);
-        box-shadow: 0 8px 25px rgba(13, 110, 253, 0.15);
-    }
-
-    .upload-icon {
-        transition: all 0.3s ease;
-    }
-
-    .upload-zone:hover .upload-icon {
-        transform: scale(1.1);
-    }
-
-    .upload-content {
-        pointer-events: none;
-        width: 100%;
-    }
-
-    .upload-content .btn {
-        pointer-events: all;
-    }
-
-    .upload-spinner {
-        padding: 40px 20px;
-    }
-
-    .preview-container {
-        min-height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .preview-placeholder {
-        color: #6c757d;
-    }
-
-    .preview-image-wrapper {
-        position: relative;
-        display: inline-block;
-    }
-
-    #removeImageBtn {
-        z-index: 10;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
-    }
-
-    #removeImageBtn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-    }
-
-    /* Animaciones */
-    .fade-in {
-        animation: fadeIn 0.3s ease-in;
-    }
-
-    @@keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .scale-in {
-        animation: scaleIn 0.3s ease-out;
-    }
-
-    @@keyframes scaleIn {
-        from { transform: scale(0.8); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-
-    .slide-in {
-        animation: slideIn 0.4s ease-out;
-    }
-
-    @@keyframes slideIn {
-        from { opacity: 0; transform: translateX(20px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
 </style>
 
 <script>
@@ -1164,37 +784,29 @@
         const detailsButtons = document.querySelectorAll('.details-btn');
         const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
 
-        // Datos de los eventos con descripciones únicas
+        // Datos de los eventos dinámicos
         const eventsData = {
-            1: {
-                title: "Voluntariado DREAM",
-                organization: "Dominican Dream Project",
-                date: "1 de Julio, 2025",
-                time: "9:00 AM - 5:00 PM",
-                location: "Santo Domingo, República Dominicana",
-                image: "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                description: "Únete a nosotros para un día de voluntariado ayudando a comunidades necesitadas en Santo Domingo. Trabajaremos en proyectos de educación, construcción y apoyo comunitario.",
-                requirements: ["Ropa cómoda", "Bloqueador solar", "Buen estado físico"]
-            },
-            2: {
-                title: "Programa de Voluntariado Universitario",
-                organization: "Universidad Autónoma de Santo Domingo",
-                date: "4 de Julio, 2025",
-                time: "10:00 AM - 4:00 PM",
-                location: "Santo Domingo, República Dominicana",
-                image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                description: "Programa especial para estudiantes universitarios que desean contribuir con sus conocimientos en comunidades vulnerables. Se requiere participación activa en talleres educativos.",
-                requirements: ["Carnet universitario vigente", "Disposición para enseñar", "Puntualidad", "Ropa adecuada para actividades al aire libre"]
-            },
-            3: {
-                title: "Jornada de Construcción de Viviendas",
-                organization: "Techo República Dominicana",
-                date: "6 de Julio, 2025",
-                time: "8:00 AM - 6:00 PM",
-                location: "Santo Domingo, República Dominicana",
-                image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                description: "Participa en la construcción de viviendas básicas para familias necesitadas en zonas marginadas de la capital. No se requiere experiencia previa en construcción.",
-                requirements: ["Ropa de trabajo resistente", "Guantes de protección", "Botas de seguridad", "Protector solar", "Mucha energía y disposición para trabajar en equipo"]
+            @if (userEvents != null && userEvents.Any())
+            {
+                var eventIndex = 0;
+                @foreach (var userEvent in userEvents)
+                {
+                    var description = (userEvent.Description ?? "Participa en esta increíble oportunidad de voluntariado y haz la diferencia en tu comunidad.").Replace("\"", "'").Replace("\n", " ").Replace("\r", "");
+                    var requirements = string.IsNullOrEmpty(userEvent.Requirements) ? "Ganas de ayudar" : userEvent.Requirements.Replace("\"", "'").Replace("\n", " ").Replace("\r", "");
+                    <text>
+            @userEvent.Id: {
+                title: "@userEvent.Title",
+                organization: "@userEvent.OrganizationName",
+                date: "@userEvent.Date.ToString("d 'de' MMMM, yyyy", new System.Globalization.CultureInfo("es-ES"))",
+                time: "9:00 AM - @(userEvent.EndDate?.ToString("h:mm tt") ?? "5:00 PM")",
+                location: "@userEvent.Location",
+                image: "@(userEvent.ImageUrl ?? "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60")",
+                description: "@description",
+                requirements: ["@requirements"]
+            }@(eventIndex < userEvents.Count() - 1 ? "," : "")
+                    </text>
+                    eventIndex++;
+                }
             }
         };
 
@@ -1239,205 +851,5 @@
         nextBtn.addEventListener('click', function() {
             console.log('Next period');
         });
-
-        // Funcionalidad de Subida de Imagen Moderna
-        let selectedFile = null;
-        let userType = 'volunteer'; // Simular detección de tipo de usuario
-
-        // Elementos del modal
-        const uploadImageModal = document.getElementById('uploadImageModal');
-        const imageFileInput = document.getElementById('imageFileInput');
-        const selectFileBtn = document.getElementById('selectFileBtn');
-        const uploadZone = document.getElementById('uploadZone');
-        const imagePreview = document.getElementById('imagePreview');
-        const previewContainer = document.getElementById('previewContainer');
-        const previewPlaceholder = document.querySelector('.preview-placeholder');
-        const previewImageWrapper = document.getElementById('previewImageWrapper');
-        const removeImageBtn = document.getElementById('removeImageBtn');
-        const saveImageBtn = document.getElementById('saveImageBtn');
-        const cancelBtn = document.getElementById('cancelBtn');
-        const uploadSpinner = document.getElementById('uploadSpinner');
-        const uploadAlerts = document.getElementById('uploadAlerts');
-
-        // Elementos de texto dinámico
-        const modalTitle = document.getElementById('modalTitle');
-        const currentImageLabel = document.getElementById('currentImageLabel');
-        const previewLabel = document.getElementById('previewLabel');
-
-        // Configurar texto según tipo de usuario
-        function configureUserInterface() {
-            if (userType === 'ong') {
-                modalTitle.textContent = 'Cambiar Logo de la ONG';
-                currentImageLabel.textContent = 'Logo Actual';
-                previewLabel.textContent = 'Nuevo Logo';
-            } else {
-                modalTitle.textContent = 'Cambiar Foto de Perfil';
-                currentImageLabel.textContent = 'Imagen Actual';
-                previewLabel.textContent = 'Vista Previa';
-            }
-        }
-
-        // Función para mostrar alertas
-        function showAlert(message, type = 'danger') {
-            uploadAlerts.innerHTML = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-        }
-
-        // Función para limpiar alertas
-        function clearAlerts() {
-            uploadAlerts.innerHTML = '';
-        }
-
-        // Función para mostrar spinner
-        function showSpinner() {
-            uploadZone.style.display = 'none';
-            uploadSpinner.style.display = 'block';
-        }
-
-        // Función para ocultar spinner
-        function hideSpinner() {
-            uploadZone.style.display = 'flex';
-            uploadSpinner.style.display = 'none';
-        }
-
-        // Función para mostrar preview
-        function showPreview(imageSrc) {
-            imagePreview.src = imageSrc;
-            previewPlaceholder.style.display = 'none';
-            previewImageWrapper.style.display = 'block';
-            previewImageWrapper.classList.add('slide-in');
-            saveImageBtn.disabled = false;
-        }
-
-        // Función para ocultar preview
-        function hidePreview() {
-            previewPlaceholder.style.display = 'block';
-            previewImageWrapper.style.display = 'none';
-            previewImageWrapper.classList.remove('slide-in');
-            saveImageBtn.disabled = true;
-            selectedFile = null;
-            imageFileInput.value = '';
-        }
-
-        // Función para validar archivo
-        function validateFile(file) {
-            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-            const fileExtension = file.name.toLowerCase().split('.').pop();
-            const allowedExtensions = ['jpg', 'jpeg', 'png'];
-            const maxSize = 2 * 1024 * 1024; // 2MB
-
-            if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
-                showAlert('Solo se permiten archivos JPG, JPEG y PNG.');
-                return false;
-            }
-
-            if (file.size > maxSize) {
-                showAlert('El archivo no puede ser mayor a 2MB.');
-                return false;
-            }
-
-            return true;
-        }
-
-        // Función para procesar imagen
-        function processImage(file) {
-            if (!validateFile(file)) return;
-
-            selectedFile = file;
-            showSpinner();
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                setTimeout(() => {
-                    showPreview(e.target.result);
-                    hideSpinner();
-                    showAlert('Imagen procesada correctamente. Revisa la vista previa.', 'success');
-                }, 1000);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // Event Listeners
-        selectFileBtn.addEventListener('click', () => imageFileInput.click());
-
-        imageFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) processImage(file);
-        });
-
-        uploadZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadZone.classList.add('dragover');
-        });
-
-        uploadZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            uploadZone.classList.remove('dragover');
-        });
-
-        uploadZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadZone.classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) processImage(files[0]);
-        });
-
-        removeImageBtn.addEventListener('click', () => {
-            hidePreview();
-            clearAlerts();
-        });
-
-        saveImageBtn.addEventListener('click', () => {
-            if (!selectedFile) {
-                showAlert('No hay imagen seleccionada para guardar.');
-                return;
-            }
-
-            showSpinner();
-            saveImageBtn.disabled = true;
-
-            setTimeout(() => {
-                const currentProfileImage = document.getElementById('currentProfileImage');
-                const modalCurrentImage = document.getElementById('modalCurrentImage');
-                
-                if (currentProfileImage) currentProfileImage.src = imagePreview.src;
-                if (modalCurrentImage) modalCurrentImage.src = imagePreview.src;
-                
-                showAlert('Imagen guardada exitosamente.', 'success');
-                hideSpinner();
-                
-                setTimeout(() => {
-                    const modal = bootstrap.Modal.getInstance(uploadImageModal);
-                    if (modal) modal.hide();
-                }, 1500);
-            }, 2000);
-        });
-
-        cancelBtn.addEventListener('click', () => {
-            hidePreview();
-            clearAlerts();
-        });
-
-        // Resetear modal cuando se cierra
-        if (uploadImageModal) {
-            uploadImageModal.addEventListener('hidden.bs.modal', () => {
-                hidePreview();
-                clearAlerts();
-                hideSpinner();
-            });
-        }
-
-        // Configurar interfaz al cargar
-        configureUserInterface();
-
-
-
-
     });
 </script>

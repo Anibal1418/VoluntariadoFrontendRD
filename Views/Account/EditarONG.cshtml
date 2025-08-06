@@ -12,7 +12,7 @@
                     <p class="mb-0 opacity-75">Actualiza la información de tu organización</p>
                 </div>
                 <div class="card-body p-4 p-md-4">
-                    <form asp-action="EditarONG" method="post" autocomplete="off" enctype="multipart/form-data">
+                    <form asp-action="EditarONG" method="post" autocomplete="off" enctype="multipart/form-data" class="ajax-form">
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="LogoActual" />
                         

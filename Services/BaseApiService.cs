@@ -50,9 +50,28 @@ namespace VoluntariosConectadosRD.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 
                 var response = await _httpClient.PostAsync(endpoint, content);
-                response.EnsureSuccessStatusCode();
-                
                 var responseContent = await response.Content.ReadAsStringAsync();
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("POST {Endpoint} returned {StatusCode}: {Response}", endpoint, response.StatusCode, responseContent);
+                    
+                    // Try to parse error response as ApiResponseDto
+                    try
+                    {
+                        var errorResponse = JsonSerializer.Deserialize<T>(responseContent, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+                        return errorResponse;
+                    }
+                    catch
+                    {
+                        // If we can't parse as expected type, return default
+                        return default;
+                    }
+                }
+                
                 return JsonSerializer.Deserialize<T>(responseContent, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
