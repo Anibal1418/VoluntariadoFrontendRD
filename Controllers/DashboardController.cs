@@ -10,17 +10,20 @@ namespace VoluntariosConectadosRD.Controllers
         private readonly IAccountApiService _accountApiService;
         private readonly IVolunteerApiService _volunteerApiService;
         private readonly IDashboardApiService _dashboardApiService;
+        private readonly IAdminApiService _adminApiService;
         private readonly ILogger<DashboardController> _logger;
 
         public DashboardController(
             IAccountApiService accountApiService, 
             IVolunteerApiService volunteerApiService, 
             IDashboardApiService dashboardApiService,
+            IAdminApiService adminApiService,
             ILogger<DashboardController> logger)
         {
             _accountApiService = accountApiService;
             _volunteerApiService = volunteerApiService;
             _dashboardApiService = dashboardApiService;
+            _adminApiService = adminApiService;
             _logger = logger;
         }
 
@@ -347,8 +350,8 @@ namespace VoluntariosConectadosRD.Controllers
                     _logger.LogWarning("No se pudo obtener el perfil del voluntario {Id}", id);
                 }
 
-                // Obtener aplicaciones/actividades del voluntario
-                var applicationsResponse = await _volunteerApiService.GetMyApplicationsAsync();
+                // Obtener aplicaciones/actividades del voluntario específico
+                var applicationsResponse = await _volunteerApiService.GetVolunteerApplicationsAsync(id);
                 
                 if (applicationsResponse?.Success == true && applicationsResponse.Data != null)
                 {
@@ -373,16 +376,23 @@ namespace VoluntariosConectadosRD.Controllers
             
             try
             {
-                // Intentar obtener aplicaciones del voluntario desde la API
-                var response = await _volunteerApiService.GetMyApplicationsAsync();
-                
-                if (response?.Success == true && response.Data != null)
+                // Get volunteer profile for context
+                var profileResponse = await _accountApiService.GetUserProfileByIdAsync(id);
+                if (profileResponse?.Success == true && profileResponse.Data != null)
                 {
-                    ViewBag.VolunteerApplications = response.Data;
+                    ViewBag.VolunteerProfile = profileResponse.Data;
+                }
+
+                // Get applications/statistics for the specific volunteer
+                var applicationsResponse = await _volunteerApiService.GetVolunteerApplicationsAsync(id);
+                
+                if (applicationsResponse?.Success == true && applicationsResponse.Data != null)
+                {
+                    ViewBag.VolunteerApplications = applicationsResponse.Data;
                 }
                 else
                 {
-                    _logger.LogWarning("No se pudieron obtener aplicaciones del voluntario desde la API");
+                    _logger.LogWarning("No se pudieron obtener aplicaciones del voluntario {Id} para estadísticas", id);
                 }
             }
             catch (Exception ex)
@@ -391,6 +401,140 @@ namespace VoluntariosConectadosRD.Controllers
             }
 
             return View();
+        }
+
+        public async Task<IActionResult> VoluntariosAdmin(int page = 1, int pageSize = 10, string? search = null)
+        {
+            try
+            {
+                // Get user info from session to validate admin permissions
+                var userInfoJson = HttpContext.Session.GetString("UserInfo");
+                if (string.IsNullOrEmpty(userInfoJson))
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+
+                var userInfo = JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
+                if (userInfo == null || userInfo.Rol != UserRole.Administrador)
+                {
+                    TempData["MensajeError"] = "No tienes permisos para acceder a esta página.";
+                    return RedirectToAction("Index");
+                }
+
+                ViewBag.UserInfo = userInfo;
+                ViewBag.CurrentPage = page;
+                ViewBag.PageSize = pageSize;
+                ViewBag.SearchQuery = search;
+
+                // Get volunteers data from API
+                try
+                {
+                    var volunteersResponse = await _adminApiService.GetAllVolunteersAsync(page, pageSize, search);
+                    if (volunteersResponse?.Success == true && volunteersResponse.Data != null)
+                    {
+                        ViewBag.VolunteersData = volunteersResponse.Data;
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = volunteersResponse?.Message ?? "Error al obtener los datos de voluntarios";
+                        ViewBag.VolunteersData = new PaginatedResult<AdminVolunteerDto> { Items = new List<AdminVolunteerDto>(), TotalCount = 0, Page = page, PageSize = pageSize };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error al obtener voluntarios para administración");
+                    ViewBag.ErrorMessage = "Error de conexión al obtener los datos";
+                    ViewBag.VolunteersData = new PaginatedResult<AdminVolunteerDto> { Items = new List<AdminVolunteerDto>(), TotalCount = 0, Page = page, PageSize = pageSize };
+                }
+
+                // Get admin stats
+                try
+                {
+                    var statsResponse = await _adminApiService.GetAdminStatsAsync();
+                    if (statsResponse?.Success == true && statsResponse.Data != null)
+                    {
+                        ViewBag.AdminStats = statsResponse.Data;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error al obtener estadísticas administrativas");
+                }
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error general en VoluntariosAdmin");
+                return RedirectToAction("Index");
+            }
+        }
+
+        public async Task<IActionResult> ONGAdmin(int page = 1, int pageSize = 10, string? search = null)
+        {
+            try
+            {
+                // Get user info from session to validate admin permissions
+                var userInfoJson = HttpContext.Session.GetString("UserInfo");
+                if (string.IsNullOrEmpty(userInfoJson))
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+
+                var userInfo = JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
+                if (userInfo == null || userInfo.Rol != UserRole.Administrador)
+                {
+                    TempData["MensajeError"] = "No tienes permisos para acceder a esta página.";
+                    return RedirectToAction("Index");
+                }
+
+                ViewBag.UserInfo = userInfo;
+                ViewBag.CurrentPage = page;
+                ViewBag.PageSize = pageSize;
+                ViewBag.SearchQuery = search;
+
+                // Get organizations data from API
+                try
+                {
+                    var organizationsResponse = await _adminApiService.GetAllOrganizationsAsync(page, pageSize, search);
+                    if (organizationsResponse?.Success == true && organizationsResponse.Data != null)
+                    {
+                        ViewBag.OrganizationsData = organizationsResponse.Data;
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = organizationsResponse?.Message ?? "Error al obtener los datos de organizaciones";
+                        ViewBag.OrganizationsData = new PaginatedResult<AdminOrganizationDto> { Items = new List<AdminOrganizationDto>(), TotalCount = 0, Page = page, PageSize = pageSize };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error al obtener organizaciones para administración");
+                    ViewBag.ErrorMessage = "Error de conexión al obtener los datos";
+                    ViewBag.OrganizationsData = new PaginatedResult<AdminOrganizationDto> { Items = new List<AdminOrganizationDto>(), TotalCount = 0, Page = page, PageSize = pageSize };
+                }
+
+                // Get admin stats
+                try
+                {
+                    var statsResponse = await _adminApiService.GetAdminStatsAsync();
+                    if (statsResponse?.Success == true && statsResponse.Data != null)
+                    {
+                        ViewBag.AdminStats = statsResponse.Data;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error al obtener estadísticas administrativas");
+                }
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error general en ONGAdmin");
+                return RedirectToAction("Index");
+            }
         }
     }
 }

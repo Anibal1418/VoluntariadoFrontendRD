@@ -11,6 +11,7 @@ namespace VoluntariosConectadosRD.Services
         Task<ApiResponseDto<object>?> UpdateOpportunityAsync(int opportunityId, UpdateOpportunityDto opportunity);
         Task<ApiResponseDto<object>?> GetApplicationsAsync();
         Task<ApiResponseDto<IEnumerable<VolunteerApplicationDetailDto>>?> GetMyApplicationsAsync();
+        Task<ApiResponseDto<IEnumerable<VolunteerApplicationDetailDto>>?> GetVolunteerApplicationsAsync(int volunteerId);
         Task<ApiResponseDto<AdminStatsDto>?> GetAdminStatsAsync();
         Task<ApiResponseDto<PaginatedResult<AdminVolunteerDto>>?> GetVolunteersForAdminAsync(int page = 1, int pageSize = 10, string? search = null);
     }

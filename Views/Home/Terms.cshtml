@@ -1,5 +1,9 @@
+@using VoluntariosConectadosRD.Models.Configuration
+@using Microsoft.Extensions.Options
+@inject IOptions<ContactConfiguration> ContactOptions
 @{
     ViewData["Title"] = "Términos de Uso - Voluntariado Conectado RD";
+    var contactInfo = ContactOptions.Value;
 }
 
 <!-- Hero Section -->
@@ -134,9 +138,9 @@
                             <h2>14. Contacto</h2>
                             <p>Si tienes preguntas sobre estos términos, contáctanos en:</p>
                             <ul>
-                                <li><strong>Email:</strong> legal@voluntariadoconectado.com.do</li>
-                                <li><strong>Teléfono:</strong> +1 (809) 555-0123</li>
-                                <li><strong>Dirección:</strong> Av. Winston Churchill #123, Santo Domingo, RD</li>
+                                <li><strong>Email:</strong> @contactInfo.Email</li>
+                                <li><strong>Teléfono:</strong> @contactInfo.Phone</li>
+                                <li><strong>Dirección:</strong> @contactInfo.Address</li>
                             </ul>
                         </div>
 

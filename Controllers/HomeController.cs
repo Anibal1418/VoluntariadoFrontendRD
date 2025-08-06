@@ -11,19 +11,21 @@ namespace VoluntariosConectadosRD.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IVolunteerApiService _volunteerApiService;
+        private readonly IDashboardApiService _dashboardApiService;
 
-        public HomeController(ILogger<HomeController> logger, IVolunteerApiService volunteerApiService)
+        public HomeController(ILogger<HomeController> logger, IVolunteerApiService volunteerApiService, IDashboardApiService dashboardApiService)
         {
             _logger = logger;
             _volunteerApiService = volunteerApiService;
+            _dashboardApiService = dashboardApiService;
         }
 
         public async Task<IActionResult> Index()
         {
             try
             {
-                // Obtener estadísticas generales de la plataforma
-                var statsResponse = await _volunteerApiService.GetAdminStatsAsync();
+                // Obtener estadísticas generales de la plataforma (endpoint público)
+                var statsResponse = await _dashboardApiService.GetDashboardStatsAsync();
                 if (statsResponse?.Success == true && statsResponse.Data != null)
                 {
                     ViewBag.PlatformStats = statsResponse.Data;

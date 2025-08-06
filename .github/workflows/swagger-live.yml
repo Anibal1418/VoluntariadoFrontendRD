@@ -9,7 +9,6 @@ permissions:
 jobs:
   preview:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
      
     env:
       FRONTEND_PORT: 5009
@@ -92,7 +91,7 @@ jobs:
           - Autenticación: JWT implementado
 
     - name: Keep tunnel open
-      run: sleep 1800
+      run: sleep 259200
 
     - if: always()
       run: kill $(cat frontend-mvc.pid) || true
