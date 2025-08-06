@@ -1,0 +1,231 @@
+@{
+    ViewData["Title"] = "Panel de Administración - Voluntariado Conectado RD";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Stats Row -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-people-fill text-primary" style="font-size: 2.5rem;"></i>
+                    <h3 class="fw-bold text-primary mb-1">1,247</h3>
+                    <small class="text-muted">Usuarios Activos</small>
+                    <div class="mt-2">
+                        <span class="badge bg-success">+12% este mes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-building text-success" style="font-size: 2.5rem;"></i>
+                    <h3 class="fw-bold text-success mb-1">89</h3>
+                    <small class="text-muted">ONGs Verificadas</small>
+                    <div class="mt-2">
+                        <span class="badge bg-warning">3 pendientes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-calendar-event text-warning" style="font-size: 2.5rem;"></i>
+                    <h3 class="fw-bold text-warning mb-1">156</h3>
+                    <small class="text-muted">Eventos Activos</small>
+                    <div class="mt-2">
+                        <span class="badge bg-info">8 hoy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-shield-check text-danger" style="font-size: 2.5rem;"></i>
+                    <h3 class="fw-bold text-danger mb-1">15</h3>
+                    <small class="text-muted">Reportes Pendientes</small>
+                    <div class="mt-2">
+                        <span class="badge bg-danger">Urgente</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Quick Actions -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                <div class="card-header bg-primary text-white" style="border-radius: 15px 15px 0 0;">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-lightning me-2"></i>Acciones Rápidas
+                    </h5>
+                </div>
+                <div class="card-body p-3">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="location.href='/Dashboard/Inicio'" style="color: #000;">
+                            <i class="bi bi-gear me-2"></i>Gestionar Sistema
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="revisarReportes()">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Revisar Reportes (15)
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" onclick="verificarONGs()">
+                            <i class="bi bi-building me-2"></i>Verificar ONGs (3)
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" onclick="generarReporte()">
+                            <i class="bi bi-graph-up me-2"></i>Generar Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                <div class="card-header bg-success text-white" style="border-radius: 15px 15px 0 0;">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-check-circle me-2"></i>Estado del Sistema
+                    </h5>
+                </div>
+                <div class="card-body p-3">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-semibold">Servidor Web</span>
+                            <span class="badge bg-success">Online</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-semibold">Base de Datos</span>
+                            <span class="badge bg-success">Conectado</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-semibold">API Externa</span>
+                            <span class="badge bg-warning">Lento</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Backup</span>
+                            <span class="badge bg-success">Actualizado</span>
+                        </div>
+                    </div>
+                    <small class="text-muted">Última verificación: hace 5 min</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                <div class="card-header bg-info text-white" style="border-radius: 15px 15px 0 0;">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-clock me-2"></i>Actividad Reciente
+                    </h5>
+                </div>
+                <div class="card-body p-3">
+                    <div class="activity-item mb-2">
+                        <small class="text-muted">Hace 2 min</small>
+                        <div class="fw-semibold">Nueva ONG registrada</div>
+                    </div>
+                    <div class="activity-item mb-2">
+                        <small class="text-muted">Hace 15 min</small>
+                        <div class="fw-semibold">Reporte de spam enviado</div>
+                    </div>
+                    <div class="activity-item mb-2">
+                        <small class="text-muted">Hace 1 hora</small>
+                        <div class="fw-semibold">Backup automático completado</div>
+                    </div>
+                    <div class="activity-item">
+                        <small class="text-muted">Hace 2 horas</small>
+                        <div class="fw-semibold">15 usuarios nuevos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Info -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                <div class="card-header bg-danger text-white" style="border-radius: 15px 15px 0 0;">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-person-gear me-2"></i>Información del Administrador
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label class="form-label fw-semibold text-muted">Nombre</label>
+                                    <p class="form-control-plaintext fw-bold">Administrador del Sistema</p>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label fw-semibold text-muted">Email</label>
+                                    <p class="form-control-plaintext fw-bold">admin@voluntariadoconectado.rd</p>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label fw-semibold text-muted">Último Acceso</label>
+                                    <p class="form-control-plaintext fw-bold">Hace 2 horas</p>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label fw-semibold text-muted">Sesión Activa</label>
+                                    <span class="badge bg-success fs-6">Activa</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="location.href='/Dashboard/Inicio'" style="color: #000;">
+                                    <i class="bi bi-gear me-2"></i>Panel de Control
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="location.href='/Dashboard/Reportes'">
+                                    <i class="bi bi-graph-up me-2"></i>Ver Reportes
+                                </button>
+                                <button class="btn btn-outline-warning" onclick="cambiarContrasena()">
+                                    <i class="bi bi-key me-2"></i>Cambiar Contraseña
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .activity-item {
+        border-left: 3px solid #0d6efd;
+        padding-left: 10px;
+    }
+    
+    .card {
+        transition: transform 0.2s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+</style>
+
+<script>
+    function revisarReportes() {
+        alert('Función de revisión de reportes - En desarrollo');
+    }
+    
+    function verificarONGs() {
+        alert('Función de verificación de ONGs - En desarrollo');
+    }
+    
+    function generarReporte() {
+        alert('Función de generación de reportes - En desarrollo');
+    }
+    
+    function cambiarContrasena() {
+        alert('Función de cambio de contraseña - En desarrollo');
+    }
+</script> 

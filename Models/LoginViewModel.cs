@@ -11,6 +11,10 @@ namespace VoluntariosConectadosRD.Models
         [Required(ErrorMessage = "La contraseña es obligatoria")]
         public string? Password { get; set; }
 
+        [Required(ErrorMessage = "Debe seleccionar un rol")]
+        [Display(Name = "Tipo de Usuario")]
+        public string? UserRole { get; set; }
+
         public bool Remember { get; set; }
     }
 } 

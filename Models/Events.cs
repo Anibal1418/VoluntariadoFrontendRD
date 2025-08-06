@@ -9,7 +9,7 @@ namespace VoluntariosConectadosRD.Models
 
         [Required(ErrorMessage = "El nombre es obligatorio")]
         [Display(Name = "Nombre del Evento")]
-        public string Nombre { get; set; }
+        public required string Nombre { get; set; }
 
         [Required(ErrorMessage = "La fecha es obligatoria")]
         [DataType(DataType.Date)]
@@ -19,7 +19,7 @@ namespace VoluntariosConectadosRD.Models
 
         [Required(ErrorMessage = "La ubicación es obligatoria")]
         [Display(Name = "Ubicación")]
-        public string Ubicacion { get; set; }
+        public required string Ubicacion { get; set; }
 
         [Display(Name = "Descripción")]
         public string? Descripcion { get; set; }

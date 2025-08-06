@@ -1,17 +1,20 @@
 ﻿@model VoluntariosConectadosRD.Models.LoginViewModel
+
 @{
     ViewData["Title"] = "Iniciar sesión - Voluntariado Conectado RD";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid py-5" style="background: linear-gradient(135deg, #2522e7 0%, #5850c9 15%, #6a5cd9 30%, #8645c2 50%, #434294 60%, rgb(85, 84, 202) 75%, #5e54b6 90%, #4e38af 100%); min-height: calc(100vh - 200px); padding-top: 120px !important;">
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #2522e7 0%, #5850c9 15%, #6a5cd9 30%, #8645c2 50%, #434294 60%, rgb(85, 84, 202) 75%, #5e54b6 90%, #4e38af 100%); min-height: 100vh;">
     <div class="row justify-content-center align-items-center min-vh-100">
-        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-            <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5" style="width: 60%;">
+            <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden; width: 100%;">
                 <div class="row g-0">
-                    <div class="col-md-6">
-                        <div class="p-4 p-md-4">
-                            <div class="text-center mb-4">
-                                <h5 class="fw-bold text-uppercase text-muted" style="font-size: 0.9rem; letter-spacing: 0.1em;">Por un país unido a la causa</h5>
+                    <!-- Form Column - Always visible -->
+                    <div class="col-12 col-md-6">
+                        <div class="p-3 p-md-4">
+                            <div class="text-center mb-3 mb-md-4">
+                                <h5 class="fw-bold text-uppercase text-muted" style="font-size: 0.85rem; letter-spacing: 0.1em;">Por un país unido a la causa</h5>
                             </div>
                             <form asp-action="Login" method="post" autocomplete="off">
                                 <div class="mb-3">
@@ -24,7 +27,21 @@
                                     <input asp-for="Password" class="form-control form-control-lg border-2" type="password" placeholder="••••••••" style="border-radius: 12px; font-size: 0.9rem;" />
                                     <span asp-validation-for="Password" class="text-danger small"></span>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="mb-3">
+                                    <div class="alert alert-warning text-center mb-3" style="border-radius: 8px; font-size: 0.75rem; padding: 0.5rem;">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        <strong>SOLO PARA PROPOSITOS DE TESTING, REMOVER CUANDO SE PONGA EN PRODUCCION</strong>
+                                    </div>
+                                    <label asp-for="UserRole" class="form-label fw-semibold text-dark">Tipo de Usuario</label>
+                                    <select asp-for="UserRole" class="form-select form-select-lg border-2" style="border-radius: 12px; font-size: 0.9rem;">
+                                        <option value="">Selecciona tu rol</option>
+                                        <option value="Voluntario">Voluntario</option>
+                                        <option value="ONG">ONG</option>
+                                        <option value="Admin">Admin</option>
+                                    </select>
+                                    <span asp-validation-for="UserRole" class="text-danger small"></span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4">
                                     <div class="form-check">
                                         <input asp-for="Remember" class="form-check-input" style="width: 1.2rem; height: 1.2rem;" />
                                         <label asp-for="Remember" class="form-check-label text-muted">Recordarme</label>
@@ -45,9 +62,10 @@
                             </form>
                         </div>
                     </div>
+                    <!-- Image Column - Hidden on small screens -->
                     <div class="col-md-6 d-none d-md-block" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 25%, #dc3545 50%, #c82333 75%, #bd2130 100%);">
-                        <div class="d-flex align-items-center justify-content-center h-100 p-4">
-                            <img src="~/images/voluntariosesion.jpg" alt="Voluntarios" class="img-fluid rounded-3 shadow" style="max-height: 350px; object-fit: cover;" />
+                        <div class="d-flex align-items-center justify-content-center h-100 p-3 p-md-4">
+                            <img src="~/images/voluntariosesion.jpg" alt="Voluntarios" class="img-fluid rounded-3 shadow" style="max-height: 300px; object-fit: cover;" />
                         </div>
                     </div>
                 </div>
@@ -55,6 +73,63 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .container-fluid {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+        
+        .card {
+            margin: 0.5rem;
+        }
+        
+        .form-control-lg, .form-select-lg {
+            font-size: 1rem !important;
+            padding: 0.75rem 1rem !important;
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 1rem !important;
+            font-size: 1rem !important;
+        }
+        
+        .alert {
+            font-size: 0.7rem !important;
+            padding: 0.5rem !important;
+        }
+    }
+    
+    @@media (max-width: 576px) {
+        .col-12 {
+            padding: 0 0.5rem;
+        }
+        
+        .card {
+            border-radius: 15px !important;
+        }
+        
+        .form-control-lg, .form-select-lg {
+            font-size: 0.9rem !important;
+        }
+        
+        .btn-lg {
+            font-size: 0.9rem !important;
+        }
+        
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start !important;
+        }
+        
+        .text-end {
+            text-align: left !important;
+        }
+    }
+</style>
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")

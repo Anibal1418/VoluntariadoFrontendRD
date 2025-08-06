@@ -19,6 +19,10 @@ builder.Services.AddSession(options =>
 
 // Agregar cliente HTTP
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IOportunidadApiService, OportunidadApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://tu-api.com/");
+});
 
 // Agregar servicios de API
 builder.Services.AddScoped<IBaseApiService, BaseApiService>();
