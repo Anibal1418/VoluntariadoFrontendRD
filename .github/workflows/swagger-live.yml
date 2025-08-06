@@ -1,0 +1,98 @@
+name: Live Frontend Preview (PR)
+
+on: pull_request_target
+
+permissions:
+  contents: read        
+  pull-requests: write 
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+     
+    env:
+      FRONTEND_PORT: 5009
+      ASPNETCORE_ENVIRONMENT: Development
+      
+      # Frontend Environment Variables
+      JWT__Key: VoluntariadoConectadoRD-Super-Secret-Key-256-bits-long-for-security
+      JWT__Issuer: VoluntariadoConectadoRD
+      JWT__Audience: VoluntariadoConectadoRD-Users
+      JWT__ExpirationMinutes: 60
+      ApiSettings__BaseUrl: ${{ secrets.BACKEND_API_URL }}
+      ApiSettings__Timeout: 30
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-dotnet@v4
+      with: { dotnet-version: '8.0.x' }
+
+    - name: Build Frontend MVC
+      run: |
+        dotnet restore
+        dotnet publish -c Release -o frontend-out
+
+    - name: Launch Frontend MVC
+      run: |
+        touch frontend-mvc.log
+        dotnet ./frontend-out/VoluntariosConectadosRD.dll --urls http://0.0.0.0:${FRONTEND_PORT} >frontend-mvc.log 2>&1 &
+        echo $! >frontend-mvc.pid
+
+    - name: Wait for Frontend MVC startup
+      run: |
+        for i in {1..30}; do
+          if grep -q "Now listening on" frontend-mvc.log; then exit 0; fi
+          if ! kill -0 $(cat frontend-mvc.pid) 2>/dev/null; then
+            echo "::group::Frontend MVC crash log"; cat frontend-mvc.log; echo "::endgroup::"
+            echo "::error::Frontend MVC process exited"; exit 1
+          fi
+          sleep 2
+        done
+        echo "::group::Frontend MVC startup log"; cat frontend-mvc.log; echo "::endgroup::"
+        echo "::error::Frontend MVC failed to become healthy"; exit 1
+
+    - name: Wait until Frontend MVC responds
+      run: |
+        for i in {1..30}; do
+          curl -sf http://localhost:${FRONTEND_PORT}/ && exit 0
+          sleep 2
+        done
+        echo "::error::Frontend MVC failed to start"; exit 1
+
+    - name: Print logs on failure
+      if: failure()
+      run: cat frontend-mvc.log
+
+    - uses: AnimMouse/setup-cloudflared@v2
+
+    - name: Start Frontend tunnel & capture URL
+      id: frontend_tunnel
+      run: |
+        cloudflared tunnel --url http://localhost:${FRONTEND_PORT} --no-autoupdate 2>&1 | tee frontend-tunnel.log &
+        for i in {1..30}; do
+          FRONTEND_URL=$(grep -o 'https://[-a-z0-9]*\.trycloudflare\.com' frontend-tunnel.log | head -n1 || true)
+          [ -n "$FRONTEND_URL" ] && { echo "url=$FRONTEND_URL" >> $GITHUB_OUTPUT; break; }
+          sleep 2
+        done
+        [ -n "$FRONTEND_URL" ] || (echo "::error::Frontend tunnel URL not captured"; exit 1)
+
+    - uses: peter-evans/create-or-update-comment@v4
+      with:
+        issue-number: ${{ github.event.number }}
+        body: |
+          🚀 **FRONTEND EN VIVO DE ESTE PR**
+          
+          **🎯 Aplicación Web:**
+          ${{ steps.frontend_tunnel.outputs.url }}
+          
+          **📋 Testing Info:**
+          - Frontend: Aplicación MVC completa con autenticación
+          - Backend: Conectado al servidor de producción
+          - Autenticación: JWT implementado
+
+    - name: Keep tunnel open
+      run: sleep 1800
+
+    - if: always()
+      run: kill $(cat frontend-mvc.pid) || true
