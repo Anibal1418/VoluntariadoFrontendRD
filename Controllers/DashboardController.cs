@@ -62,6 +62,11 @@ namespace VoluntariosConectadosRD.Controllers
             return View();
         }
 
+        public IActionResult TestNotifications()
+        {
+            return View();
+        }
+
         public IActionResult VolunteerDetails(string name)
         {
             ViewData["VolunteerName"] = name;

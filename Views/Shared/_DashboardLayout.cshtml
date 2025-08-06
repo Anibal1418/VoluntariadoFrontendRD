@@ -138,8 +138,12 @@
 
             </div>
             <div class="d-flex align-items-center gap-3 flex-shrink-0">
-                <button class="btn btn-link p-0 position-relative" title="Notificaciones">
+                <button class="btn btn-link p-0 position-relative" id="notificationBtn" title="Notificaciones">
                     <i class="bi bi-bell" style="font-size: 1.6rem; color: #0d6efd;"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge" id="notificationCount" style="display: none;">
+                        0
+                    </span>
+                    <span class="notification-dot" id="notificationDot"></span>
                 </button>
                 <div class="dropdown">
                     <button class="btn btn-link p-0 dropdown-toggle-no-arrow"
@@ -227,9 +231,53 @@
         </div>
     </footer>
 
+    <!-- Modal de Notificaciones -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">
+                        <i class="bi bi-bell me-2"></i>Notificaciones
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="btn-group" role="group" aria-label="Filtros de notificaciones">
+                            <input type="radio" class="btn-check" name="notificationFilter" id="filterAll" value="all" checked>
+                            <label class="btn btn-outline-primary btn-sm" for="filterAll">Todas</label>
+                            
+                            <input type="radio" class="btn-check" name="notificationFilter" id="filterUnread" value="unread">
+                            <label class="btn btn-outline-primary btn-sm" for="filterUnread">No leídas</label>
+                            
+                            <input type="radio" class="btn-check" name="notificationFilter" id="filterRead" value="read">
+                            <label class="btn btn-outline-primary btn-sm" for="filterRead">Leídas</label>
+                        </div>
+                        <button type="button" class="btn btn-success btn-sm" id="markAllReadBtn">
+                            <i class="bi bi-check-all me-1"></i>Marcar todas como leídas
+                        </button>
+                    </div>
+                    
+                    <div id="notificationsList" class="notifications-container">
+                        <!-- Las notificaciones se cargarán dinámicamente aquí -->
+                    </div>
+                    
+                    <div id="noNotifications" class="text-center py-4" style="display: none;">
+                        <i class="bi bi-bell-slash" style="font-size: 3rem; color: #6c757d;"></i>
+                        <p class="text-muted mt-2">No hay notificaciones para mostrar</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/notifications.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
