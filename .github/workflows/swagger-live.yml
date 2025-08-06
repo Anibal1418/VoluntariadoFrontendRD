@@ -19,7 +19,7 @@ jobs:
       JWT__Issuer: VoluntariadoConectadoRD
       JWT__Audience: VoluntariadoConectadoRD-Users
       JWT__ExpirationMinutes: 60
-      ApiSettings__BaseUrl: https://created-compile-saves-introducing.trycloudflare.com/api/
+      ApiSettings__BaseUrl: https://leaving-brussels-boulder-superintendent.trycloudflare.com/
       ApiSettings__Timeout: 30
 
     steps:
