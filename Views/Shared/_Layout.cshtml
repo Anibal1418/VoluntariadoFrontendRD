@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using VoluntariosConectadosRD.Models.Configuration
+@using Microsoft.Extensions.Options
+@inject IOptions<ContactConfiguration> ContactOptions
+@{
+    var contactInfo = ContactOptions.Value;
+}
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
@@ -81,11 +87,17 @@
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h6 class="text-white mb-3">Contacto</h6>
                     <p class="text-light mb-2">
-                        <i class="fas fa-envelope me-2"></i>info@voluntariadoconectado.rd
+                        <i class="fas fa-envelope me-2"></i>@contactInfo.Email
                     </p>
                     <p class="text-light mb-2">
-                        <i class="fas fa-phone me-2"></i>+1 (809) 555-0123
+                        <i class="fas fa-phone me-2"></i>@contactInfo.Phone
                     </p>
+                    @if (!string.IsNullOrEmpty(contactInfo.Address))
+                    {
+                        <p class="text-light mb-2">
+                            <i class="fas fa-map-marker-alt me-2"></i>@contactInfo.Address
+                        </p>
+                    }
                 </div>
             </div>
             <hr class="border-light">

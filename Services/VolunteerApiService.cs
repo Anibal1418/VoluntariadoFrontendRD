@@ -49,6 +49,11 @@ namespace VoluntariosConectadosRD.Services
             return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<VolunteerApplicationDetailDto>>>("Volunteer/applications/me");
         }
 
+        public async Task<ApiResponseDto<IEnumerable<VolunteerApplicationDetailDto>>?> GetVolunteerApplicationsAsync(int volunteerId)
+        {
+            return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<VolunteerApplicationDetailDto>>>($"Volunteer/applications/{volunteerId}");
+        }
+
         public async Task<ApiResponseDto<AdminStatsDto>?> GetAdminStatsAsync()
         {
             return await _baseApiService.GetAsync<ApiResponseDto<AdminStatsDto>>("Volunteer/admin/stats");

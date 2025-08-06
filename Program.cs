@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using VoluntariosConectadosRD.Services;
 using VoluntariosConectadosRD.Middleware;
+using VoluntariosConectadosRD.Models.Configuration;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,7 @@ builder.Services.AddControllersWithViews();
 // Agregar soporte de sesión
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.MaxValue;
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -24,11 +25,15 @@ builder.Services.AddHttpClient<IOportunidadApiService, OportunidadApiService>(cl
     client.BaseAddress = new Uri("https://tu-api.com/");
 });
 
+// Configuraciones
+builder.Services.Configure<ContactConfiguration>(builder.Configuration.GetSection(ContactConfiguration.SectionName));
+
 // Agregar servicios de API
 builder.Services.AddScoped<IBaseApiService, BaseApiService>();
 builder.Services.AddScoped<IAccountApiService, AccountApiService>();
 builder.Services.AddScoped<IVolunteerApiService, VolunteerApiService>();
 builder.Services.AddScoped<IDashboardApiService, DashboardApiService>();
+builder.Services.AddScoped<IAdminApiService, AdminApiService>();
 
 // Configuración JWT para autenticación
 var jwtSettings = builder.Configuration.GetSection("JWT");

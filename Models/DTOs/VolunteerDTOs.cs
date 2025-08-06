@@ -114,4 +114,88 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public string IconColor { get; set; } = string.Empty;
     }
 
+    // Platform Statistics DTO
+    public class PlatformStatsDto
+    {
+        public int VoluntariosActivos { get; set; }
+        public int OrganizacionesActivas { get; set; }
+        public int ProyectosActivos { get; set; }
+        public int HorasTotalesDonadas { get; set; }
+        public int PersonasBeneficiadas { get; set; }
+        public decimal FondosRecaudados { get; set; }
+        public DateTime FechaActualizacion { get; set; }
+    }
+
+    // Admin DTOs for User Management
+    public class AdminEditUserDto
+    {
+        [Required]
+        public string Nombre { get; set; } = string.Empty;
+        
+        [Required]
+        public string Apellido { get; set; } = string.Empty;
+        
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        
+        public string? Telefono { get; set; }
+        
+        public DateTime? FechaNacimiento { get; set; }
+        
+        public string? Biografia { get; set; }
+        
+        public string? Disponibilidad { get; set; }
+        
+        public UserStatus Status { get; set; }
+    }
+
+    // Admin DTOs for Organization Management
+    public class AdminOrganizationDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Telefono { get; set; }
+        public string? Direccion { get; set; }
+        public string? SitioWeb { get; set; }
+        public string? NumeroRegistro { get; set; }
+        public bool Verificada { get; set; }
+        public UserStatus Estado { get; set; }
+        public DateTime FechaRegistro { get; set; }
+        public DateTime? FechaVerificacion { get; set; }
+        public string? LogoUrl { get; set; }
+        public string? TipoOrganizacion { get; set; }
+        public int TotalOportunidades { get; set; }
+        public int OportunidadesActivas { get; set; }
+        public int TotalVoluntarios { get; set; }
+        public DateTime? UltimaActividad { get; set; }
+    }
+
+    public class AdminEditOrganizationDto
+    {
+        [Required]
+        public string Nombre { get; set; } = string.Empty;
+        
+        public string? Descripcion { get; set; }
+        
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        
+        public string? Telefono { get; set; }
+        
+        public string? Direccion { get; set; }
+        
+        public string? SitioWeb { get; set; }
+        
+        public string? NumeroRegistro { get; set; }
+        
+        public string? TipoOrganizacion { get; set; }
+        
+        public UserStatus Status { get; set; }
+        
+        public bool Verificada { get; set; }
+    }
+
 }

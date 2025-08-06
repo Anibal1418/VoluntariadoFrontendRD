@@ -1,5 +1,9 @@
+@using VoluntariosConectadosRD.Models.Configuration
+@using Microsoft.Extensions.Options
+@inject IOptions<ContactConfiguration> ContactOptions
 @{
     ViewData["Title"] = "Contacto - Voluntariado Conectado RD";
+    var contactInfo = ContactOptions.Value;
 }
 
 <!-- Hero Section -->
@@ -28,7 +32,7 @@
                                     <i class="fas fa-envelope"></i>
                                 </div>
                                 <h4>Email General</h4>
-                                <p>info@voluntariadoconectado.com.do</p>
+                                <p>@contactInfo.Email</p>
                                 <small>Para consultas generales sobre la plataforma</small>
                             </div>
                         </div>
@@ -39,7 +43,7 @@
                                     <i class="fas fa-phone"></i>
                                 </div>
                                 <h4>Teléfono</h4>
-                                <p>+1 (809) 555-0123</p>
+                                <p>@contactInfo.Phone</p>
                                 <small>Lunes a Viernes: 8:00 AM - 6:00 PM</small>
                             </div>
                         </div>
@@ -50,7 +54,7 @@
                                     <i class="fas fa-headset"></i>
                                 </div>
                                 <h4>Soporte Técnico</h4>
-                                <p>soporte@voluntariadoconectado.com.do</p>
+                                <p>@contactInfo.Email</p>
                                 <small>Para problemas técnicos y asistencia</small>
                             </div>
                         </div>
@@ -61,7 +65,7 @@
                                     <i class="fas fa-building"></i>
                                 </div>
                                 <h4>ONGs y Organizaciones</h4>
-                                <p>ong@voluntariadoconectado.com.do</p>
+                                <p>@contactInfo.Email</p>
                                 <small>Para organizaciones que quieren registrarse</small>
                             </div>
                         </div>
@@ -212,7 +216,7 @@
                         <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
                                 Si experimentas problemas técnicos, puedes contactarnos a través de
-                                soporte@voluntariadoconectado.com.do o llamarnos al +1 (809) 555-0123 durante nuestro
+                                @contactInfo.Email o llamarnos al @contactInfo.Phone durante nuestro
                                 horario de atención.
                             </div>
                         </div>

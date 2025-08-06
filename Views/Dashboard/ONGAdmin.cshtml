@@ -1,6 +1,11 @@
+@using VoluntariosConectadosRD.Models.DTOs
 @{
     ViewData["Title"] = "Gestión de ONGs - Administración";
     Layout = "_DashboardLayout";
+    var organizationsData = ViewBag.OrganizationsData as PaginatedResult<AdminOrganizationDto>;
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var pageSize = ViewBag.PageSize ?? 10;
+    var searchQuery = ViewBag.SearchQuery as string ?? "";
 }
 
 <div class="container-fluid py-4">
@@ -12,24 +17,29 @@
     <!-- Search and Actions Row -->
     <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
         <div class="card-body p-4">
-            <div class="row align-items-center">
+            <form method="get" asp-action="ONGAdmin" class="row align-items-center">
+                <input type="hidden" name="page" value="1" />
+                <input type="hidden" name="pageSize" value="@pageSize" />
                 <div class="col-md-6 mb-3 mb-md-0">
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0">
                             <i class="bi bi-search text-muted"></i>
                         </span>
-                        <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Buscar ONGs por nombre, RNC o ubicación..." style="border-radius: 0 8px 8px 0;">
+                        <input type="text" class="form-control border-start-0" name="search" value="@searchQuery" placeholder="Buscar ONGs por nombre, RNC o ubicación..." style="border-radius: 0 8px 8px 0;">
                     </div>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <button class="btn btn-success me-2" onclick="exportarONGs()">
+                    <button type="submit" class="btn btn-outline-primary me-2">
+                        <i class="bi bi-search me-2"></i>Buscar
+                    </button>
+                    <button type="button" class="btn btn-success me-2" onclick="exportarONGs()">
                         <i class="bi bi-download me-2"></i>Exportar
                     </button>
-                    <button class="btn btn-primary" onclick="agregarONG()">
+                    <button type="button" class="btn btn-primary" onclick="agregarONG()">
                         <i class="bi bi-building-add me-2"></i>Agregar ONG
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -54,156 +64,109 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><input type="checkbox" class="form-check-input ong-checkbox"></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="/images/companylogo.jpg" alt="Logo ONG" class="rounded me-3" width="50" height="50" style="object-fit: cover;">
-                                    <div>
-                                        <div class="fw-bold">Fundación Esperanza Viva</div>
-                                        <small class="text-muted">Desarrollo social</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>123456789</td>
-                            <td>
-                                <div>
-                                    <div>contacto@fundacion.org</div>
-                                    <small class="text-muted">(809) 123-4567</small>
-                                </div>
-                            </td>
-                            <td>Santo Domingo, RD</td>
-                            <td><span class="badge bg-success">Verificada</span></td>
-                            <td><span class="badge bg-primary">15 eventos</span></td>
-                            <td>10/01/2024</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="editarONG(1)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-warning" onclick="verificarONG(1)">
-                                        <i class="bi bi-shield-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarONG(1)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="form-check-input ong-checkbox"></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" width="50" height="50">
-                                        <i class="bi bi-building text-muted" style="font-size: 1.5rem;"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-bold">ONG Ambiental RD</div>
-                                        <small class="text-muted">Medio ambiente</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>987654321</td>
-                            <td>
-                                <div>
-                                    <div>info@ongambiental.rd</div>
-                                    <small class="text-muted">(809) 987-6543</small>
-                                </div>
-                            </td>
-                            <td>Santiago, RD</td>
-                            <td><span class="badge bg-warning">Pendiente</span></td>
-                            <td><span class="badge bg-secondary">3 eventos</span></td>
-                            <td>15/01/2024</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="editarONG(2)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-success" onclick="aprobarONG(2)">
-                                        <i class="bi bi-check-circle"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarONG(2)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="form-check-input ong-checkbox"></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" width="50" height="50">
-                                        <i class="bi bi-building text-muted" style="font-size: 1.5rem;"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-bold">Fundación Ayuda Directa</div>
-                                        <small class="text-muted">Asistencia social</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>456789123</td>
-                            <td>
-                                <div>
-                                    <div>ayuda@fundacion.org</div>
-                                    <small class="text-muted">(809) 456-7890</small>
-                                </div>
-                            </td>
-                            <td>La Romana, RD</td>
-                            <td><span class="badge bg-success">Verificada</span></td>
-                            <td><span class="badge bg-primary">8 eventos</span></td>
-                            <td>05/01/2024</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="editarONG(3)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-warning" onclick="verificarONG(3)">
-                                        <i class="bi bi-shield-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarONG(3)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="form-check-input ong-checkbox"></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" width="50" height="50">
-                                        <i class="bi bi-building text-muted" style="font-size: 1.5rem;"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-bold">Asociación Comunitaria</div>
-                                        <small class="text-muted">Desarrollo local</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>789123456</td>
-                            <td>
-                                <div>
-                                    <div>comunidad@asociacion.org</div>
-                                    <small class="text-muted">(809) 789-1234</small>
-                                </div>
-                            </td>
-                            <td>Puerto Plata, RD</td>
-                            <td><span class="badge bg-danger">Suspendida</span></td>
-                            <td><span class="badge bg-secondary">0 eventos</span></td>
-                            <td>20/12/2023</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="editarONG(4)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-success" onclick="reactivarONG(4)">
-                                        <i class="bi bi-arrow-clockwise"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarONG(4)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        @if (organizationsData?.Items?.Any() == true)
+                        {
+                            @foreach (var org in organizationsData.Items)
+                            {
+                                <tr>
+                                    <td><input type="checkbox" class="form-check-input ong-checkbox" data-org-id="@org.Id"></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            @if (!string.IsNullOrEmpty(org.LogoUrl))
+                                            {
+                                                <img src="@org.LogoUrl" alt="Logo ONG" class="rounded me-3" width="50" height="50" style="object-fit: cover;">
+                                            }
+                                            else
+                                            {
+                                                <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                    <i class="bi bi-building text-muted" style="font-size: 1.5rem;"></i>
+                                                </div>
+                                            }
+                                            <div>
+                                                <div class="fw-bold">@org.Nombre</div>
+                                                <small class="text-muted">@(!string.IsNullOrEmpty(org.TipoOrganizacion) ? org.TipoOrganizacion : "Sin categoría")</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@(!string.IsNullOrEmpty(org.NumeroRegistro) ? org.NumeroRegistro : "N/A")</td>
+                                    <td>
+                                        <div>
+                                            <div>@(!string.IsNullOrEmpty(org.Email) ? org.Email : "Sin email")</div>
+                                            <small class="text-muted">@(!string.IsNullOrEmpty(org.Telefono) ? org.Telefono : "Sin teléfono")</small>
+                                        </div>
+                                    </td>
+                                    <td>@(!string.IsNullOrEmpty(org.Direccion) ? org.Direccion : "No especificada")</td>
+                                    <td>
+                                        @{
+                                            var (statusClass, statusText) = org.Estado switch
+                                            {
+                                                UserStatus.Activo => ("bg-success", "Activa"),
+                                                UserStatus.Inactivo => ("bg-secondary", "Inactiva"),
+                                                UserStatus.Suspendido => ("bg-danger", "Suspendida"),
+                                                UserStatus.PendienteVerificacion => ("bg-warning", "Pendiente"),
+                                                _ => ("bg-secondary", "Desconocido")
+                                            };
+                                        }
+                                        <span class="badge @statusClass">@statusText</span>
+                                    </td>
+                                    <td><span class="badge bg-primary">@org.TotalOportunidades eventos</span></td>
+                                    <td>@org.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="editarONG(@org.Id)">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            @if (org.Estado == UserStatus.PendienteVerificacion) // Pendiente verificación
+                                            {
+                                                <button class="btn btn-sm btn-outline-success" onclick="aprobarONG(@org.Id)">
+                                                    <i class="bi bi-check-circle"></i>
+                                                </button>
+                                            }
+                                            else if (org.Estado == UserStatus.Activo) // Activa
+                                            {
+                                                <button class="btn btn-sm btn-outline-warning" onclick="verificarONG(@org.Id)">
+                                                    <i class="bi bi-shield-check"></i>
+                                                </button>
+                                            }
+                                            else if (org.Estado == UserStatus.Suspendido) // Suspendida
+                                            {
+                                                <button class="btn btn-sm btn-outline-success" onclick="reactivarONG(@org.Id)">
+                                                    <i class="bi bi-arrow-clockwise"></i>
+                                                </button>
+                                            }
+                                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarONG(@org.Id)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center py-4">
+                                    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage as string))
+                                    {
+                                        <div class="text-danger">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+                                        </div>
+                                    }
+                                    else if (!string.IsNullOrEmpty(searchQuery))
+                                    {
+                                        <div class="text-muted">
+                                            <i class="bi bi-search me-2"></i>No se encontraron organizaciones que coincidan con "@searchQuery"
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-muted">
+                                            <i class="bi bi-building me-2"></i>No hay organizaciones registradas en el sistema
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -211,36 +174,54 @@
     </div>
 
     <!-- Pagination -->
-    <div class="d-flex justify-content-between align-items-center mt-4">
-        <div class="text-muted">
-            Mostrando 1-4 de 89 ONGs registradas
+    @if (organizationsData != null && organizationsData.TotalCount > 0)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="text-muted">
+                @{
+                    var startItem = ((currentPage - 1) * pageSize) + 1;
+                    var endItem = Math.Min(currentPage * pageSize, organizationsData.TotalCount);
+                }
+                Mostrando @startItem-@endItem de @organizationsData.TotalCount organizaciones
+                @if (!string.IsNullOrEmpty(searchQuery))
+                {
+                    <text> (filtrado por "@searchQuery")</text>
+                }
+            </div>
+            
+            @if (organizationsData.TotalPages > 1)
+            {
+                <nav aria-label="Paginación de ONGs">
+                    <ul class="pagination mb-0">
+                        <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("ONGAdmin", new { page = currentPage - 1, pageSize = pageSize, search = searchQuery })">Anterior</a>
+                        </li>
+                        
+                        @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(organizationsData.TotalPages, currentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("ONGAdmin", new { page = i, pageSize = pageSize, search = searchQuery })">@i</a>
+                            </li>
+                        }
+                        
+                        @if (currentPage < organizationsData.TotalPages - 2)
+                        {
+                            <li class="page-item">
+                                <span class="page-link">...</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("ONGAdmin", new { page = organizationsData.TotalPages, pageSize = pageSize, search = searchQuery })">@organizationsData.TotalPages</a>
+                            </li>
+                        }
+                        
+                        <li class="page-item @(currentPage >= organizationsData.TotalPages ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("ONGAdmin", new { page = currentPage + 1, pageSize = pageSize, search = searchQuery })">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            }
         </div>
-        <nav aria-label="Paginación de ONGs">
-            <ul class="pagination mb-0">
-                <li class="page-item disabled">
-                    <a class="page-link" href="javascript:void(0)">Anterior</a>
-                </li>
-                <li class="page-item active">
-                    <a class="page-link" href="javascript:void(0)">1</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="javascript:void(0)">2</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="javascript:void(0)">3</a>
-                </li>
-                <li class="page-item">
-                    <span class="page-link">...</span>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="javascript:void(0)">23</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="javascript:void(0)">Siguiente</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+    }
 </div>
 
 <style>
@@ -287,50 +268,111 @@
         });
     });
 
-    // Search functionality
-    document.getElementById('searchInput').addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#ongsTable tbody tr');
-        
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchTerm) ? '' : 'none';
-        });
-    });
-
     function editarONG(id) {
-        alert('Función de edición de ONG ' + id + ' - En desarrollo');
+        // Redirect to organization profile/edit page
+        window.location.href = '/Dashboard/OrganizationDetails/' + id;
     }
 
-    function verificarONG(id) {
+    async function verificarONG(id) {
         if (confirm('¿Está seguro de que desea verificar esta ONG?')) {
-            alert('ONG ' + id + ' verificada - En desarrollo');
+            try {
+                const response = await fetch(`/api/Admin/organizations/${id}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: 1 }) // 1 = Activa (verificada)
+                });
+
+                if (response.ok) {
+                    alert('ONG verificada exitosamente');
+                    location.reload(); // Reload page to update status
+                } else {
+                    alert('Error al verificar ONG');
+                }
+            } catch (error) {
+                alert('Error de conexión al verificar ONG');
+            }
         }
     }
 
-    function aprobarONG(id) {
+    async function aprobarONG(id) {
         if (confirm('¿Está seguro de que desea aprobar esta ONG?')) {
-            alert('ONG ' + id + ' aprobada - En desarrollo');
+            try {
+                const response = await fetch(`/api/Admin/organizations/${id}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: 1 }) // 1 = Activa (aprobada)
+                });
+
+                if (response.ok) {
+                    alert('ONG aprobada exitosamente');
+                    location.reload(); // Reload page to update status
+                } else {
+                    alert('Error al aprobar ONG');
+                }
+            } catch (error) {
+                alert('Error de conexión al aprobar ONG');
+            }
         }
     }
 
-    function reactivarONG(id) {
+    async function reactivarONG(id) {
         if (confirm('¿Está seguro de que desea reactivar esta ONG?')) {
-            alert('ONG ' + id + ' reactivada - En desarrollo');
+            try {
+                const response = await fetch(`/api/Admin/organizations/${id}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: 1 }) // 1 = Activa
+                });
+
+                if (response.ok) {
+                    alert('ONG reactivada exitosamente');
+                    location.reload(); // Reload page to update status
+                } else {
+                    alert('Error al reactivar ONG');
+                }
+            } catch (error) {
+                alert('Error de conexión al reactivar ONG');
+            }
         }
     }
 
-    function eliminarONG(id) {
+    async function eliminarONG(id) {
         if (confirm('¿Está seguro de que desea eliminar esta ONG? Esta acción no se puede deshacer.')) {
-            alert('ONG ' + id + ' eliminada - En desarrollo');
+            try {
+                const response = await fetch(`/api/Admin/organizations/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('ONG eliminada exitosamente');
+                    location.reload(); // Reload page to remove organization
+                } else {
+                    alert('Error al eliminar ONG');
+                }
+            } catch (error) {
+                alert('Error de conexión al eliminar ONG');
+            }
         }
     }
 
     function agregarONG() {
-        alert('Función de agregar ONG - En desarrollo');
+        // Redirect to organization registration
+        window.location.href = '/Account/RegistroONG';
     }
 
     function exportarONGs() {
-        alert('Función de exportar ONGs - En desarrollo');
+        // Download organizations as CSV/Excel
+        const searchQuery = '@(ViewBag.SearchQuery ?? "")';
+        let url = '/Admin/ExportOrganizations';
+        if (searchQuery) {
+            url += '?search=' + encodeURIComponent(searchQuery);
+        }
+        window.open(url, '_blank');
     }
 </script> 

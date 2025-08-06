@@ -16,49 +16,19 @@ namespace VoluntariosConectadosRD.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly IVolunteerApiService _volunteerApiService;
         private readonly ILogger<EventsController> _logger;
-        private static List<Events> _eventos = new List<Events>();
-        private static int _nextId = 1;
 
         public EventsController(IWebHostEnvironment environment, IVolunteerApiService volunteerApiService, ILogger<EventsController> logger)
         {
             _environment = environment;
             _volunteerApiService = volunteerApiService;
             _logger = logger;
-
-            // Example data initialization
-            if (_eventos.Count == 0)
-            {
-                _eventos.Add(new Events
-                {
-                    Id = _nextId++,
-                    Nombre = "Reforestación en Jarabacoa",
-                    Fecha = DateTime.Today.AddDays(5),
-                    Ubicacion = "Jarabacoa",
-                    Descripcion = "Ayuda a reforestar zonas afectadas por la tala.",
-                    Organizador = "Fundación Verde",
-                    ImagenUrl = "/images/eventos/reforestacion.jpg",
-                    ImagenNombre = "reforestacion.jpg"
-                });
-
-                _eventos.Add(new Events
-                {
-                    Id = _nextId++,
-                    Nombre = "Donación de ropa",
-                    Fecha = DateTime.Today.AddDays(10),
-                    Ubicacion = "Santo Domingo",
-                    Descripcion = "Entrega de ropa a comunidades vulnerables.",
-                    Organizador = "Caritas Dominicana",
-                    ImagenUrl = "/images/eventos/donacion-ropa.jpg",
-                    ImagenNombre = "donacion-ropa.jpg"
-                });
-            }
         }
 
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(int page = 1, int pageSize = 6, string? search = null)
         {
             try
             {
-                // Intentar obtener oportunidades de la API
+                // Obtener oportunidades de la API
                 var response = await _volunteerApiService.GetVolunteerOpportunitiesAsync();
                 
                 if (response?.Success == true && response.Data != null)
@@ -74,24 +44,62 @@ namespace VoluntariosConectadosRD.Controllers
                         Organizador = opp.Organizacion?.Nombre ?? "Sin especificar",
                         ImagenUrl = "/images/eventos/default.jpg", // Imagen por defecto
                         ImagenNombre = "default.jpg"
-                    }).ToList();
+                    }).AsQueryable();
+
+                    // Apply search filter if provided
+                    if (!string.IsNullOrEmpty(search))
+                    {
+                        eventosFromApi = eventosFromApi.Where(e => 
+                            e.Nombre.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                            e.Ubicacion.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                            e.Organizador.Contains(search, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    // Order and apply pagination
+                    var totalCount = eventosFromApi.Count();
+                    var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
                     
-                    return View(eventosFromApi.OrderByDescending(e => e.Fecha).ToList());
+                    var pagedEvents = eventosFromApi
+                        .OrderByDescending(e => e.Fecha)
+                        .Skip((page - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+                    // Pass pagination info to view
+                    ViewBag.CurrentPage = page;
+                    ViewBag.PageSize = pageSize;
+                    ViewBag.TotalCount = totalCount;
+                    ViewBag.TotalPages = totalPages;
+                    ViewBag.SearchQuery = search;
+                    ViewBag.HasPreviousPage = page > 1;
+                    ViewBag.HasNextPage = page < totalPages;
+                    
+                    return View(pagedEvents);
                 }
                 else
                 {
-                    // Si la API falla, usar datos locales como fallback
-                    _logger.LogWarning("No se pudieron obtener oportunidades de la API, usando datos locales");
-                    var eventosOrdenados = _eventos.OrderByDescending(e => e.Fecha).ToList();
-                    return View(eventosOrdenados);
+                    // Si la API no devuelve datos, mostrar lista vacía
+                    _logger.LogWarning("No se pudieron obtener oportunidades de la API");
+                    ViewBag.ErrorMessage = "No se pudieron cargar las oportunidades de voluntariado en este momento.";
+                    ViewBag.CurrentPage = page;
+                    ViewBag.PageSize = pageSize;
+                    ViewBag.TotalCount = 0;
+                    ViewBag.TotalPages = 0;
+                    ViewBag.SearchQuery = search;
+                    return View(new List<Events>());
                 }
             }
             catch (Exception ex)
             {
-                // Si hay error, usar datos locales como fallback
+                // Si hay error, mostrar lista vacía con mensaje de error
                 _logger.LogError(ex, "Error al obtener oportunidades de voluntariado");
-                var eventosOrdenados = _eventos.OrderByDescending(e => e.Fecha).ToList();
-                return View(eventosOrdenados);
+                ViewBag.ErrorMessage = "Error de conexión. No se pudieron cargar las oportunidades de voluntariado.";
+                ViewBag.CurrentPage = page;
+                ViewBag.PageSize = pageSize;
+                ViewBag.TotalCount = 0;
+                ViewBag.TotalPages = 0;
+                ViewBag.SearchQuery = search;
+                return View(new List<Events>());
             }
         }
 
@@ -102,7 +110,7 @@ namespace VoluntariosConectadosRD.Controllers
 
             try
             {
-                // Intentar obtener detalles de la API
+                // Obtener detalles de la API
                 var response = await _volunteerApiService.GetOpportunityDetailsAsync(id.Value);
                 
                 if (response?.Success == true && response.Data != null)
@@ -124,23 +132,16 @@ namespace VoluntariosConectadosRD.Controllers
                 }
                 else
                 {
-                    // Si la API falla, buscar en datos locales
-                    var evento = _eventos.FirstOrDefault(e => e.Id == id);
-                    if (evento == null)
-                        return NotFound();
-                    
-                    return View(evento);
+                    // Si la API no encuentra la oportunidad
+                    return NotFound();
                 }
             }
             catch (Exception ex)
             {
-                // Si hay error, buscar en datos locales
+                // Si hay error de conexión
                 _logger.LogError(ex, "Error al obtener detalles de la oportunidad {Id}", id);
-                var evento = _eventos.FirstOrDefault(e => e.Id == id);
-                if (evento == null)
-                    return NotFound();
-                
-                return View(evento);
+                ViewBag.ErrorMessage = "Error de conexión. No se pudieron cargar los detalles de la oportunidad.";
+                return View("Error");
             }
         }
 
@@ -202,9 +203,12 @@ namespace VoluntariosConectadosRD.Controllers
                         });
                     }
 
-                    // Establecer valores por defecto para campos opcionales
-                    evento.ImagenUrl ??= "/images/eventos/default.jpg";
-                    evento.ImagenNombre ??= "default.jpg";
+                    // Set category-based default image if no file uploaded
+                    if (string.IsNullOrEmpty(evento.ImagenUrl))
+                    {
+                        evento.ImagenUrl = GetCategoryImage(evento.Descripcion);
+                        evento.ImagenNombre = Path.GetFileName(evento.ImagenUrl);
+                    }
 
                     // Intentar crear oportunidad a través de la API
                     var createDto = new Models.DTOs.CreateOpportunityDto
@@ -212,10 +216,10 @@ namespace VoluntariosConectadosRD.Controllers
                         Titulo = evento.Nombre,
                         Descripcion = evento.Descripcion ?? "",
                         FechaInicio = evento.Fecha,
-                        FechaFin = evento.Fecha.AddHours(8), // Por defecto 8 horas de duración
+                        FechaFin = evento.FechaFin ?? evento.Fecha.AddHours(evento.DuracionHoras),
                         Ubicacion = evento.Ubicacion,
-                        DuracionHoras = 8, // Por defecto 8 horas
-                        VoluntariosRequeridos = 10 // Valor por defecto
+                        DuracionHoras = evento.DuracionHoras,
+                        VoluntariosRequeridos = evento.VoluntariosRequeridos
                     };
 
                     var response = await _volunteerApiService.CreateOpportunityAsync(createDto);
@@ -245,37 +249,11 @@ namespace VoluntariosConectadosRD.Controllers
                             });
                         }
                         
-                        // Si es otro tipo de error, intentar crear localmente como fallback
-                        _logger.LogInformation("Intentando crear oportunidad localmente como fallback");
-                        
-                        // Manejar subida de imagen
-                        if (imagenArchivo != null && imagenArchivo.Length > 0)
-                        {
-                            var uploadsFolder = Path.Combine(_environment.WebRootPath, "images", "eventos");
-
-                            if (!Directory.Exists(uploadsFolder))
-                            {
-                                Directory.CreateDirectory(uploadsFolder);
-                            }
-
-                            var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(imagenArchivo.FileName);
-                            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                            using (var fileStream = new FileStream(filePath, FileMode.Create))
-                            {
-                                await imagenArchivo.CopyToAsync(fileStream);
-                            }
-
-                            evento.ImagenUrl = $"/images/eventos/{uniqueFileName}";
-                            evento.ImagenNombre = imagenArchivo.FileName;
-                        }
-
-                        evento.Id = _nextId++;
-                        _eventos.Add(evento);
+                        // Return the API error message
+                        _logger.LogError("Error creating event via API: {ErrorMessage}", errorMessage);
                         return Json(new { 
-                            success = true, 
-                            message = "¡Evento creado exitosamente! (Modo local)",
-                            redirectUrl = Url.Action(nameof(List))
+                            success = false, 
+                            message = $"Error del servidor: {errorMessage}"
                         });
                     }
                 }
@@ -332,6 +310,28 @@ namespace VoluntariosConectadosRD.Controllers
             }
 
             return RedirectToAction("Details", new { id });
+        }
+
+        private static string GetCategoryImage(string? description)
+        {
+            if (string.IsNullOrEmpty(description))
+                return "/images/eventos/default.jpg";
+            
+            var desc = description.ToLower();
+            
+            // Category-based image mapping
+            if (desc.Contains("educación") || desc.Contains("educacion") || desc.Contains("enseñanza") || desc.Contains("escuela"))
+                return "/images/eventos/educacion.jpg";
+            else if (desc.Contains("salud") || desc.Contains("médico") || desc.Contains("hospital") || desc.Contains("medicina"))
+                return "/images/eventos/salud.jpg";
+            else if (desc.Contains("ambiente") || desc.Contains("naturaleza") || desc.Contains("limpieza") || desc.Contains("reciclaje"))
+                return "/images/eventos/medio-ambiente.jpg";
+            else if (desc.Contains("comunitario") || desc.Contains("comunidad") || desc.Contains("vecindario"))
+                return "/images/eventos/comunitario.jpg";
+            else if (desc.Contains("emergencia") || desc.Contains("ayuda") || desc.Contains("desastre") || desc.Contains("socorro"))
+                return "/images/eventos/emergencia.jpg";
+            else
+                return "/images/eventos/default.jpg";
         }
     }
 }

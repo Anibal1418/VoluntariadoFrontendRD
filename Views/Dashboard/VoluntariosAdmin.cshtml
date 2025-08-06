@@ -1,3 +1,4 @@
+@using VoluntariosConectadosRD.Models.DTOs
 @{
     ViewData["Title"] = "Gestión de Usuarios - Administración";
     Layout = "_DashboardLayout";
@@ -18,7 +19,7 @@
                         <span class="input-group-text bg-light border-end-0">
                             <i class="bi bi-search text-muted"></i>
                         </span>
-                        <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Buscar usuarios por nombre, email o rol..." style="border-radius: 0 8px 8px 0;">
+                        <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Buscar usuarios por nombre, email o rol..." style="border-radius: 0 8px 8px 0;" value="@(ViewBag.SearchQuery ?? "")" onkeypress="if(event.key==='Enter'){buscarUsuarios();}">
                     </div>
                 </div>
                 <div class="col-md-6 text-md-end">
@@ -53,126 +54,121 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><input type="checkbox" class="form-check-input user-checkbox"></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40">
-                                    <div>
-                                        <div class="fw-bold">Omar Alexis Reyes</div>
-                                        <small class="text-muted">Voluntario Activo</small>
+                        @{
+                            var volunteersData = ViewBag.VolunteersData as PaginatedResult<AdminVolunteerDto>;
+                        }
+                        @if (volunteersData != null && volunteersData.Items.Any())
+                        {
+                            @foreach (var volunteer in volunteersData.Items)
+                            {
+                                <tr>
+                                    <td><input type="checkbox" class="form-check-input user-checkbox" data-user-id="@volunteer.Id"></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="@(string.IsNullOrEmpty(volunteer.ImagenUrl) ? "https://randomuser.me/api/portraits/men/32.jpg" : volunteer.ImagenUrl)" alt="Avatar" class="rounded-circle me-3" width="40" height="40">
+                                            <div>
+                                                <div class="fw-bold">@volunteer.Nombre @volunteer.Apellido</div>
+                                                <small class="text-muted">
+                                                    @if (volunteer.HorasVoluntariado > 0)
+                                                    {
+                                                        @($"Voluntario - {volunteer.HorasVoluntariado} hrs")
+                                                    }
+                                                    else
+                                                    {
+                                                        @("Voluntario Nuevo")
+                                                    }
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@volunteer.Email</td>
+                                    <td><span class="badge bg-primary">Voluntario</span></td>
+                                    <td>
+                                        @switch (volunteer.Estado)
+                                        {
+                                            case UserStatus.Activo:
+                                                <span class="badge bg-success">Activo</span>
+                                                break;
+                                            case UserStatus.Inactivo:
+                                                <span class="badge bg-secondary">Inactivo</span>
+                                                break;
+                                            case UserStatus.Suspendido:
+                                                <span class="badge bg-danger">Suspendido</span>
+                                                break;
+                                            case UserStatus.PendienteVerificacion:
+                                                <span class="badge bg-warning">Pendiente</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-secondary">@volunteer.Estado</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>@volunteer.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @if (volunteer.UltimaActividad.HasValue)
+                                        {
+                                            var timeDiff = DateTime.UtcNow - volunteer.UltimaActividad.Value;
+                                            if (timeDiff.TotalDays < 1)
+                                            {
+                                                @($"Hace {(int)timeDiff.TotalHours} horas")
+                                            }
+                                            else if (timeDiff.TotalDays < 30)
+                                            {
+                                                @($"Hace {(int)timeDiff.TotalDays} días")
+                                            }
+                                            else
+                                            {
+                                                @volunteer.UltimaActividad.Value.ToString("dd/MM/yyyy")
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @("Sin actividad")
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario(@volunteer.Id)">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            @if (volunteer.Estado == UserStatus.Activo)
+                                            {
+                                                <button class="btn btn-sm btn-outline-warning" onclick="bloquearUsuario(@volunteer.Id)" title="Suspender usuario">
+                                                    <i class="bi bi-lock"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-sm btn-outline-success" onclick="activarUsuario(@volunteer.Id)" title="Activar usuario">
+                                                    <i class="bi bi-unlock"></i>
+                                                </button>
+                                            }
+                                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario(@volunteer.Id)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="bi bi-people fs-1 d-block mb-2"></i>
+                                        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage as string))
+                                        {
+                                            <p>@ViewBag.ErrorMessage</p>
+                                        }
+                                        else
+                                        {
+                                            <p>No se encontraron voluntarios.</p>
+                                        }
                                     </div>
-                                </div>
-                            </td>
-                            <td>omar@email.com</td>
-                            <td><span class="badge bg-primary">Voluntario</span></td>
-                            <td><span class="badge bg-success">Activo</span></td>
-                            <td>15/01/2024</td>
-                            <td>Hace 2 horas</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario(1)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-warning" onclick="bloquearUsuario(1)">
-                                        <i class="bi bi-lock"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario(1)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="form-check-input user-checkbox"></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="/images/companylogo.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40">
-                                    <div>
-                                        <div class="fw-bold">Fundación Esperanza Viva</div>
-                                        <small class="text-muted">ONG Verificada</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>contacto@fundacion.org</td>
-                            <td><span class="badge bg-success">ONG</span></td>
-                            <td><span class="badge bg-success">Activo</span></td>
-                            <td>10/01/2024</td>
-                            <td>Hace 1 día</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario(2)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-warning" onclick="bloquearUsuario(2)">
-                                        <i class="bi bi-lock"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario(2)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="form-check-input user-checkbox"></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-person-gear text-danger me-3" style="font-size: 1.5rem;"></i>
-                                    <div>
-                                        <div class="fw-bold">Admin Sistema</div>
-                                        <small class="text-muted">Administrador</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>admin@voluntariadoconectado.rd</td>
-                            <td><span class="badge bg-danger">Admin</span></td>
-                            <td><span class="badge bg-success">Activo</span></td>
-                            <td>01/01/2024</td>
-                            <td>Hace 30 min</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario(3)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary" disabled>
-                                        <i class="bi bi-shield-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary" disabled>
-                                        <i class="bi bi-shield-check"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="form-check-input user-checkbox"></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Avatar" class="rounded-circle me-3" width="40" height="40">
-                                    <div>
-                                        <div class="fw-bold">María González</div>
-                                        <small class="text-muted">Voluntaria</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>maria@email.com</td>
-                            <td><span class="badge bg-primary">Voluntario</span></td>
-                            <td><span class="badge bg-warning">Bloqueado</span></td>
-                            <td>20/01/2024</td>
-                            <td>Hace 5 días</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario(4)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-success" onclick="desbloquearUsuario(4)">
-                                        <i class="bi bi-unlock"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario(4)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -180,36 +176,69 @@
     </div>
 
     <!-- Pagination -->
-    <div class="d-flex justify-content-between align-items-center mt-4">
-        <div class="text-muted">
-            Mostrando 1-4 de 1,247 usuarios
+    @{
+        var currentPage = ViewBag.CurrentPage as int? ?? 1;
+        var pageSize = ViewBag.PageSize as int? ?? 10;
+        var searchQuery = ViewBag.SearchQuery as string;
+    }
+    @if (volunteersData != null && volunteersData.TotalCount > 0)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="text-muted">
+                @{
+                    var startItem = ((currentPage - 1) * pageSize) + 1;
+                    var endItem = Math.Min(currentPage * pageSize, volunteersData.TotalCount);
+                }
+                Mostrando @startItem-@endItem de @volunteersData.TotalCount usuarios
+            </div>
+            
+            @if (volunteersData.TotalPages > 1)
+            {
+                <nav aria-label="Paginación de usuarios">
+                    <ul class="pagination mb-0">
+                        <li class="page-item @(volunteersData.HasPreviousPage ? "" : "disabled")">
+                            @if (volunteersData.HasPreviousPage)
+                            {
+                                <a class="page-link" href="@Url.Action("VoluntariosAdmin", new { page = currentPage - 1, pageSize = pageSize, search = searchQuery })">Anterior</a>
+                            }
+                            else
+                            {
+                                <span class="page-link">Anterior</span>
+                            }
+                        </li>
+                        
+                        @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(volunteersData.TotalPages, currentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("VoluntariosAdmin", new { page = i, pageSize = pageSize, search = searchQuery })">@i</a>
+                            </li>
+                        }
+                        
+                        @if (currentPage + 2 < volunteersData.TotalPages)
+                        {
+                            <li class="page-item">
+                                <span class="page-link">...</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("VoluntariosAdmin", new { page = volunteersData.TotalPages, pageSize = pageSize, search = searchQuery })">@volunteersData.TotalPages</a>
+                            </li>
+                        }
+                        
+                        <li class="page-item @(volunteersData.HasNextPage ? "" : "disabled")">
+                            @if (volunteersData.HasNextPage)
+                            {
+                                <a class="page-link" href="@Url.Action("VoluntariosAdmin", new { page = currentPage + 1, pageSize = pageSize, search = searchQuery })">Siguiente</a>
+                            }
+                            else
+                            {
+                                <span class="page-link">Siguiente</span>
+                            }
+                        </li>
+                    </ul>
+                </nav>
+            }
         </div>
-        <nav aria-label="Paginación de usuarios">
-            <ul class="pagination mb-0">
-                <li class="page-item disabled">
-                    <a class="page-link" href="javascript:void(0)">Anterior</a>
-                </li>
-                <li class="page-item active">
-                    <a class="page-link" href="javascript:void(0)">1</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="javascript:void(0)">2</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="javascript:void(0)">3</a>
-                </li>
-                <li class="page-item">
-                    <span class="page-link">...</span>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="javascript:void(0)">312</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="javascript:void(0)">Siguiente</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+    }
 </div>
 
 <style>
@@ -268,32 +297,87 @@
     });
 
     function editarUsuario(id) {
-        alert('Función de edición de usuario ' + id + ' - En desarrollo');
+        // Redirect to user profile/edit page
+        window.location.href = '/Dashboard/VolunteerDetails/' + id;
     }
 
-    function bloquearUsuario(id) {
+    async function bloquearUsuario(id) {
         if (confirm('¿Está seguro de que desea bloquear este usuario?')) {
-            alert('Usuario ' + id + ' bloqueado - En desarrollo');
+            try {
+                const response = await fetch(`/api/Admin/users/${id}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: 3 }) // 3 = Suspendido
+                });
+
+                if (response.ok) {
+                    alert('Usuario bloqueado exitosamente');
+                    location.reload(); // Reload page to update status
+                } else {
+                    alert('Error al bloquear usuario');
+                }
+            } catch (error) {
+                alert('Error de conexión al bloquear usuario');
+            }
         }
     }
 
-    function desbloquearUsuario(id) {
+    async function desbloquearUsuario(id) {
         if (confirm('¿Está seguro de que desea desbloquear este usuario?')) {
-            alert('Usuario ' + id + ' desbloqueado - En desarrollo');
+            try {
+                const response = await fetch(`/api/Admin/users/${id}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: 1 }) // 1 = Activo
+                });
+
+                if (response.ok) {
+                    alert('Usuario desbloqueado exitosamente');
+                    location.reload(); // Reload page to update status
+                } else {
+                    alert('Error al desbloquear usuario');
+                }
+            } catch (error) {
+                alert('Error de conexión al desbloquear usuario');
+            }
         }
     }
 
-    function eliminarUsuario(id) {
+    async function eliminarUsuario(id) {
         if (confirm('¿Está seguro de que desea eliminar este usuario? Esta acción no se puede deshacer.')) {
-            alert('Usuario ' + id + ' eliminado - En desarrollo');
+            try {
+                const response = await fetch(`/api/Admin/users/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('Usuario eliminado exitosamente');
+                    location.reload(); // Reload page to remove user
+                } else {
+                    alert('Error al eliminar usuario');
+                }
+            } catch (error) {
+                alert('Error de conexión al eliminar usuario');
+            }
         }
     }
 
     function agregarUsuario() {
-        alert('Función de agregar usuario - En desarrollo');
+        // Redirect to user registration
+        window.location.href = '/Account/Registro';
     }
 
     function exportarUsuarios() {
-        alert('Función de exportar usuarios - En desarrollo');
+        // Download users as CSV/Excel
+        const searchQuery = '@(ViewBag.SearchQuery ?? "")';
+        let url = '/Admin/ExportUsers';
+        if (searchQuery) {
+            url += '?search=' + encodeURIComponent(searchQuery);
+        }
+        window.open(url, '_blank');
     }
 </script> 

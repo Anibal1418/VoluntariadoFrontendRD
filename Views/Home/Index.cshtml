@@ -2,7 +2,7 @@
 @using VoluntariosConectadosRD.Models.DTOs
 @{
     ViewData["Title"] = "Voluntariado Conectado RD - Conectamos personas con causas que importan";
-    var platformStats = ViewBag.PlatformStats;
+    var platformStats = ViewBag.PlatformStats as DashboardStatsDto;
     var featuredOpportunities = ViewBag.FeaturedOpportunities as IEnumerable<OpportunityListDto>;
     var hasStats = platformStats != null;
     var hasOpportunities = featuredOpportunities != null && featuredOpportunities.Any();
@@ -25,39 +25,36 @@
 </section>
 
 <!-- Platform Statistics -->
-@if (hasStats)
-{
-    <section class="stats-section py-5" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-3 col-6 mb-4">
-                    <div class="stat-card">
-                        <div class="stat-number">@(hasStats ? "Loading..." : "0")</div>
-                        <div class="stat-label">Voluntarios Activos</div>
-                    </div>
+<section class="stats-section py-5" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-number">@(platformStats?.TotalUsers.ToString("N0") ?? "0")</div>
+                    <div class="stat-label">Voluntarios Activos</div>
                 </div>
-                <div class="col-md-3 col-6 mb-4">
-                    <div class="stat-card">
-                        <div class="stat-number">@(hasStats ? "Loading..." : "0")</div>
-                        <div class="stat-label">Organizaciones</div>
-                    </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-number">@(platformStats?.TotalOrganizations.ToString("N0") ?? "0")</div>
+                    <div class="stat-label">Organizaciones</div>
                 </div>
-                <div class="col-md-3 col-6 mb-4">
-                    <div class="stat-card">
-                        <div class="stat-number">@(hasStats ? "Loading..." : "0")</div>
-                        <div class="stat-label">Proyectos Activos</div>
-                    </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-number">@(platformStats?.ActiveOpportunities.ToString("N0") ?? "0")</div>
+                    <div class="stat-label">Proyectos Activos</div>
                 </div>
-                <div class="col-md-3 col-6 mb-4">
-                    <div class="stat-card">
-                        <div class="stat-number">@(hasStats ? "Loading..." : "0")</div>
-                        <div class="stat-label">Horas Donadas</div>
-                    </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-number">@(platformStats?.TotalVolunteerHours.ToString("N0") ?? "0")</div>
+                    <div class="stat-label">Horas Donadas</div>
                 </div>
             </div>
         </div>
-    </section>
-}
+    </div>
+</section>
 
 <!-- Descripción del Proyecto -->
 <section class="about-section">

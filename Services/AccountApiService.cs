@@ -47,15 +47,15 @@ namespace VoluntariosConectadosRD.Services
                 DescripcionOrganizacion = model.Descripcion,
                 EmailOrganizacion = model.Email ?? "",
                 TelefonoOrganizacion = model.Telefono,
-                DireccionOrganizacion = model.Direccion,
-                SitioWeb = null, // No está disponible en el modelo frontend
+                DireccionOrganizacion = GetFullAddress(model.Direccion, model.Ciudad, model.Provincia),
+                SitioWeb = null, // Not available in frontend model - could be added later
                 NumeroRegistro = model.RNC,
-                NombreAdmin = "Administrador", // Valor por defecto
-                ApellidoAdmin = "ONG", // Valor por defecto
+                NombreAdmin = ExtractFirstName(model.NombreONG),
+                ApellidoAdmin = "Admin",
                 EmailAdmin = model.Email ?? "",
                 PasswordAdmin = model.Password ?? "",
                 TelefonoAdmin = model.Telefono,
-                FechaNacimientoAdmin = DateTime.Now.AddYears(-30) // Valor por defecto
+                FechaNacimientoAdmin = DateTime.Now.AddYears(-30) // Default admin age
             };
             return await _baseApiService.PostAsync<ApiResponseDto<UserInfoDto>>("auth/register/organizacion", registerRequest);
         }
@@ -80,9 +80,10 @@ namespace VoluntariosConectadosRD.Services
             {
                 Nombre = model.NombreONG,
                 Descripcion = model.Descripcion,
-                Direccion = model.Direccion,
+                Direccion = GetFullAddress(model.Direccion, model.Ciudad, model.Provincia),
                 Telefono = model.Telefono,
-                SitioWeb = null // No está disponible en el modelo frontend
+                SitioWeb = null // Not available in frontend model - could be added later
+                // Note: LogoONG field could be used here if the backend supports logo updates
             };
             return await _baseApiService.PutAsync<ApiResponseDto<OrganizationProfileDto>>("profile/organization", updateRequest);
         }
@@ -115,6 +116,30 @@ namespace VoluntariosConectadosRD.Services
                 NewPassword = newPassword
             };
             return await _baseApiService.PostAsync<ApiResponseDto<bool>>("auth/change-password", changePasswordRequest);
+        }
+
+        private static string GetFullAddress(string? direccion, string? ciudad, string? provincia)
+        {
+            var addressParts = new List<string>();
+            
+            if (!string.IsNullOrEmpty(direccion))
+                addressParts.Add(direccion);
+            if (!string.IsNullOrEmpty(ciudad))
+                addressParts.Add(ciudad);
+            if (!string.IsNullOrEmpty(provincia))
+                addressParts.Add(provincia);
+            
+            return string.Join(", ", addressParts);
+        }
+
+        private static string ExtractFirstName(string? organizationName)
+        {
+            if (string.IsNullOrEmpty(organizationName))
+                return "Admin";
+            
+            // Extract first word as first name for admin user
+            var parts = organizationName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return parts.Length > 0 ? parts[0] : "Admin";
         }
     }
 } 

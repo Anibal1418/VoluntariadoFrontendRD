@@ -1,5 +1,8 @@
 @using VoluntariosConectadosRD.Models.DTOs
+@using VoluntariosConectadosRD.Models.Configuration
+@using Microsoft.Extensions.Options
 @using System.Text.Json
+@inject IOptions<ContactConfiguration> ContactOptions
 @{
     var userInfoJson = Context.Session.GetString("UserInfo");
     UserInfoDto? userInfo = null;
@@ -7,6 +10,7 @@
     {
         userInfo = JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
     }
+    var contactInfo = ContactOptions.Value;
 }
 <!DOCTYPE html>
 <html lang="es">
@@ -34,11 +38,33 @@
             </div>
             <div class="flex-grow-1 d-flex justify-content-end">
                 <nav class="dashboard-nav d-flex align-items-center" style="margin-right: 20px;">
-                    <a href="/Dashboard/ProfileONG" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "ProfileONG" ? "active" : "")">Inicio</a>
-                    <a href="#" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "VolunteerStats" ? "active" : "")">Voluntarios</a>
-                    <a href="/Dashboard/Reportes" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reportes" ? "active" : "")">Registro de Impacto</a>
-
-                    <a href="/Events/List" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Eventos" ? "active" : "")">Eventos</a>
+                    @if (userInfo != null)
+                    {
+                        @if (userInfo.Rol == UserRole.Voluntario)
+                        {
+                            <!-- Volunteer Navigation -->
+                            <a href="/Dashboard/Index" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">Inicio</a>
+                            <a href="/Events/List" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Events" ? "active" : "")">Oportunidades</a>
+                            <a href="/Dashboard/Profile" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")">Mi Perfil</a>
+                        }
+                        else if (userInfo.Rol == UserRole.Organizacion)
+                        {
+                            <!-- Organization Navigation -->
+                            <a href="/Dashboard/ProfileONG" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "ProfileONG" ? "active" : "")">Inicio</a>
+                            <a href="/Events/Create" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Create" ? "active" : "")">Crear Evento</a>
+                            <a href="/Events/Manage" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Manage" ? "active" : "")">Mis Eventos</a>
+                            <a href="/Dashboard/Reportes" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reportes" ? "active" : "")">Reportes</a>
+                        }
+                        else if (userInfo.Rol == UserRole.Administrador)
+                        {
+                            <!-- Administrator Navigation -->
+                            <a href="/Dashboard/Index" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">Inicio</a>
+                            <a href="/Dashboard/VoluntariosAdmin" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "VoluntariosAdmin" ? "active" : "")">Usuarios</a>
+                            <a href="/Dashboard/ONGAdmin" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "ONGAdmin" ? "active" : "")">Organizaciones</a>
+                            <a href="/Dashboard/Reportes" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reportes" ? "active" : "")">Reportes</a>
+                            <a href="/Events/List" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Events" ? "active" : "")">Eventos</a>
+                        }
+                    }
                 </nav>
 
             </div>
@@ -67,8 +93,28 @@
                         </div>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/Dashboard/Profile">Mi perfil</a></li>
-                        <li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Cerrar sesión</a></li>
+                        @if (userInfo != null)
+                        {
+                            @if (userInfo.Rol == UserRole.Voluntario)
+                            {
+                                <li><a class="dropdown-item" href="/Dashboard/Profile"><i class="bi bi-person me-2"></i>Mi perfil</a></li>
+                                <li><a class="dropdown-item" href="/Events/List"><i class="bi bi-calendar-event me-2"></i>Buscar eventos</a></li>
+                            }
+                            else if (userInfo.Rol == UserRole.Organizacion)
+                            {
+                                <li><a class="dropdown-item" href="/Dashboard/ProfileONG"><i class="bi bi-building me-2"></i>Perfil organización</a></li>
+                                <li><a class="dropdown-item" href="/Events/Create"><i class="bi bi-plus-circle me-2"></i>Crear evento</a></li>
+                            }
+                            else if (userInfo.Rol == UserRole.Administrador)
+                            {
+                                <li><a class="dropdown-item" href="/Dashboard/Index"><i class="bi bi-speedometer2 me-2"></i>Panel Admin</a></li>
+                                <li><a class="dropdown-item" href="/Dashboard/VoluntariosAdmin"><i class="bi bi-people me-2"></i>Gestionar usuarios</a></li>
+                                <li><a class="dropdown-item" href="/Dashboard/ONGAdmin"><i class="bi bi-buildings me-2"></i>Gestionar ONGs</a></li>
+                            }
+                        }
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/Account/ChangePassword"><i class="bi bi-shield-lock me-2"></i>Cambiar contraseña</a></li>
+                        <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a></li>
                     </ul>
                 </div>
             </div>
@@ -105,11 +151,51 @@
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h6 class="text-white mb-3">Contacto</h6>
                     <p class="text-light mb-2">
-                        <i class="fas fa-envelope me-2"></i>info@voluntariadoconectado.rd
+                        <i class="fas fa-envelope me-2"></i>@contactInfo.Email
                     </p>
                     <p class="text-light mb-2">
-                        <i class="fas fa-phone me-2"></i>+1 (809) 555-0123
+                        <i class="fas fa-phone me-2"></i>@contactInfo.Phone
                     </p>
+                    @if (!string.IsNullOrEmpty(contactInfo.Address))
+                    {
+                        <p class="text-light mb-2">
+                            <i class="fas fa-map-marker-alt me-2"></i>@contactInfo.Address
+                        </p>
+                    }
+                    @if (!string.IsNullOrEmpty(contactInfo.SocialMedia.Facebook) || 
+                         !string.IsNullOrEmpty(contactInfo.SocialMedia.Twitter) || 
+                         !string.IsNullOrEmpty(contactInfo.SocialMedia.Instagram))
+                    {
+                        <div class="mt-3">
+                            <h6 class="text-white mb-2">Síguenos</h6>
+                            <div class="d-flex gap-2">
+                                @if (!string.IsNullOrEmpty(contactInfo.SocialMedia.Facebook))
+                                {
+                                    <a href="@contactInfo.SocialMedia.Facebook" target="_blank" class="text-light">
+                                        <i class="fab fa-facebook fa-lg"></i>
+                                    </a>
+                                }
+                                @if (!string.IsNullOrEmpty(contactInfo.SocialMedia.Twitter))
+                                {
+                                    <a href="@contactInfo.SocialMedia.Twitter" target="_blank" class="text-light">
+                                        <i class="fab fa-twitter fa-lg"></i>
+                                    </a>
+                                }
+                                @if (!string.IsNullOrEmpty(contactInfo.SocialMedia.Instagram))
+                                {
+                                    <a href="@contactInfo.SocialMedia.Instagram" target="_blank" class="text-light">
+                                        <i class="fab fa-instagram fa-lg"></i>
+                                    </a>
+                                }
+                                @if (!string.IsNullOrEmpty(contactInfo.SocialMedia.LinkedIn))
+                                {
+                                    <a href="@contactInfo.SocialMedia.LinkedIn" target="_blank" class="text-light">
+                                        <i class="fab fa-linkedin fa-lg"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
             <hr class="border-light">
