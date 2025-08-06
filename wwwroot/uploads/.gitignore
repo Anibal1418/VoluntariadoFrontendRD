@@ -1,0 +1,4 @@
+# Ignorar archivos de imágenes subidas
+temp/*
+profiles/*
+!.gitignore 
