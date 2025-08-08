@@ -18,9 +18,19 @@ namespace VoluntariosConectadosRD.Services
             return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<OpportunityListDto>>>("voluntariado/opportunities");
         }
 
+        public async Task<ApiResponseDto<IEnumerable<OpportunityListDto>>?> GetOrganizationOpportunitiesAsync()
+        {
+            return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<OpportunityListDto>>>("api/Voluntariado/organization-opportunities");
+        }
+
         public async Task<ApiResponseDto<OpportunityDetailDto>?> GetOpportunityDetailsAsync(int id)
         {
             return await _baseApiService.GetAsync<ApiResponseDto<OpportunityDetailDto>>($"voluntariado/opportunities/{id}");
+        }
+
+        public async Task<ApiResponseDto<OpportunityDetailDto>?> GetOpportunityByIdAsync(int id)
+        {
+            return await _baseApiService.GetAsync<ApiResponseDto<OpportunityDetailDto>>($"api/Voluntariado/opportunities/{id}");
         }
 
         public async Task<ApiResponseDto<object>?> ApplyToOpportunityAsync(int opportunityId, string? message = null)
@@ -68,6 +78,16 @@ namespace VoluntariosConectadosRD.Services
             }
             
             return await _baseApiService.GetAsync<ApiResponseDto<PaginatedResult<AdminVolunteerDto>>>($"Volunteer/admin/volunteers{queryParams}");
+        }
+
+        public async Task<ApiResponseDto<IEnumerable<VolunteerApplicationDetailDto>>?> GetApplicationsForOpportunityAsync(int opportunityId)
+        {
+            return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<VolunteerApplicationDetailDto>>>($"api/Voluntariado/opportunities/{opportunityId}/applications");
+        }
+
+        public async Task<ApiResponseDto<object>?> UpdateApplicationStatusAsync(int applicationId, int status)
+        {
+            return await _baseApiService.PutAsync<ApiResponseDto<object>>($"api/Voluntariado/applications/{applicationId}/status", new { status });
         }
     }
 }

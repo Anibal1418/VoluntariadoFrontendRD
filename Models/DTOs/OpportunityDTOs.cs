@@ -72,6 +72,7 @@ namespace VoluntariosConectadosRD.Models.DTOs
 
     public class UpdateOpportunityDto : CreateOpportunityDto
     {
+        public int Id { get; set; }
         public OpportunityStatus? Estatus { get; set; }
     }
 
