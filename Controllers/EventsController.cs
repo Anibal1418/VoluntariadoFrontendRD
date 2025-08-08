@@ -367,7 +367,7 @@ namespace VoluntariosConectadosRD.Controllers
                     var userInfo = System.Text.Json.JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
                     if (userInfo?.Organizacion != null)
                     {
-                        var response = await _volunteerApiService.GetOrganizationOpportunitiesAsync(userInfo.Organizacion.Id);
+                        var response = await _volunteerApiService.GetOrganizationOpportunitiesAsync();
                         
                         if (response?.Success == true && response.Data != null)
                         {
@@ -475,7 +475,7 @@ namespace VoluntariosConectadosRD.Controllers
                     VoluntariosRequeridos = evento.VoluntariosRequeridos
                 };
 
-                var response = await _volunteerApiService.UpdateOpportunityAsync(updateDto);
+                var response = await _volunteerApiService.UpdateOpportunityAsync(evento.Id, updateDto);
                 
                 if (response?.Success == true)
                 {
@@ -519,7 +519,7 @@ namespace VoluntariosConectadosRD.Controllers
                 var applicationsResponse = await _volunteerApiService.GetApplicationsForOpportunityAsync(id);
                 
                 ViewBag.Opportunity = opportunityResponse.Data;
-                ViewBag.Applications = applicationsResponse?.Data ?? new List<dynamic>();
+                ViewBag.Applications = applicationsResponse?.Data ?? new List<VolunteerApplicationDetailDto>();
 
                 return View();
             }
@@ -536,7 +536,7 @@ namespace VoluntariosConectadosRD.Controllers
         {
             try
             {
-                var response = await _volunteerApiService.UpdateApplicationStatusAsync(applicationId, status, message);
+                var response = await _volunteerApiService.UpdateApplicationStatusAsync(applicationId, int.Parse(status));
                 
                 if (response?.Success == true)
                 {

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using VoluntariosConectadosRD.Services;
 using VoluntariosConectadosRD.Models;
+using VoluntariosConectadosRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Controllers
 {
@@ -405,7 +406,7 @@ namespace VoluntariosConectadosRD.Controllers
                     NewPassword = model.NewPassword
                 };
 
-                var response = await _accountApiService.ChangePasswordAsync(userInfo.Id, changePasswordDto);
+                var response = await _accountApiService.ChangePasswordAsync(model.CurrentPassword, model.NewPassword);
 
                 if (response?.Success == true)
                 {

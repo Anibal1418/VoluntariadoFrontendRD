@@ -8,6 +8,7 @@ namespace VoluntariosConectadosRD.Services
         Task<T?> PostAsync<T>(string endpoint, object data);
         Task<T?> PutAsync<T>(string endpoint, object data);
         Task<bool> DeleteAsync(string endpoint);
+        Task<T?> PostFormDataAsync<T>(string endpoint, MultipartFormDataContent formData, string? token = null);
         void SetAuthToken(string token);
     }
 } 
