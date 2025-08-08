@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VoluntariadoConectadoRD.Models.DTOs
+namespace VoluntariosConectadosRD.Models.DTOs
 {
     public enum MessageType
     {
