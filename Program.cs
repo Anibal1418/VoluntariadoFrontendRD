@@ -34,6 +34,7 @@ builder.Services.AddScoped<IAccountApiService, AccountApiService>();
 builder.Services.AddScoped<IVolunteerApiService, VolunteerApiService>();
 builder.Services.AddScoped<IDashboardApiService, DashboardApiService>();
 builder.Services.AddScoped<IAdminApiService, AdminApiService>();
+builder.Services.AddScoped<ITransparencyApiService, TransparencyApiService>();
 
 // Configuración JWT para autenticación
 var jwtSettings = builder.Configuration.GetSection("JWT");

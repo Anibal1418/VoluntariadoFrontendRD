@@ -111,9 +111,9 @@
                                     Último semestre <i class="bi bi-chevron-down"></i>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Último mes</a></li>
-                                    <li><a class="dropdown-item" href="#">Último semestre</a></li>
-                                    <li><a class="dropdown-item" href="#">Último año</a></li>
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateChart('month')">Último mes</a></li>
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateChart('semester')">Último semestre</a></li>
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateChart('year')">Último año</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -305,7 +305,7 @@
                                                         <span class="badge bg-secondary">@eventItem.Status</span>
                                                     }
                                                 </td>
-                                                <td><a href="#" class="link-primary">Ver detalles</a></td>
+                                                <td><a href="/Events/Details/@eventItem.Id" class="link-primary">Ver detalles</a></td>
                                             </tr>
                                         }
                                     }
@@ -577,6 +577,30 @@
 
 /* media queries moved to site.css */
 </style>
+
+<script>
+    function updateChart(period) {
+        // Update button text
+        const dropdownButton = document.querySelector('[data-bs-toggle="dropdown"]');
+        let buttonText = '';
+        switch(period) {
+            case 'month':
+                buttonText = 'Último mes';
+                break;
+            case 'semester':
+                buttonText = 'Último semestre';
+                break;
+            case 'year':
+                buttonText = 'Último año';
+                break;
+        }
+        dropdownButton.innerHTML = buttonText + ' <i class="bi bi-chevron-down"></i>';
+        
+        // In a real implementation, this would fetch new data and update the chart
+        // For now, just show a message
+        console.log('Chart updated for period:', period);
+    }
+</script>
 
 <!-- Bootstrap Icons CDN -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"> 

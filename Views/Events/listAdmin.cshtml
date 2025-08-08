@@ -146,17 +146,17 @@
                     </div>
                     <nav aria-label="Paginación de eventos">
                         <ul class="pagination mb-0">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="javascript:void(0)">Anterior</a>
+                            <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="/Events/listAdmin?page=@(ViewBag.CurrentPage - 1)">Anterior</a>
                             </li>
-                            <li class="page-item active">
-                                <a class="page-link" href="javascript:void(0)">1</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="javascript:void(0)">2</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="javascript:void(0)">Siguiente</a>
+                            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="/Events/listAdmin?page=@i">@i</a>
+                                </li>
+                            }
+                            <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                                <a class="page-link" href="/Events/listAdmin?page=@(ViewBag.CurrentPage + 1)">Siguiente</a>
                             </li>
                         </ul>
                     </nav>
@@ -275,20 +275,23 @@
 
 <script>
     function gestionarUsuarios() {
-        alert('Función de gestión de usuarios - En desarrollo');
+        window.location.href = '/Dashboard/VoluntariosAdmin';
     }
     
     function gestionarONGs() {
-        alert('Función de gestión de ONGs - En desarrollo');
+        window.location.href = '/Dashboard/ONGAdmin';
     }
     
     function editarEvento(id) {
-        alert('Función de edición de evento ' + id + ' - En desarrollo');
+        window.location.href = '/Events/Edit/' + id;
     }
     
     function eliminarEvento(id) {
         if (confirm('¿Está seguro de que desea eliminar este evento?')) {
-            alert('Evento ' + id + ' eliminado - En desarrollo');
+            // For now, redirect to events list with a message
+            // In a real implementation, this would make an API call to delete
+            alert('Funcionalidad de eliminación pendiente de implementación');
+            // window.location.href = '/Events/Delete/' + id;
         }
     }
 </script> 

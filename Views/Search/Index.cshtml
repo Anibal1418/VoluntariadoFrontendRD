@@ -1,0 +1,717 @@
+@{
+    ViewData["Title"] = "Búsqueda Avanzada";
+    Layout = "_Layout";
+    var searchQuery = ViewBag.SearchQuery as string ?? "";
+    var searchType = ViewBag.SearchType as string ?? "opportunities";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Search Sidebar -->
+        <div class="col-lg-3">
+            <div class="card shadow-sm" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">
+                        <i class="bi bi-funnel me-2"></i>Filtros de Búsqueda
+                    </h5>
+
+                    <form id="searchForm">
+                        <!-- Search Type Tabs -->
+                        <div class="mb-4">
+                            <div class="nav nav-pills nav-fill" id="searchTypeTabs" role="tablist">
+                                <button class="nav-link @(searchType == "opportunities" ? "active" : "")" 
+                                        id="opportunities-tab" data-bs-toggle="pill" data-bs-target="#opportunities" 
+                                        type="button" role="tab" data-type="opportunities">
+                                    <i class="bi bi-calendar-event me-1"></i>
+                                    <small>Eventos</small>
+                                </button>
+                                <button class="nav-link @(searchType == "volunteers" ? "active" : "")" 
+                                        id="volunteers-tab" data-bs-toggle="pill" data-bs-target="#volunteers" 
+                                        type="button" role="tab" data-type="volunteers">
+                                    <i class="bi bi-people me-1"></i>
+                                    <small>Voluntarios</small>
+                                </button>
+                                <button class="nav-link @(searchType == "organizations" ? "active" : "")" 
+                                        id="organizations-tab" data-bs-toggle="pill" data-bs-target="#organizations" 
+                                        type="button" role="tab" data-type="organizations">
+                                    <i class="bi bi-building me-1"></i>
+                                    <small>ONGs</small>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Search Bar -->
+                        <div class="mb-4">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchTerm" placeholder="Buscar..." value="@searchQuery">
+                                <button type="button" class="btn btn-primary" onclick="performSearch()">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Filters Container -->
+                        <div id="filtersContainer">
+                            <!-- Filters will be loaded here dynamically -->
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="button" class="btn btn-success" onclick="performSearch()">
+                                <i class="bi bi-search me-2"></i>Buscar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="clearFilters()">
+                                <i class="bi bi-x-circle me-2"></i>Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="bi bi-search me-2"></i>
+                    <span id="resultsTitle">Resultados de Búsqueda</span>
+                </h2>
+                <div class="d-flex align-items-center gap-3">
+                    <select class="form-select" id="sortBy" style="width: auto;">
+                        <option value="">Ordenar por...</option>
+                    </select>
+                    <select class="form-select" id="pageSize" style="width: auto;">
+                        <option value="10">10 por página</option>
+                        <option value="20">20 por página</option>
+                        <option value="50">50 por página</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-2">Buscando...</p>
+            </div>
+
+            <!-- Search Results Container -->
+            <div id="searchResults">
+                <!-- Results will be loaded here -->
+                <div class="text-center py-5">
+                    <i class="bi bi-search" style="font-size: 4rem; color: #dee2e6;"></i>
+                    <h4 class="mt-3 text-muted">Inicia una búsqueda</h4>
+                    <p class="text-muted">Usa los filtros de la izquierda para encontrar lo que buscas.</p>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav id="pagination" style="display: none;">
+                <ul class="pagination justify-content-center">
+                    <!-- Pagination will be generated here -->
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentSearchType = '@searchType';
+let currentPage = 1;
+let currentFilters = {};
+
+$(document).ready(function() {
+    // Initialize search if query provided
+    @if (!string.IsNullOrEmpty(searchQuery))
+    {
+        <text>
+        setTimeout(() => {
+            performSearch();
+        }, 500);
+        </text>
+    }
+
+    // Load initial filters
+    loadFilters(currentSearchType);
+
+    // Handle tab changes
+    $('#searchTypeTabs button').on('click', function() {
+        currentSearchType = $(this).data('type');
+        loadFilters(currentSearchType);
+        updateSortOptions();
+        $('#searchResults').html(getEmptyState());
+        $('#pagination').hide();
+    });
+
+    // Handle sort change
+    $('#sortBy, #pageSize').on('change', function() {
+        if ($('#searchResults .search-result').length > 0) {
+            performSearch();
+        }
+    });
+
+    // Handle enter key in search input
+    $('#searchTerm').on('keypress', function(e) {
+        if (e.which === 13) {
+            performSearch();
+        }
+    });
+});
+
+function loadFilters(type) {
+    $.ajax({
+        url: '@Url.Action("GetFilters")',
+        type: 'GET',
+        data: { type: type },
+        success: function(response) {
+            if (response.success && response.data) {
+                renderFilters(response.data, type);
+                updateSortOptions();
+            } else {
+                console.error('Error loading filters:', response.message);
+            }
+        },
+        error: function() {
+            console.error('Error loading filters');
+        }
+    });
+}
+
+function renderFilters(filters, type) {
+    let html = '';
+
+    if (type === 'opportunities') {
+        // Location filter
+        if (filters.locations && filters.locations.length > 0) {
+            html += renderSelectFilter('location', 'Ubicación', filters.locations);
+        }
+
+        // Category filter
+        if (filters.categories && filters.categories.length > 0) {
+            html += renderSelectFilter('category', 'Categoría', filters.categories);
+        }
+
+        // Organizations filter
+        if (filters.organizations && filters.organizations.length > 0) {
+            html += renderSelectFilter('organizationId', 'Organización', filters.organizations);
+        }
+
+        // Date range filter
+        html += `
+            <div class="mb-3">
+                <label class="form-label fw-bold">Fechas</label>
+                <div class="row">
+                    <div class="col-6">
+                        <input type="date" class="form-control" id="startDate" placeholder="Desde">
+                    </div>
+                    <div class="col-6">
+                        <input type="date" class="form-control" id="endDate" placeholder="Hasta">
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Duration range filter
+        if (filters.durationRange) {
+            html += `
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Duración (horas)</label>
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="number" class="form-control" id="minDuration" placeholder="Min" min="${filters.durationRange.min || 1}">
+                        </div>
+                        <div class="col-6">
+                            <input type="number" class="form-control" id="maxDuration" placeholder="Max" max="${filters.durationRange.max || 48}">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    } else if (type === 'volunteers') {
+        // Location filter
+        if (filters.locations && filters.locations.length > 0) {
+            html += renderSelectFilter('location', 'Ubicación', filters.locations);
+        }
+
+        // Experience range filter
+        if (filters.experienceRange) {
+            html += `
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Experiencia (años)</label>
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="number" class="form-control" id="minExperience" placeholder="Min" min="${filters.experienceRange.min || 0}">
+                        </div>
+                        <div class="col-6">
+                            <input type="number" class="form-control" id="maxExperience" placeholder="Max" max="${filters.experienceRange.max || 50}">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Status filter
+        html += `
+            <div class="mb-3">
+                <label class="form-label fw-bold">Estado</label>
+                <select class="form-select" id="isActive">
+                    <option value="">Todos</option>
+                    <option value="true">Activos</option>
+                    <option value="false">Inactivos</option>
+                </select>
+            </div>
+        `;
+    } else if (type === 'organizations') {
+        // Location filter
+        if (filters.locations && filters.locations.length > 0) {
+            html += renderSelectFilter('location', 'Ubicación', filters.locations);
+        }
+
+        // Category filter
+        if (filters.categories && filters.categories.length > 0) {
+            html += renderSelectFilter('category', 'Tipo', filters.categories);
+        }
+
+        // Verified filter
+        html += `
+            <div class="mb-3">
+                <label class="form-label fw-bold">Verificación</label>
+                <select class="form-select" id="isVerified">
+                    <option value="">Todas</option>
+                    <option value="true">Verificadas</option>
+                    <option value="false">No verificadas</option>
+                </select>
+            </div>
+        `;
+    }
+
+    $('#filtersContainer').html(html);
+}
+
+function renderSelectFilter(id, label, options) {
+    let html = `
+        <div class="mb-3">
+            <label class="form-label fw-bold">${label}</label>
+            <select class="form-select" id="${id}">
+                <option value="">Todos</option>
+    `;
+
+    options.forEach(option => {
+        html += `<option value="${option.value}">${option.label} (${option.count})</option>`;
+    });
+
+    html += `
+            </select>
+        </div>
+    `;
+
+    return html;
+}
+
+function updateSortOptions() {
+    const sortOptions = {
+        opportunities: [
+            { value: 'Date,Desc', text: 'Más recientes' },
+            { value: 'Date,Asc', text: 'Más antiguos' },
+            { value: 'Title,Asc', text: 'Título A-Z' },
+            { value: 'Title,Desc', text: 'Título Z-A' },
+            { value: 'Duration,Asc', text: 'Menor duración' },
+            { value: 'Duration,Desc', text: 'Mayor duración' }
+        ],
+        volunteers: [
+            { value: 'Name,Asc', text: 'Nombre A-Z' },
+            { value: 'Name,Desc', text: 'Nombre Z-A' },
+            { value: 'Experience,Desc', text: 'Más experiencia' },
+            { value: 'Experience,Asc', text: 'Menos experiencia' },
+            { value: 'JoinDate,Desc', text: 'Más recientes' },
+            { value: 'JoinDate,Asc', text: 'Más antiguos' }
+        ],
+        organizations: [
+            { value: 'Name,Asc', text: 'Nombre A-Z' },
+            { value: 'Name,Desc', text: 'Nombre Z-A' },
+            { value: 'CreatedDate,Desc', text: 'Más recientes' },
+            { value: 'CreatedDate,Asc', text: 'Más antiguos' }
+        ]
+    };
+
+    const options = sortOptions[currentSearchType] || [];
+    let html = '<option value="">Ordenar por...</option>';
+    options.forEach(option => {
+        html += `<option value="${option.value}">${option.text}</option>`;
+    });
+
+    $('#sortBy').html(html);
+}
+
+function performSearch() {
+    const searchTerm = $('#searchTerm').val().trim();
+    const pageSize = parseInt($('#pageSize').val()) || 10;
+    const sortValue = $('#sortBy').val();
+    const [sortBy, sortOrder] = sortValue ? sortValue.split(',') : ['', ''];
+
+    // Build search data based on current type
+    let searchData = {
+        searchTerm: searchTerm,
+        page: currentPage,
+        pageSize: pageSize,
+        sortBy: sortBy,
+        sortOrder: sortOrder
+    };
+
+    // Add type-specific filters
+    if (currentSearchType === 'opportunities') {
+        searchData = {
+            ...searchData,
+            location: $('#location').val(),
+            category: $('#category').val(),
+            organizationId: $('#organizationId').val(),
+            startDate: $('#startDate').val(),
+            endDate: $('#endDate').val(),
+            minDuration: $('#minDuration').val() ? parseInt($('#minDuration').val()) : null,
+            maxDuration: $('#maxDuration').val() ? parseInt($('#maxDuration').val()) : null
+        };
+    } else if (currentSearchType === 'volunteers') {
+        searchData = {
+            ...searchData,
+            location: $('#location').val(),
+            minExperience: $('#minExperience').val() ? parseInt($('#minExperience').val()) : null,
+            maxExperience: $('#maxExperience').val() ? parseInt($('#maxExperience').val()) : null,
+            isActive: $('#isActive').val() ? $('#isActive').val() === 'true' : null
+        };
+    } else if (currentSearchType === 'organizations') {
+        searchData = {
+            ...searchData,
+            location: $('#location').val(),
+            category: $('#category').val(),
+            isVerified: $('#isVerified').val() ? $('#isVerified').val() === 'true' : null
+        };
+    }
+
+    // Remove empty/null values
+    Object.keys(searchData).forEach(key => {
+        if (searchData[key] === '' || searchData[key] === null || searchData[key] === undefined) {
+            delete searchData[key];
+        }
+    });
+
+    // Show loading
+    $('#loadingSpinner').show();
+    $('#searchResults').hide();
+    $('#pagination').hide();
+
+    // Perform search
+    const endpoints = {
+        opportunities: '@Url.Action("SearchOpportunities")',
+        volunteers: '@Url.Action("SearchVolunteers")',
+        organizations: '@Url.Action("SearchOrganizations")'
+    };
+
+    $.ajax({
+        url: endpoints[currentSearchType],
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(searchData),
+        success: function(response) {
+            $('#loadingSpinner').hide();
+            $('#searchResults').show();
+
+            if (response.success && response.data) {
+                renderSearchResults(response.data, currentSearchType);
+                renderPagination(response.data);
+                updateResultsTitle(response.data.totalCount, searchTerm);
+            } else {
+                $('#searchResults').html(`
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        ${response.message || 'No se encontraron resultados'}
+                    </div>
+                `);
+            }
+        },
+        error: function() {
+            $('#loadingSpinner').hide();
+            $('#searchResults').show().html(`
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    Error de conexión al realizar la búsqueda
+                </div>
+            `);
+        }
+    });
+}
+
+function renderSearchResults(data, type) {
+    let html = '';
+
+    if (!data.results || data.results.length === 0) {
+        html = getEmptyState();
+    } else {
+        data.results.forEach(item => {
+            if (type === 'opportunities') {
+                html += renderOpportunityCard(item);
+            } else if (type === 'volunteers') {
+                html += renderVolunteerCard(item);
+            } else if (type === 'organizations') {
+                html += renderOrganizationCard(item);
+            }
+        });
+    }
+
+    $('#searchResults').html(html);
+}
+
+function renderOpportunityCard(opportunity) {
+    const startDate = new Date(opportunity.fechaInicio).toLocaleDateString('es-ES');
+    return `
+        <div class="card mb-3 search-result">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5 class="card-title">
+                            <a href="/Events/Details/${opportunity.id}" class="text-decoration-none">
+                                ${opportunity.titulo}
+                            </a>
+                        </h5>
+                        <p class="card-text">${opportunity.descripcion?.substring(0, 150)}...</p>
+                        <div class="d-flex gap-3 text-muted small">
+                            <span><i class="bi bi-calendar me-1"></i>${startDate}</span>
+                            <span><i class="bi bi-geo-alt me-1"></i>${opportunity.ubicacion}</span>
+                            <span><i class="bi bi-clock me-1"></i>${opportunity.duracionHoras}h</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <span class="badge bg-success mb-2">${opportunity.categoria || 'General'}</span>
+                        <div class="text-muted small">
+                            ${opportunity.organizacion?.nombre || 'Organización'}
+                        </div>
+                        <div class="mt-2">
+                            <small>${opportunity.volunteerApplications?.length || 0}/${opportunity.voluntariosRequeridos} voluntarios</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderVolunteerCard(volunteer) {
+    return `
+        <div class="card mb-3 search-result">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <div class="avatar-circle" style="width: 60px; height: 60px; margin: 0 auto;">
+                            ${volunteer.imagenUrl ? 
+                                `<img src="${volunteer.imagenUrl}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` :
+                                `<span class="avatar-initials" style="font-size: 20px;">${(volunteer.nombre?.charAt(0) + volunteer.apellido?.charAt(0)).toUpperCase()}</span>`
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="card-title mb-1">
+                            <a href="/Dashboard/VolunteerDetails/${volunteer.id}" class="text-decoration-none">
+                                ${volunteer.nombre} ${volunteer.apellido}
+                            </a>
+                        </h5>
+                        <p class="text-muted mb-2">${volunteer.biografia?.substring(0, 100) || 'Sin descripción'}...</p>
+                        <div class="d-flex gap-3 text-muted small">
+                            <span><i class="bi bi-briefcase me-1"></i>${volunteer.experienciaAnios} años exp.</span>
+                            ${volunteer.ubicacion ? `<span><i class="bi bi-geo-alt me-1"></i>${volunteer.ubicacion}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <span class="badge bg-info mb-2">${volunteer.disponibilidad || 'No especificada'}</span>
+                        <div class="text-muted small">
+                            Miembro desde ${new Date(volunteer.fechaCreacion).getFullYear()}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderOrganizationCard(organization) {
+    return `
+        <div class="card mb-3 search-result">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <div class="avatar-circle" style="width: 60px; height: 60px; margin: 0 auto;">
+                            ${organization.logoUrl ? 
+                                `<img src="${organization.logoUrl}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` :
+                                `<i class="bi bi-building" style="font-size: 24px; color: #6c757d;"></i>`
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="card-title mb-1">
+                            <a href="/Organizations/Details/${organization.id}" class="text-decoration-none">
+                                ${organization.nombre}
+                                ${organization.esVerificada ? '<i class="bi bi-patch-check-fill text-primary ms-1"></i>' : ''}
+                            </a>
+                        </h5>
+                        <p class="text-muted mb-2">${organization.descripcion?.substring(0, 100) || 'Sin descripción'}...</p>
+                        <div class="d-flex gap-3 text-muted small">
+                            ${organization.direccion ? `<span><i class="bi bi-geo-alt me-1"></i>${organization.direccion}</span>` : ''}
+                            ${organization.telefono ? `<span><i class="bi bi-telephone me-1"></i>${organization.telefono}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <span class="badge bg-primary mb-2">${organization.tipoOrganizacion || 'General'}</span>
+                        <div class="text-muted small">
+                            ${organization.esVerificada ? 'Verificada' : 'Sin verificar'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderPagination(data) {
+    if (data.totalPages <= 1) {
+        $('#pagination').hide();
+        return;
+    }
+
+    let html = '';
+    
+    // Previous button
+    html += `
+        <li class="page-item ${!data.hasPreviousPage ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="goToPage(${data.page - 1})" aria-label="Anterior">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+    `;
+
+    // Page numbers
+    const startPage = Math.max(1, data.page - 2);
+    const endPage = Math.min(data.totalPages, data.page + 2);
+
+    if (startPage > 1) {
+        html += `<li class="page-item"><a class="page-link" href="#" onclick="goToPage(1)">1</a></li>`;
+        if (startPage > 2) {
+            html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        html += `
+            <li class="page-item ${i === data.page ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>
+            </li>
+        `;
+    }
+
+    if (endPage < data.totalPages) {
+        if (endPage < data.totalPages - 1) {
+            html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+        html += `<li class="page-item"><a class="page-link" href="#" onclick="goToPage(${data.totalPages})">${data.totalPages}</a></li>`;
+    }
+
+    // Next button
+    html += `
+        <li class="page-item ${!data.hasNextPage ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="goToPage(${data.page + 1})" aria-label="Siguiente">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    `;
+
+    $('#pagination ul').html(html);
+    $('#pagination').show();
+}
+
+function goToPage(page) {
+    if (page < 1) return;
+    currentPage = page;
+    performSearch();
+}
+
+function updateResultsTitle(totalCount, searchTerm) {
+    let title = `${totalCount} resultado${totalCount !== 1 ? 's' : ''}`;
+    if (searchTerm) {
+        title += ` para "${searchTerm}"`;
+    }
+    $('#resultsTitle').text(title);
+}
+
+function getEmptyState() {
+    return `
+        <div class="text-center py-5">
+            <i class="bi bi-search" style="font-size: 4rem; color: #dee2e6;"></i>
+            <h4 class="mt-3 text-muted">No se encontraron resultados</h4>
+            <p class="text-muted">Intenta ajustar tus filtros de búsqueda.</p>
+        </div>
+    `;
+}
+
+function clearFilters() {
+    $('#searchForm')[0].reset();
+    $('#searchTerm').val('');
+    currentPage = 1;
+    $('#searchResults').html(getEmptyState());
+    $('#pagination').hide();
+    $('#resultsTitle').text('Resultados de Búsqueda');
+}
+</script>
+
+<style>
+.nav-pills .nav-link {
+    border-radius: 8px;
+    margin: 0 2px;
+    font-size: 0.875rem;
+}
+
+.nav-pills .nav-link.active {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.search-result {
+    border-radius: 15px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.search-result:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9ecef;
+}
+
+.avatar-initials {
+    font-size: 14px;
+    font-weight: bold;
+    color: #6c757d;
+}
+
+.page-link {
+    border-radius: 8px;
+    margin: 0 2px;
+    border: 1px solid #dee2e6;
+}
+
+.page-link:hover {
+    background: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.page-item.active .page-link {
+    background: #28a745;
+    border-color: #28a745;
+}
+</style>
