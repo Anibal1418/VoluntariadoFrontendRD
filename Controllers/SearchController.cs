@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using VoluntariosConectadosRD.Services;
-using VoluntariadoConectadoRD.Models.DTOs;
+using VoluntariosConectadosRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Controllers
 {
@@ -57,7 +57,8 @@ namespace VoluntariosConectadosRD.Controllers
                     return Json(new { success = false, message = "Sesión expirada" });
                 }
 
-                var response = await _baseApiService.PostAsync<SearchResultDto<dynamic>>("api/Voluntariado/search/volunteers", searchDto, token);
+                _baseApiService.SetAuthToken(token);
+                var response = await _baseApiService.PostAsync<SearchResultDto<dynamic>>("api/Voluntariado/search/volunteers", searchDto);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 

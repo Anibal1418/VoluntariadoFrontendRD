@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VoluntariadoConectadoRD.Models.DTOs
+namespace VoluntariosConectadosRD.Models.DTOs
 {
     public class OpportunitySearchDto
     {
@@ -56,6 +56,12 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public bool HasNextPage => Page < TotalPages;
         public bool HasPreviousPage => Page > 1;
         public SearchFilters? AppliedFilters { get; set; }
+        
+        // API Response wrapper properties
+        public bool Success { get; set; } = true;
+        public string Message { get; set; } = string.Empty;
+        public T? Data { get; set; }
+        public List<string>? Errors { get; set; }
     }
 
     public class SearchFilters
@@ -67,6 +73,12 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public DateRange? DateRange { get; set; }
         public NumberRange? DurationRange { get; set; }
         public NumberRange? ExperienceRange { get; set; }
+        
+        // API Response wrapper properties
+        public bool Success { get; set; } = true;
+        public string Message { get; set; } = string.Empty;
+        public dynamic? Data { get; set; }
+        public List<string>? Errors { get; set; }
     }
 
     public class FilterOption
@@ -105,6 +117,12 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public List<SearchSuggestion> Volunteers { get; set; } = new List<SearchSuggestion>();
         public List<SearchSuggestion> Organizations { get; set; } = new List<SearchSuggestion>();
         public int TotalResults { get; set; }
+        
+        // API Response wrapper properties
+        public bool Success { get; set; } = true;
+        public string Message { get; set; } = string.Empty;
+        public dynamic? Data { get; set; }
+        public List<string>? Errors { get; set; }
     }
 
     public class SearchSuggestion

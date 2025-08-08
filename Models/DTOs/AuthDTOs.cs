@@ -303,4 +303,18 @@ namespace VoluntariosConectadosRD.Models.DTOs
         NoCompletada = 4,
         Cancelada = 5
     }
+
+    public class UserBasicDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? ImagenUrl { get; set; }
+        public UserRole Rol { get; set; }
+        public UserStatus Estatus { get; set; }
+        public bool IsOnline { get; set; }
+        public DateTime? LastSeen { get; set; }
+        public string FullName => $"{Nombre} {Apellido}";
+    }
 }

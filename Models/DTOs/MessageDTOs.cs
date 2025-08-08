@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VoluntariadoConectadoRD.Models.DTOs
+namespace VoluntariosConectadosRD.Models.DTOs
 {
     public enum MessageType
     {
@@ -34,6 +34,12 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public string TimeAgo { get; set; } = string.Empty;
         public bool IsFromCurrentUser { get; set; }
         public string FormattedContent { get; set; } = string.Empty;
+        
+        // API Response wrapper properties
+        public bool Success { get; set; } = true;
+        public string Message { get; set; } = string.Empty;
+        public MessageDto? Data { get; set; }
+        public List<string>? Errors { get; set; }
     }
 
     public class SendMessageDto
@@ -64,6 +70,12 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public DateTime? LastSeen { get; set; }
         public bool IsOnline { get; set; }
         public DateTime CreatedAt { get; set; }
+        
+        // API Response wrapper properties
+        public bool Success { get; set; } = true;
+        public string Message { get; set; } = string.Empty;
+        public ConversationDto? Data { get; set; }
+        public List<string>? Errors { get; set; }
     }
 
     public class ConversationListDto
@@ -76,6 +88,12 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
         public bool HasNextPage => Page < TotalPages;
         public bool HasPreviousPage => Page > 1;
+        
+        // API Response wrapper properties
+        public bool Success { get; set; } = true;
+        public string Message { get; set; } = string.Empty;
+        public ConversationListDto? Data { get; set; }
+        public List<string>? Errors { get; set; }
     }
 
     public class ConversationMessagesDto
@@ -92,6 +110,12 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public bool IsOtherUserOnline { get; set; }
         public DateTime? OtherUserLastSeen { get; set; }
         public bool IsTyping { get; set; }
+        
+        // API Response wrapper properties
+        public bool Success { get; set; } = true;
+        public string Message { get; set; } = string.Empty;
+        public ConversationMessagesDto? Data { get; set; }
+        public List<string>? Errors { get; set; }
     }
 
     public class StartConversationDto
@@ -119,6 +143,12 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public int UnreadConversations { get; set; }
         public int TotalUnreadMessages { get; set; }
         public DateTime? LastActivity { get; set; }
+        
+        // API Response wrapper properties
+        public bool Success { get; set; } = true;
+        public string Message { get; set; } = string.Empty;
+        public ConversationStatsDto? Data { get; set; }
+        public List<string>? Errors { get; set; }
     }
 
     public class TypingIndicatorDto
