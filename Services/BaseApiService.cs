@@ -121,6 +121,80 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
+        public async Task<T?> PostFormDataAsync<T>(string endpoint, MultipartFormDataContent formData, string? token = null)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+                
+                var response = await _httpClient.PostAsync(endpoint, formData);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("POST FormData {Endpoint} returned {StatusCode}: {Response}", endpoint, response.StatusCode, responseContent);
+                    
+                    // Try to parse error response as ApiResponseDto
+                    try
+                    {
+                        var errorResponse = JsonSerializer.Deserialize<T>(responseContent, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+                        return errorResponse;
+                    }
+                    catch
+                    {
+                        // If we can't parse as expected type, return default
+                        return default;
+                    }
+                }
+                
+                return JsonSerializer.Deserialize<T>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al llamar POST FormData {Endpoint}", endpoint);
+                return default;
+            }
+        }
+
+        public async Task<T?> DeleteAsync<T>(string endpoint, string? token = null)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+                
+                var response = await _httpClient.DeleteAsync(endpoint);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("DELETE {Endpoint} returned {StatusCode}: {Response}", endpoint, response.StatusCode, responseContent);
+                    return default;
+                }
+                
+                return JsonSerializer.Deserialize<T>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al llamar DELETE {Endpoint}", endpoint);
+                return default;
+            }
+        }
+
         public void SetAuthToken(string token)
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);

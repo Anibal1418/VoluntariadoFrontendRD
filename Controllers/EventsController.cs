@@ -312,6 +312,257 @@ namespace VoluntariosConectadosRD.Controllers
             return RedirectToAction("Details", new { id });
         }
 
+        public async Task<IActionResult> ListAdmin(int page = 1, int pageSize = 10)
+        {
+            try
+            {
+                // Get all opportunities for admin view
+                var response = await _volunteerApiService.GetVolunteerOpportunitiesAsync();
+                
+                if (response?.Success == true && response.Data != null)
+                {
+                    var allEvents = response.Data.Select(opp => new Events
+                    {
+                        Id = opp.Id,
+                        Nombre = opp.Titulo,
+                        Fecha = opp.FechaInicio,
+                        Ubicacion = opp.Ubicacion,
+                        Descripcion = opp.Descripcion,
+                        Organizador = opp.Organizacion?.Nombre ?? "Sin especificar",
+                        ImagenUrl = GetCategoryImage(opp.Descripcion),
+                        ImagenNombre = "default.jpg"
+                    }).ToList();
+
+                    // Calculate pagination
+                    var totalItems = allEvents.Count;
+                    var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+                    var paginatedEvents = allEvents.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                    ViewBag.CurrentPage = page;
+                    ViewBag.TotalPages = totalPages;
+                    ViewBag.PageSize = pageSize;
+
+                    return View(paginatedEvents);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading admin events list");
+            }
+
+            // Return empty list on error
+            ViewBag.CurrentPage = 1;
+            ViewBag.TotalPages = 1;
+            return View(new List<Events>());
+        }
+
+        public async Task<IActionResult> ListONG(int page = 1, int pageSize = 10)
+        {
+            try
+            {
+                // Get user's organization events
+                var userInfoJson = HttpContext.Session.GetString("UserInfo");
+                if (!string.IsNullOrEmpty(userInfoJson))
+                {
+                    var userInfo = System.Text.Json.JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
+                    if (userInfo?.Organizacion != null)
+                    {
+                        var response = await _volunteerApiService.GetOrganizationOpportunitiesAsync(userInfo.Organizacion.Id);
+                        
+                        if (response?.Success == true && response.Data != null)
+                        {
+                            var orgEvents = response.Data.Select(opp => new Events
+                            {
+                                Id = opp.Id,
+                                Nombre = opp.Titulo,
+                                Fecha = opp.FechaInicio,
+                                Ubicacion = opp.Ubicacion,
+                                Descripcion = opp.Descripcion,
+                                Organizador = userInfo.Organizacion.Nombre,
+                                ImagenUrl = GetCategoryImage(opp.Descripcion),
+                                ImagenNombre = "default.jpg"
+                            }).ToList();
+
+                            // Calculate pagination
+                            var totalItems = orgEvents.Count;
+                            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+                            var paginatedEvents = orgEvents.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                            ViewBag.CurrentPage = page;
+                            ViewBag.TotalPages = totalPages;
+                            ViewBag.PageSize = pageSize;
+
+                            return View(paginatedEvents);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading organization events list");
+            }
+
+            // Return empty list on error
+            ViewBag.CurrentPage = 1;
+            ViewBag.TotalPages = 1;
+            return View(new List<Events>());
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                // Get opportunity details from API
+                var response = await _volunteerApiService.GetOpportunityByIdAsync(id);
+                
+                if (response?.Success == true && response.Data != null)
+                {
+                    var opportunity = response.Data;
+                    var evento = new Events
+                    {
+                        Id = opportunity.Id,
+                        Nombre = opportunity.Titulo,
+                        Descripcion = opportunity.Descripcion,
+                        Fecha = opportunity.FechaInicio,
+                        FechaFin = opportunity.FechaFin,
+                        Ubicacion = opportunity.Ubicacion,
+                        DuracionHoras = opportunity.DuracionHoras,
+                        VoluntariosRequeridos = opportunity.VoluntariosRequeridos,
+                        ImagenUrl = GetCategoryImage(opportunity.Descripcion),
+                        Organizador = opportunity.Organizacion?.Nombre ?? "Sin especificar"
+                    };
+
+                    return View(evento);
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "No se pudo cargar el evento.";
+                    return RedirectToAction("List");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading event for editing: {Id}", id);
+                TempData["ErrorMessage"] = "Error al cargar el evento.";
+                return RedirectToAction("List");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Events evento)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Json(new { 
+                        success = false, 
+                        message = "Por favor, corrige los errores en el formulario.",
+                        errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToArray()
+                    });
+                }
+
+                // Create update DTO
+                var updateDto = new Models.DTOs.UpdateOpportunityDto
+                {
+                    Id = evento.Id,
+                    Titulo = evento.Nombre,
+                    Descripcion = evento.Descripcion ?? "",
+                    FechaInicio = evento.Fecha,
+                    FechaFin = evento.FechaFin ?? evento.Fecha.AddHours(evento.DuracionHoras),
+                    Ubicacion = evento.Ubicacion,
+                    DuracionHoras = evento.DuracionHoras,
+                    VoluntariosRequeridos = evento.VoluntariosRequeridos
+                };
+
+                var response = await _volunteerApiService.UpdateOpportunityAsync(updateDto);
+                
+                if (response?.Success == true)
+                {
+                    return Json(new { 
+                        success = true, 
+                        message = "¡Evento actualizado exitosamente!",
+                        redirectUrl = Url.Action("Details", new { id = evento.Id })
+                    });
+                }
+                else
+                {
+                    return Json(new { 
+                        success = false, 
+                        message = response?.Message ?? "Error al actualizar el evento"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating event: {Id}", evento.Id);
+                return Json(new { 
+                    success = false, 
+                    message = "Error interno del servidor" 
+                });
+            }
+        }
+
+        public async Task<IActionResult> Applicants(int id)
+        {
+            try
+            {
+                // Get opportunity details
+                var opportunityResponse = await _volunteerApiService.GetOpportunityByIdAsync(id);
+                if (opportunityResponse?.Success != true || opportunityResponse.Data == null)
+                {
+                    TempData["ErrorMessage"] = "No se pudo cargar el evento.";
+                    return RedirectToAction("List");
+                }
+
+                // Get applications for this opportunity
+                var applicationsResponse = await _volunteerApiService.GetApplicationsForOpportunityAsync(id);
+                
+                ViewBag.Opportunity = opportunityResponse.Data;
+                ViewBag.Applications = applicationsResponse?.Data ?? new List<dynamic>();
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading applicants for event: {Id}", id);
+                TempData["ErrorMessage"] = "Error al cargar las aplicaciones.";
+                return RedirectToAction("List");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateApplicationStatus(int applicationId, string status, string? message = "")
+        {
+            try
+            {
+                var response = await _volunteerApiService.UpdateApplicationStatusAsync(applicationId, status, message);
+                
+                if (response?.Success == true)
+                {
+                    return Json(new { 
+                        success = true, 
+                        message = "Estado de la aplicación actualizado exitosamente"
+                    });
+                }
+                else
+                {
+                    return Json(new { 
+                        success = false, 
+                        message = response?.Message ?? "Error al actualizar el estado"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating application status: {ApplicationId}", applicationId);
+                return Json(new { 
+                    success = false, 
+                    message = "Error interno del servidor" 
+                });
+            }
+        }
+
         private static string GetCategoryImage(string? description)
         {
             if (string.IsNullOrEmpty(description))

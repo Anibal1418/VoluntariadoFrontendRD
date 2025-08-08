@@ -324,6 +324,132 @@ namespace VoluntariosConectadosRD.Controllers
             });
         }
 
+        public IActionResult Logout()
+        {
+            // Clear session
+            HttpContext.Session.Clear();
+            
+            // Clear authentication cookies if any
+            Response.Cookies.Delete(".AspNetCore.Session");
+            
+            // Redirect to home page
+            return RedirectToAction("Index", "Home");
+        }
 
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                ModelState.AddModelError("", "Por favor, ingresa tu correo electrónico.");
+                return View();
+            }
+
+            // In a real implementation, this would send a password reset email
+            // For now, we'll just show a success message
+            TempData["SuccessMessage"] = "Si el correo existe en nuestro sistema, recibirás instrucciones para restablecer tu contraseña.";
+            return RedirectToAction("Login");
+        }
+
+        public IActionResult ChangePassword()
+        {
+            // Check if user is logged in
+            var userInfoJson = HttpContext.Session.GetString("UserInfo");
+            if (string.IsNullOrEmpty(userInfoJson))
+            {
+                return RedirectToAction("Login");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Por favor, corrige los errores en el formulario.",
+                        errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList()
+                    });
+                }
+
+                // Get current user from session
+                var userInfoJson = HttpContext.Session.GetString("UserInfo");
+                if (string.IsNullOrEmpty(userInfoJson))
+                {
+                    return Json(new { success = false, message = "Sesión expirada. Por favor, inicia sesión nuevamente." });
+                }
+
+                var userInfo = System.Text.Json.JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
+                if (userInfo == null)
+                {
+                    return Json(new { success = false, message = "Error al obtener información del usuario." });
+                }
+
+                // Call API to change password
+                var changePasswordDto = new
+                {
+                    CurrentPassword = model.CurrentPassword,
+                    NewPassword = model.NewPassword
+                };
+
+                var response = await _accountApiService.ChangePasswordAsync(userInfo.Id, changePasswordDto);
+
+                if (response?.Success == true)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Contraseña actualizada exitosamente."
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = response?.Message ?? "Error al cambiar la contraseña."
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing password for user");
+                return Json(new
+                {
+                    success = false,
+                    message = "Error de conexión. Por favor, inténtalo de nuevo más tarde."
+                });
+            }
+        }
+    }
+
+    public class ChangePasswordViewModel
+    {
+        [Required(ErrorMessage = "La contraseña actual es requerida")]
+        [Display(Name = "Contraseña Actual")]
+        public string CurrentPassword { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La nueva contraseña es requerida")]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "La contraseña debe tener entre 8 y 100 caracteres")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$", 
+            ErrorMessage = "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial")]
+        [Display(Name = "Nueva Contraseña")]
+        public string NewPassword { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Debes confirmar la nueva contraseña")]
+        [Compare("NewPassword", ErrorMessage = "Las contraseñas no coinciden")]
+        [Display(Name = "Confirmar Nueva Contraseña")]
+        public string ConfirmPassword { get; set; } = string.Empty;
     }
 } 

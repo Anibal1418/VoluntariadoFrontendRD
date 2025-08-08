@@ -1,0 +1,249 @@
+@{
+    ViewData["Title"] = "Postulantes del Evento";
+    Layout = "_DashboardLayout";
+    var opportunity = ViewBag.Opportunity;
+    var applications = ViewBag.Applications as List<dynamic>;
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex align-items-center mb-4">
+                <h2 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #28a745, #20c997); border-radius:12px; padding:18px 32px; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">POSTULANTES</h2>
+                <a asp-action="Details" asp-route-id="@opportunity?.Id" class="btn btn-outline-success back-btn ms-3">
+                    <i class="bi bi-arrow-left me-2"></i>Volver al Evento
+                </a>
+            </div>
+
+            @if (opportunity != null)
+            {
+                <div class="card shadow-sm mb-4" style="border-radius: 15px;">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3">@opportunity.Titulo</h4>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p class="text-muted mb-2"><i class="bi bi-calendar me-2"></i>@DateTime.Parse(opportunity.FechaInicio.ToString()).ToString("dd/MM/yyyy HH:mm")</p>
+                                <p class="text-muted mb-2"><i class="bi bi-geo-alt me-2"></i>@opportunity.Ubicacion</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="d-flex justify-content-end gap-3">
+                                    <div class="text-center">
+                                        <div class="fs-3 fw-bold text-success">@(applications?.Count ?? 0)</div>
+                                        <small class="text-muted">Postulantes</small>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="fs-3 fw-bold text-primary">@opportunity.VoluntariosRequeridos</div>
+                                        <small class="text-muted">Requeridos</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-body p-4">
+                    @if (applications != null && applications.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Voluntario</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Fecha de Aplicación</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var application in applications)
+                                    {
+                                        <tr class="application-row" data-id="@application.Id">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-circle me-3">
+                                                        @if (!string.IsNullOrEmpty(application.Voluntario?.ProfileImageUrl))
+                                                        {
+                                                            <img src="@application.Voluntario.ProfileImageUrl" alt="Avatar" class="avatar-img">
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="avatar-initials">@((application.Voluntario?.Nombre?.Substring(0,1) + application.Voluntario?.Apellido?.Substring(0,1))?.ToUpper())</span>
+                                                        }
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">@application.Voluntario?.Nombre @application.Voluntario?.Apellido</div>
+                                                        <small class="text-muted">@application.Voluntario?.ExperienciaAnios años experiencia</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@application.Voluntario?.Email</td>
+                                            <td>@application.Voluntario?.Telefono</td>
+                                            <td>@DateTime.Parse(application.FechaCreacion.ToString()).ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                <span class="badge status-badge" data-status="@application.Estado">
+                                                    @(application.Estado switch 
+                                                    {
+                                                        "Pendiente" => "Pendiente",
+                                                        "Aprobado" => "Aprobado", 
+                                                        "Rechazado" => "Rechazado",
+                                                        _ => "Desconocido"
+                                                    })
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    @if (application.Estado == "Pendiente")
+                                                    {
+                                                        <button class="btn btn-sm btn-success" onclick="updateStatus(@application.Id, 'Aprobado')">
+                                                            <i class="bi bi-check me-1"></i>Aprobar
+                                                        </button>
+                                                        <button class="btn btn-sm btn-danger" onclick="updateStatus(@application.Id, 'Rechazado')">
+                                                            <i class="bi bi-x me-1"></i>Rechazar
+                                                        </button>
+                                                    }
+                                                    <button class="btn btn-sm btn-outline-info" onclick="viewProfile(@application.Voluntario?.Id)">
+                                                        <i class="bi bi-person me-1"></i>Ver Perfil
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-people" style="font-size: 4rem; color: #dee2e6;"></i>
+                            <h4 class="mt-3 text-muted">No hay postulantes aún</h4>
+                            <p class="text-muted">Cuando los voluntarios se postulen a este evento, aparecerán aquí.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateStatus(applicationId, status) {
+    let message = '';
+    if (status === 'Rechazado') {
+        message = prompt('Mensaje opcional para el voluntario:');
+        if (message === null) return; // User cancelled
+    }
+
+    $.ajax({
+        url: '@Url.Action("UpdateApplicationStatus")',
+        type: 'POST',
+        data: {
+            applicationId: applicationId,
+            status: status,
+            message: message
+        },
+        success: function(response) {
+            if (response.success) {
+                toastr.success(response.message);
+                
+                // Update status badge
+                const row = $(`tr[data-id="${applicationId}"]`);
+                const statusBadge = row.find('.status-badge');
+                statusBadge.attr('data-status', status).text(status);
+                
+                // Hide action buttons if approved/rejected
+                if (status !== 'Pendiente') {
+                    row.find('.btn-success, .btn-danger').hide();
+                }
+                
+                // Refresh page after a short delay
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                toastr.error(response.message);
+            }
+        },
+        error: function() {
+            toastr.error('Error de conexión');
+        }
+    });
+}
+
+function viewProfile(volunteerId) {
+    // Redirect to volunteer profile
+    window.open(`/Dashboard/VolunteerDetails/${volunteerId}`, '_blank');
+}
+</script>
+
+<style>
+    .back-btn {
+        border: 2px solid #28a745;
+        color: #28a745;
+        transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+        background: #28a745;
+        color: white;
+        transform: translateX(-5px);
+    }
+    
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e9ecef;
+    }
+    
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .avatar-initials {
+        font-size: 14px;
+        font-weight: bold;
+        color: #6c757d;
+    }
+    
+    .status-badge {
+        border-radius: 20px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .status-badge[data-status="Pendiente"] {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+    
+    .status-badge[data-status="Aprobado"] {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #b8daff;
+    }
+    
+    .status-badge[data-status="Rechazado"] {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .application-row:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+</style>

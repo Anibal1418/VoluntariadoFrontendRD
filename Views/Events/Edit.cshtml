@@ -1,0 +1,132 @@
+@model VoluntariosConectadosRD.Models.Events
+
+@{
+    ViewData["Title"] = "Editar Evento";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-8">
+            <div class="d-flex align-items-center mb-4">
+                <h2 class="dashboard-title mb-0" style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #ffc107, #e0a800); border-radius:12px; padding:18px 32px; box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);">EDITAR EVENTO</h2>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-warning back-btn ms-3">
+                    <i class="bi bi-arrow-left me-2"></i>Volver a Detalles
+                </a>
+            </div>
+
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-body p-4">
+                    <form id="editEventForm" method="post">
+                        @Html.HiddenFor(m => m.Id)
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Nombre" class="form-label fw-semibold">Nombre del Evento *</label>
+                                <input asp-for="Nombre" class="form-control form-control-lg" style="border-radius: 12px;" required>
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Ubicacion" class="form-label fw-semibold">Ubicación *</label>
+                                <input asp-for="Ubicacion" class="form-control form-control-lg" style="border-radius: 12px;" required>
+                                <span asp-validation-for="Ubicacion" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label fw-semibold">Descripción *</label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="4" style="border-radius: 12px;" required></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Fecha" class="form-label fw-semibold">Fecha de Inicio *</label>
+                                <input asp-for="Fecha" type="datetime-local" class="form-control form-control-lg" style="border-radius: 12px;" required>
+                                <span asp-validation-for="Fecha" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="FechaFin" class="form-label fw-semibold">Fecha de Fin</label>
+                                <input asp-for="FechaFin" type="datetime-local" class="form-control form-control-lg" style="border-radius: 12px;">
+                                <span asp-validation-for="FechaFin" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="DuracionHoras" class="form-label fw-semibold">Duración (horas) *</label>
+                                <input asp-for="DuracionHoras" type="number" min="1" max="24" class="form-control form-control-lg" style="border-radius: 12px;" required>
+                                <span asp-validation-for="DuracionHoras" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="VoluntariosRequeridos" class="form-label fw-semibold">Voluntarios Requeridos *</label>
+                                <input asp-for="VoluntariosRequeridos" type="number" min="1" max="1000" class="form-control form-control-lg" style="border-radius: 12px;" required>
+                                <span asp-validation-for="VoluntariosRequeridos" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-warning btn-lg flex-fill" style="border-radius: 12px; background: linear-gradient(135deg, #ffc107, #e0a800); border: none; color: #000;">
+                                <i class="bi bi-check-circle me-2"></i>Actualizar Evento
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary btn-lg flex-fill" style="border-radius: 12px;">
+                                <i class="bi bi-x-circle me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#editEventForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Show loading
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalText = submitBtn.html();
+        submitBtn.html('<i class="bi bi-hourglass-split me-2"></i>Actualizando...').prop('disabled', true);
+        
+        $.ajax({
+            url: '@Url.Action("Edit")',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.success) {
+                    toastr.success(response.message);
+                    setTimeout(() => {
+                        window.location.href = response.redirectUrl;
+                    }, 1500);
+                } else {
+                    toastr.error(response.message || 'Error al actualizar el evento');
+                    submitBtn.html(originalText).prop('disabled', false);
+                }
+            },
+            error: function() {
+                toastr.error('Error de conexión');
+                submitBtn.html(originalText).prop('disabled', false);
+            }
+        });
+    });
+});
+</script>
+
+<style>
+    .back-btn {
+        border: 2px solid #ffc107;
+        color: #ffc107;
+        transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+        background: #ffc107;
+        color: #000;
+        transform: translateX(-5px);
+    }
+</style>
