@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VoluntariadoConectadoRD.Models.DTOs
+namespace VoluntariosConectadosRD.Models.DTOs
 {
     public class OpportunitySearchDto
     {
@@ -46,7 +46,7 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public int PageSize { get; set; } = 10;
     }
 
-    public class SearchResultDto<T>
+    public class SearchResultDto<T> : ApiResponse<SearchResultDto<T>>
     {
         public List<T> Results { get; set; } = new List<T>();
         public int TotalCount { get; set; }
@@ -58,7 +58,7 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public SearchFilters? AppliedFilters { get; set; }
     }
 
-    public class SearchFilters
+    public class SearchFilters : ApiResponse<SearchFilters>
     {
         public List<FilterOption> Categories { get; set; } = new List<FilterOption>();
         public List<FilterOption> Locations { get; set; } = new List<FilterOption>();
@@ -99,7 +99,7 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public int Limit { get; set; } = 5;
     }
 
-    public class QuickSearchResultDto
+    public class QuickSearchResultDto : ApiResponse<QuickSearchResultDto>
     {
         public List<SearchSuggestion> Opportunities { get; set; } = new List<SearchSuggestion>();
         public List<SearchSuggestion> Volunteers { get; set; } = new List<SearchSuggestion>();

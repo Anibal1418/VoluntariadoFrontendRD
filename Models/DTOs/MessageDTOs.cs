@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VoluntariadoConectadoRD.Models.DTOs
+namespace VoluntariosConectadosRD.Models.DTOs
 {
     public enum MessageType
     {
@@ -11,7 +11,7 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         ApplicationUpdate = 5
     }
 
-    public class MessageDto
+    public class MessageDto : ApiResponse<MessageDto>
     {
         public int Id { get; set; }
         public int SenderId { get; set; }
@@ -53,7 +53,7 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public IFormFile? Attachment { get; set; }
     }
 
-    public class ConversationDto
+    public class ConversationDto : ApiResponse<ConversationDto>
     {
         public string Id { get; set; } = string.Empty;
         public UserBasicDto OtherUser { get; set; } = new UserBasicDto();
@@ -66,7 +66,7 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public DateTime CreatedAt { get; set; }
     }
 
-    public class ConversationListDto
+    public class ConversationListDto : ApiResponse<ConversationListDto>
     {
         public List<ConversationDto> Conversations { get; set; } = new List<ConversationDto>();
         public int TotalUnread { get; set; }
@@ -78,7 +78,7 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public bool HasPreviousPage => Page > 1;
     }
 
-    public class ConversationMessagesDto
+    public class ConversationMessagesDto : ApiResponse<ConversationMessagesDto>
     {
         public string ConversationId { get; set; } = string.Empty;
         public UserBasicDto OtherUser { get; set; } = new UserBasicDto();
@@ -113,7 +113,7 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public string Content { get; set; } = string.Empty;
     }
 
-    public class ConversationStatsDto
+    public class ConversationStatsDto : ApiResponse<ConversationStatsDto>
     {
         public int TotalConversations { get; set; }
         public int UnreadConversations { get; set; }

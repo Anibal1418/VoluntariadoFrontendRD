@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using VoluntariosConectadosRD.Models;
 using VoluntariosConectadosRD.Services;
-using VoluntariadoConectadoRD.Models.DTOs;
+using VoluntariosConectadosRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Controllers
 {
@@ -48,8 +49,9 @@ namespace VoluntariosConectadosRD.Controllers
                     return Json(new { success = false, message = "Sesión expirada" });
                 }
 
+                _baseApiService.SetAuthToken(token);
                 var response = await _baseApiService.GetAsync<ConversationListDto>(
-                    $"api/Message/conversations?page={page}&pageSize={pageSize}", token);
+                    $"api/Message/conversations?page={page}&pageSize={pageSize}");
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -78,8 +80,9 @@ namespace VoluntariosConectadosRD.Controllers
                     return Json(new { success = false, message = "Sesión expirada" });
                 }
 
+                _baseApiService.SetAuthToken(token);
                 var response = await _baseApiService.GetAsync<ConversationMessagesDto>(
-                    $"api/Message/conversation/{conversationId}/messages?page={page}&pageSize={pageSize}", token);
+                    $"api/Message/conversation/{conversationId}/messages?page={page}&pageSize={pageSize}");
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -155,7 +158,8 @@ namespace VoluntariosConectadosRD.Controllers
                     return Json(new { success = false, message = "Sesión expirada" });
                 }
 
-                var response = await _baseApiService.PostAsync<ConversationDto>("api/Message/conversation/start", startDto, token);
+                _baseApiService.SetAuthToken(token);
+                var response = await _baseApiService.PostAsync<ConversationDto>("api/Message/conversation/start", startDto);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -184,7 +188,8 @@ namespace VoluntariosConectadosRD.Controllers
                     return Json(new { success = false, message = "Sesión expirada" });
                 }
 
-                var response = await _baseApiService.PutAsync<bool>($"api/Message/conversation/{conversationId}/read", null, token);
+                _baseApiService.SetAuthToken(token);
+                var response = await _baseApiService.PutAsync<ApiResponse<object>>($"api/Message/conversation/{conversationId}/read", null);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -213,7 +218,8 @@ namespace VoluntariosConectadosRD.Controllers
                     return Json(new { success = false, message = "Sesión expirada" });
                 }
 
-                var response = await _baseApiService.PutAsync<MessageDto>($"api/Message/{messageId}", editDto, token);
+                _baseApiService.SetAuthToken(token);
+                var response = await _baseApiService.PutAsync<MessageDto>($"api/Message/{messageId}", editDto);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -242,12 +248,12 @@ namespace VoluntariosConectadosRD.Controllers
                     return Json(new { success = false, message = "Sesión expirada" });
                 }
 
-                var response = await _baseApiService.DeleteAsync<bool>($"api/Message/{messageId}", token);
+                _baseApiService.SetAuthToken(token);
+                var response = await _baseApiService.DeleteAsync($"api/Message/{messageId}");
                 
                 return Json(new { 
-                    success = response?.Success ?? false, 
-                    data = response?.Data,
-                    message = response?.Message 
+                    success = response, 
+                    message = response ? "Mensaje eliminado" : "Error al eliminar mensaje"
                 });
             }
             catch (Exception ex)
@@ -271,7 +277,8 @@ namespace VoluntariosConectadosRD.Controllers
                     return Json(new { success = false, message = "Sesión expirada" });
                 }
 
-                var response = await _baseApiService.GetAsync<ConversationStatsDto>("api/Message/stats", token);
+                _baseApiService.SetAuthToken(token);
+                var response = await _baseApiService.GetAsync<ConversationStatsDto>("api/Message/stats");
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
