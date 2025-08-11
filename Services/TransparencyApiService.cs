@@ -1,5 +1,6 @@
 using VoluntariadoConectadoRD.Models.DTOs;
 using VoluntariosConectadosRD.Models;
+using VoluntariosConectadosRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Services
 {
@@ -14,7 +15,7 @@ namespace VoluntariosConectadosRD.Services
             _logger = logger;
         }
 
-        public async Task<ApiResponse<List<OrganizationTransparencyDto>>?> GetOrganizationsFinancialSummaryAsync(TransparencyFiltersDto? filters = null)
+        public async Task<ApiResponseDto<List<OrganizationTransparencyDto>>?> GetOrganizationsFinancialSummaryAsync(TransparencyFiltersDto? filters = null)
         {
             try
             {
@@ -41,7 +42,7 @@ namespace VoluntariosConectadosRD.Services
                 }
 
                 var queryString = queryParams.Any() ? "?" + string.Join("&", queryParams) : "";
-                return await _baseApiService.GetAsync<ApiResponse<List<OrganizationTransparencyDto>>>($"transparency/organizations{queryString}");
+                return await _baseApiService.GetAsync<ApiResponseDto<List<OrganizationTransparencyDto>>>($"transparency/organizations{queryString}");
             }
             catch (Exception ex)
             {
@@ -50,11 +51,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponse<OrganizationFinancialDetailsDto>?> GetOrganizationFinancialDetailsAsync(int organizationId)
+        public async Task<ApiResponseDto<OrganizationFinancialDetailsDto>?> GetOrganizationFinancialDetailsAsync(int organizationId)
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponse<OrganizationFinancialDetailsDto>>($"transparency/organizations/{organizationId}");
+                return await _baseApiService.GetAsync<ApiResponseDto<OrganizationFinancialDetailsDto>>($"transparency/organizations/{organizationId}");
             }
             catch (Exception ex)
             {
@@ -63,11 +64,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponse<FinancialReportDetailDto>?> GetFinancialReportDetailsAsync(int reportId)
+        public async Task<ApiResponseDto<FinancialReportDetailDto>?> GetFinancialReportDetailsAsync(int reportId)
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponse<FinancialReportDetailDto>>($"transparency/reports/{reportId}");
+                return await _baseApiService.GetAsync<ApiResponseDto<FinancialReportDetailDto>>($"transparency/reports/{reportId}");
             }
             catch (Exception ex)
             {
@@ -76,11 +77,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponse<List<int>>?> GetAvailableYearsAsync()
+        public async Task<ApiResponseDto<List<int>>?> GetAvailableYearsAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponse<List<int>>>("transparency/filters/years");
+                return await _baseApiService.GetAsync<ApiResponseDto<List<int>>>("transparency/filters/years");
             }
             catch (Exception ex)
             {
@@ -89,11 +90,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponse<List<string>>?> GetOrganizationTypesAsync()
+        public async Task<ApiResponseDto<List<string>>?> GetOrganizationTypesAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponse<List<string>>>("transparency/filters/organization-types");
+                return await _baseApiService.GetAsync<ApiResponseDto<List<string>>>("transparency/filters/organization-types");
             }
             catch (Exception ex)
             {
@@ -102,11 +103,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponse<ChartDataDto>?> GetPlatformFinancialOverviewAsync()
+        public async Task<ApiResponseDto<ChartDataDto>?> GetPlatformFinancialOverviewAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponse<ChartDataDto>>("transparency/platform-overview");
+                return await _baseApiService.GetAsync<ApiResponseDto<ChartDataDto>>("transparency/platform-overview");
             }
             catch (Exception ex)
             {

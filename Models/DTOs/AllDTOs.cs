@@ -1,6 +1,32 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace VoluntariosConectadosRD.Models.DTOs
+{
+    // Common API Response wrapper
+    public class ApiResponseDto<T>
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public T? Data { get; set; }
+        public List<string>? Errors { get; set; }
+    }
+
+    // Pagination
+    public class PaginatedResult<T>
+    {
+        public List<T> Items { get; set; } = new();
+        public int TotalCount { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+        public bool HasPreviousPage => PageNumber > 1;
+        public bool HasNextPage => PageNumber < TotalPages;
+    }
+}
+
+// Backend namespace compatibility
+namespace VoluntariadoConectadoRD.Models.DTOs
 {
     // AuthDTOs.cs
     public class LoginDto
@@ -94,7 +120,7 @@ namespace VoluntariosConectadosRD.Models.DTOs
         ApplicationUpdate = 5
     }
 
-    public class MessageDto : ApiResponse<MessageDto>
+    public class MessageDto
     {
         public int Id { get; set; }
         public int SenderId { get; set; }
@@ -136,7 +162,7 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public IFormFile? Attachment { get; set; }
     }
 
-    public class ConversationDto : ApiResponse<ConversationDto>
+    public class ConversationDto
     {
         public string Id { get; set; } = string.Empty;
         public UserBasicDto OtherUser { get; set; } = new UserBasicDto();
@@ -149,7 +175,7 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public DateTime CreatedAt { get; set; }
     }
 
-    public class ConversationListDto : ApiResponse<ConversationListDto>
+    public class ConversationListDto
     {
         public List<ConversationDto> Conversations { get; set; } = new List<ConversationDto>();
         public int TotalUnread { get; set; }
@@ -161,7 +187,7 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public bool HasPreviousPage => Page > 1;
     }
 
-    public class ConversationMessagesDto : ApiResponse<ConversationMessagesDto>
+    public class ConversationMessagesDto
     {
         public string ConversationId { get; set; } = string.Empty;
         public UserBasicDto OtherUser { get; set; } = new UserBasicDto();
@@ -196,7 +222,7 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public string Content { get; set; } = string.Empty;
     }
 
-    public class ConversationStatsDto : ApiResponse<ConversationStatsDto>
+    public class ConversationStatsDto
     {
         public int TotalConversations { get; set; }
         public int UnreadConversations { get; set; }
@@ -355,7 +381,7 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public int PageSize { get; set; } = 10;
     }
 
-    public class SearchResultDto<T> : ApiResponse<SearchResultDto<T>>
+    public class SearchResultDto<T>
     {
         public List<T> Results { get; set; } = new List<T>();
         public int TotalCount { get; set; }
@@ -367,7 +393,7 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public SearchFilters? AppliedFilters { get; set; }
     }
 
-    public class SearchFilters : ApiResponse<SearchFilters>
+    public class SearchFilters
     {
         public List<FilterOption> Categories { get; set; } = new List<FilterOption>();
         public List<FilterOption> Locations { get; set; } = new List<FilterOption>();
@@ -408,7 +434,7 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public int Limit { get; set; } = 5;
     }
 
-    public class QuickSearchResultDto : ApiResponse<QuickSearchResultDto>
+    public class QuickSearchResultDto
     {
         public List<SearchSuggestion> Opportunities { get; set; } = new List<SearchSuggestion>();
         public List<SearchSuggestion> Volunteers { get; set; } = new List<SearchSuggestion>();
@@ -489,5 +515,404 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public double Rating { get; set; }
         public int OpportunitiesPosted { get; set; }
         public bool IsVerified { get; set; }
+    }
+
+    // Backend compatibility DTOs
+    public class LoginResponseDto
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
+        public DateTime ExpiresAt { get; set; }
+        public UserInfoDto User { get; set; } = new();
+    }
+
+    public class UserInfoDto
+    {
+        public int Id { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string? Telefono { get; set; }
+        public int Rol { get; set; }
+        public string RolNombre { get; set; } = string.Empty;
+        public int Estatus { get; set; }
+        public string? ProfileImageUrl { get; set; }
+        public bool PerfilCompleto { get; set; }
+        public DateTime FechaCreacion { get; set; }
+    }
+
+    public class UserProfileDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Telefono { get; set; }
+        public string? Direccion { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
+        public string? ProfileImageUrl { get; set; }
+        public string? Biografia { get; set; }
+        public string? Habilidades { get; set; }
+        public int? ExperienciaAnios { get; set; }
+        public string? Disponibilidad { get; set; }
+        public int HorasVoluntariado { get; set; }
+        public decimal CalificacionPromedio { get; set; }
+        public int TotalResenas { get; set; }
+        public bool PerfilCompleto { get; set; }
+    }
+
+    public class EnhancedUserProfileDto : UserProfileDto
+    {
+        public List<string> Skills { get; set; } = new();
+        public string? About { get; set; }
+        public string? Location { get; set; }
+        public bool IsAvailable { get; set; } = true;
+    }
+
+    public class OrganizationProfileDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string? Descripcion { get; set; }
+        public string? Direccion { get; set; }
+        public string? Telefono { get; set; }
+        public string? SitioWeb { get; set; }
+        public string? LogoUrl { get; set; }
+        public string? TipoOrganizacion { get; set; }
+        public string? Mision { get; set; }
+        public string? Vision { get; set; }
+        public DateTime? FechaFundacion { get; set; }
+        public string? NumeroRegistro { get; set; }
+        public bool Verificada { get; set; }
+        public int CalificacionPromedio { get; set; }
+        public int TotalOportunidades { get; set; }
+    }
+
+    public class AdminStatsDto
+    {
+        public int TotalUsers { get; set; }
+        public int TotalOrganizations { get; set; }
+        public int TotalOpportunities { get; set; }
+        public int TotalApplications { get; set; }
+        public int ActiveUsers { get; set; }
+        public int NewUsersThisMonth { get; set; }
+        public decimal AverageRating { get; set; }
+        public List<MonthlyStatsDto> MonthlyStats { get; set; } = new();
+    }
+
+    public class MonthlyStatsDto
+    {
+        public string Month { get; set; } = string.Empty;
+        public int Users { get; set; }
+        public int Organizations { get; set; }
+        public int Opportunities { get; set; }
+        public int Applications { get; set; }
+    }
+
+    public class AdminVolunteerDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Telefono { get; set; }
+        public int Estatus { get; set; }
+        public DateTime FechaCreacion { get; set; }
+        public int HorasVoluntariado { get; set; }
+        public decimal CalificacionPromedio { get; set; }
+        public string? ProfileImageUrl { get; set; }
+        public bool PerfilCompleto { get; set; }
+    }
+
+    public class VolunteerApplicationDetailDto
+    {
+        public int Id { get; set; }
+        public int UsuarioId { get; set; }
+        public int OpportunityId { get; set; }
+        public string? Mensaje { get; set; }
+        public int Estatus { get; set; }
+        public DateTime FechaAplicacion { get; set; }
+        public DateTime? FechaRespuesta { get; set; }
+        public string? NotasOrganizacion { get; set; }
+        public string VolunteerName { get; set; } = string.Empty;
+        public string OpportunityTitle { get; set; } = string.Empty;
+    }
+
+    // Transparency DTOs
+    public class TransparencyFiltersDto
+    {
+        public bool? SoloVerificadas { get; set; }
+        public string? TipoOrganizacion { get; set; }
+        public int? Año { get; set; }
+        public int? Trimestre { get; set; }
+    }
+
+    public class OrganizationTransparencyDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string? LogoUrl { get; set; }
+        public string? TipoOrganizacion { get; set; }
+        public DateTime FechaRegistro { get; set; }
+        public bool Verificada { get; set; }
+        public decimal TotalIngresosPeriodo { get; set; }
+        public decimal TotalGastosPeriodo { get; set; }
+        public decimal BalanceActual { get; set; }
+        public int TotalReportes { get; set; }
+        public DateTime? UltimoReporte { get; set; }
+        public List<FinancialReportSummaryDto> ReportesRecientes { get; set; } = new();
+    }
+
+    public class FinancialReportSummaryDto
+    {
+        public int Id { get; set; }
+        public string Titulo { get; set; } = string.Empty;
+        public int Año { get; set; }
+        public int Trimestre { get; set; }
+        public decimal TotalIngresos { get; set; }
+        public decimal TotalGastos { get; set; }
+        public decimal Balance { get; set; }
+        public DateTime FechaCreacion { get; set; }
+        public bool EsPublico { get; set; }
+    }
+
+    // Additional missing DTOs and Enums
+    public enum UserStatus
+    {
+        Activo = 1,
+        Inactivo = 2,
+        Suspendido = 3,
+        PendienteVerificacion = 4
+    }
+
+    public class AdminEditUserDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Telefono { get; set; }
+        public UserStatus Estatus { get; set; }
+        public string? Ubicacion { get; set; }
+    }
+
+    public class AdminOrganizationDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Telefono { get; set; }
+        public string? TipoOrganizacion { get; set; }
+        public bool Verificada { get; set; }
+        public DateTime FechaRegistro { get; set; }
+        public int TotalOportunidades { get; set; }
+        public UserStatus Estatus { get; set; }
+    }
+
+    public class AdminEditOrganizationDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string? Descripcion { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string? Telefono { get; set; }
+        public string? SitioWeb { get; set; }
+        public string? TipoOrganizacion { get; set; }
+        public bool Verificada { get; set; }
+        public UserStatus Estatus { get; set; }
+    }
+
+    public class PlatformStatsDto
+    {
+        public int TotalUsers { get; set; }
+        public int TotalOrganizations { get; set; }
+        public int TotalOpportunities { get; set; }
+        public int TotalApplications { get; set; }
+        public int ActiveUsers { get; set; }
+        public int NewUsersThisMonth { get; set; }
+        public int PendingApplications { get; set; }
+        public decimal TotalVolunteerHours { get; set; }
+    }
+
+    public class DashboardStatsDto
+    {
+        public int TotalApplications { get; set; }
+        public int PendingApplications { get; set; }
+        public int AcceptedApplications { get; set; }
+        public int CompletedOpportunities { get; set; }
+        public int TotalVolunteerHours { get; set; }
+        public decimal AverageRating { get; set; }
+        public int BadgesEarned { get; set; }
+        public List<MonthlyActivityDto> MonthlyActivity { get; set; } = new();
+    }
+
+    public class MonthlyActivityDto
+    {
+        public string Month { get; set; } = string.Empty;
+        public int Applications { get; set; }
+        public int CompletedOpportunities { get; set; }
+        public int VolunteerHours { get; set; }
+    }
+
+    public class VolunteerStatsDto
+    {
+        public int TotalApplications { get; set; }
+        public int CompletedOpportunities { get; set; }
+        public int TotalVolunteerHours { get; set; }
+        public decimal AverageRating { get; set; }
+        public int BadgesEarned { get; set; }
+        public DateTime? LastActivity { get; set; }
+        public List<MonthlyActivityDto> MonthlyActivity { get; set; } = new();
+    }
+
+    public class RecentActivityDto
+    {
+        public int Id { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
+        public string? Url { get; set; }
+    }
+
+    public class OrganizationStatsDto
+    {
+        public int TotalOpportunities { get; set; }
+        public int ActiveOpportunities { get; set; }
+        public int TotalApplications { get; set; }
+        public int AcceptedVolunteers { get; set; }
+        public int CompletedOpportunities { get; set; }
+        public decimal AverageRating { get; set; }
+        public List<MonthlyStatsDto> MonthlyStats { get; set; } = new();
+    }
+
+    public class OrganizationEventDto
+    {
+        public int Id { get; set; }
+        public string Titulo { get; set; } = string.Empty;
+        public DateTime FechaInicio { get; set; }
+        public string Ubicacion { get; set; } = string.Empty;
+        public int VoluntariosInscritos { get; set; }
+        public int VoluntariosRequeridos { get; set; }
+        public string Estatus { get; set; } = string.Empty;
+    }
+
+    public class UserEventDto
+    {
+        public int Id { get; set; }
+        public string Titulo { get; set; } = string.Empty;
+        public DateTime FechaInicio { get; set; }
+        public string Ubicacion { get; set; } = string.Empty;
+        public string OrganizacionNombre { get; set; } = string.Empty;
+        public string EstadoAplicacion { get; set; } = string.Empty;
+    }
+
+    public class UserDashboardDto
+    {
+        public UserProfileDto Profile { get; set; } = new();
+        public DashboardStatsDto Stats { get; set; } = new();
+        public List<UserEventDto> UpcomingEvents { get; set; } = new();
+        public List<RecentActivityDto> RecentActivity { get; set; } = new();
+    }
+
+    public class OrganizationDashboardDto
+    {
+        public OrganizationProfileDto Profile { get; set; } = new();
+        public OrganizationStatsDto Stats { get; set; } = new();
+        public List<OrganizationEventDto> UpcomingEvents { get; set; } = new();
+        public List<RecentActivityDto> RecentActivity { get; set; } = new();
+    }
+
+    // Complete transparency DTOs from backend
+    public class OrganizationFinancialDetailsDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string? Descripcion { get; set; }
+        public string? Email { get; set; }
+        public string? Telefono { get; set; }
+        public string? SitioWeb { get; set; }
+        public string? LogoUrl { get; set; }
+        public string? TipoOrganizacion { get; set; }
+        public string? Mision { get; set; }
+        public DateTime FechaRegistro { get; set; }
+        public bool Verificada { get; set; }
+        
+        public FinancialSummaryDto ResumenFinanciero { get; set; } = new();
+        public List<FinancialReportDetailDto> ReportesFinancieros { get; set; } = new();
+        
+        public ChartDataDto GastosCategoria { get; set; } = new();
+        public ChartDataDto IngresosTipo { get; set; } = new();
+        public ChartDataDto TendenciaTrimestral { get; set; } = new();
+    }
+
+    public class FinancialReportDetailDto
+    {
+        public int Id { get; set; }
+        public int OrganizacionId { get; set; }
+        public string OrganizacionNombre { get; set; } = string.Empty;
+        public string Titulo { get; set; } = string.Empty;
+        public int Año { get; set; }
+        public int Trimestre { get; set; }
+        public decimal TotalIngresos { get; set; }
+        public decimal TotalGastos { get; set; }
+        public decimal Balance { get; set; }
+        public string? Resumen { get; set; }
+        public string? DocumentoUrl { get; set; }
+        public DateTime FechaCreacion { get; set; }
+        public DateTime? FechaActualizacion { get; set; }
+        
+        public List<ExpenseDto> Gastos { get; set; } = new();
+        public List<DonationDto> Donaciones { get; set; } = new();
+        
+        public decimal TotalGastosOperativos => Gastos.Where(g => g.Categoria == "Operativo").Sum(g => g.Monto);
+        public decimal TotalGastosPrograma => Gastos.Where(g => g.Categoria == "Programa").Sum(g => g.Monto);
+        public decimal TotalGastosAdministrativos => Gastos.Where(g => g.Categoria == "Administrativo").Sum(g => g.Monto);
+        public decimal TotalDonacionesMonetarias => Donaciones.Where(d => d.Tipo == "Monetaria").Sum(d => d.Monto);
+        public decimal TotalDonacionesEspecie => Donaciones.Where(d => d.Tipo == "Especie").Sum(d => d.Monto);
+    }
+
+    public class FinancialSummaryDto
+    {
+        public decimal TotalIngresosHistorico { get; set; }
+        public decimal TotalGastosHistorico { get; set; }
+        public decimal BalanceGeneral { get; set; }
+        public decimal PromedioIngresosTrimestral { get; set; }
+        public decimal PromedioGastosTrimestral { get; set; }
+        public int TotalReportes { get; set; }
+        public int TotalDonantes { get; set; }
+        public DateTime? PrimerReporte { get; set; }
+        public DateTime? UltimoReporte { get; set; }
+    }
+
+    public class ChartDataDto
+    {
+        public List<string> Labels { get; set; } = new();
+        public List<decimal> Values { get; set; } = new();
+        public string? Title { get; set; }
+    }
+
+    public class ExpenseDto
+    {
+        public int Id { get; set; }
+        public string Descripcion { get; set; } = string.Empty;
+        public string Categoria { get; set; } = string.Empty;
+        public decimal Monto { get; set; }
+        public DateTime Fecha { get; set; }
+        public string? Justificacion { get; set; }
+        public string? DocumentoUrl { get; set; }
+    }
+
+    public class DonationDto
+    {
+        public int Id { get; set; }
+        public string Donante { get; set; } = string.Empty;
+        public string Tipo { get; set; } = string.Empty;
+        public decimal Monto { get; set; }
+        public DateTime Fecha { get; set; }
+        public string? Proposito { get; set; }
+        public bool EsRecurrente { get; set; }
     }
 }

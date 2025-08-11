@@ -1,5 +1,6 @@
 using VoluntariosConectadosRD.Models;
 using VoluntariosConectadosRD.Models.DTOs;
+using VoluntariadoConectadoRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Services
 {

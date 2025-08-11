@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using VoluntariosConectadosRD.Models;
 using VoluntariosConectadosRD.Services;
 using VoluntariosConectadosRD.Models.DTOs;
+using VoluntariadoConectadoRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Controllers
 {

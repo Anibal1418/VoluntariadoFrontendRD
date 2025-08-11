@@ -1,15 +1,16 @@
 using VoluntariadoConectadoRD.Models.DTOs;
 using VoluntariosConectadosRD.Models;
+using VoluntariosConectadosRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Services
 {
     public interface ITransparencyApiService
     {
-        Task<ApiResponse<List<OrganizationTransparencyDto>>?> GetOrganizationsFinancialSummaryAsync(TransparencyFiltersDto? filters = null);
-        Task<ApiResponse<OrganizationFinancialDetailsDto>?> GetOrganizationFinancialDetailsAsync(int organizationId);
-        Task<ApiResponse<FinancialReportDetailDto>?> GetFinancialReportDetailsAsync(int reportId);
-        Task<ApiResponse<List<int>>?> GetAvailableYearsAsync();
-        Task<ApiResponse<List<string>>?> GetOrganizationTypesAsync();
-        Task<ApiResponse<ChartDataDto>?> GetPlatformFinancialOverviewAsync();
+        Task<ApiResponseDto<List<OrganizationTransparencyDto>>?> GetOrganizationsFinancialSummaryAsync(TransparencyFiltersDto? filters = null);
+        Task<ApiResponseDto<OrganizationFinancialDetailsDto>?> GetOrganizationFinancialDetailsAsync(int organizationId);
+        Task<ApiResponseDto<FinancialReportDetailDto>?> GetFinancialReportDetailsAsync(int reportId);
+        Task<ApiResponseDto<List<int>>?> GetAvailableYearsAsync();
+        Task<ApiResponseDto<List<string>>?> GetOrganizationTypesAsync();
+        Task<ApiResponseDto<ChartDataDto>?> GetPlatformFinancialOverviewAsync();
     }
 }
