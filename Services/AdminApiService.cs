@@ -15,7 +15,7 @@ namespace VoluntariosConectadosRD.Services
         }
 
         // User Management
-        public async Task<ApiResponseDto<PaginatedResult<AdminVolunteerDto>>?> GetAllVolunteersAsync(int page = 1, int pageSize = 10, string? search = null)
+        public async Task<ApiResponseDto<PaginatedResult<VoluntariosConectadosRD.Models.DTOs.AdminVolunteerDto>>?> GetAllVolunteersAsync(int page = 1, int pageSize = 10, string? search = null)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace VoluntariosConectadosRD.Services
                     queryParams += $"&search={Uri.EscapeDataString(search)}";
                 }
                 
-                return await _baseApiService.GetAsync<ApiResponseDto<PaginatedResult<AdminVolunteerDto>>>($"Volunteer/admin/volunteers{queryParams}");
+                return await _baseApiService.GetAsync<ApiResponseDto<PaginatedResult<VoluntariosConectadosRD.Models.DTOs.AdminVolunteerDto>>>($"Volunteer/admin/volunteers{queryParams}");
             }
             catch (Exception ex)
             {
@@ -34,7 +34,7 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<object>?> UpdateUserStatusAsync(int userId, UserStatus status)
+        public async Task<ApiResponseDto<object>?> UpdateUserStatusAsync(int userId, VoluntariosConectadosRD.Models.DTOs.UserStatus status)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace VoluntariosConectadosRD.Services
         }
 
         // Organization Management
-        public async Task<ApiResponseDto<PaginatedResult<AdminOrganizationDto>>?> GetAllOrganizationsAsync(int page = 1, int pageSize = 10, string? search = null)
+        public async Task<ApiResponseDto<PaginatedResult<VoluntariosConectadosRD.Models.DTOs.AdminOrganizationDto>>?> GetAllOrganizationsAsync(int page = 1, int pageSize = 10, string? search = null)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace VoluntariosConectadosRD.Services
                     queryParams += $"&search={Uri.EscapeDataString(search)}";
                 }
                 
-                return await _baseApiService.GetAsync<ApiResponseDto<PaginatedResult<AdminOrganizationDto>>>($"Volunteer/admin/organizations{queryParams}");
+                return await _baseApiService.GetAsync<ApiResponseDto<PaginatedResult<VoluntariosConectadosRD.Models.DTOs.AdminOrganizationDto>>>($"Volunteer/admin/organizations{queryParams}");
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<object>?> UpdateOrganizationStatusAsync(int orgId, UserStatus status, bool verificada)
+        public async Task<ApiResponseDto<object>?> UpdateOrganizationStatusAsync(int orgId, VoluntariosConectadosRD.Models.DTOs.UserStatus status, bool verificada)
         {
             try
             {
@@ -147,11 +147,11 @@ namespace VoluntariosConectadosRD.Services
         }
 
         // Statistics
-        public async Task<ApiResponseDto<AdminStatsDto>?> GetAdminStatsAsync()
+        public async Task<ApiResponseDto<VoluntariosConectadosRD.Models.DTOs.AdminStatsDto>?> GetAdminStatsAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponseDto<AdminStatsDto>>("Volunteer/admin/stats");
+                return await _baseApiService.GetAsync<ApiResponseDto<VoluntariosConectadosRD.Models.DTOs.AdminStatsDto>>("Volunteer/admin/stats");
             }
             catch (Exception ex)
             {

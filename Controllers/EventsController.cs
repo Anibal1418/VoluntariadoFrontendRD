@@ -41,7 +41,7 @@ namespace VoluntariosConectadosRD.Controllers
                         Fecha = opp.FechaInicio,
                         Ubicacion = opp.Ubicacion,
                         Descripcion = opp.Descripcion,
-                        Organizador = opp.Organizacion?.Nombre ?? "Sin especificar",
+                        Organizador = opp.OrganizacionNombre ?? opp.ONG ?? "Sin especificar",
                         ImagenUrl = "/images/eventos/default.jpg", // Imagen por defecto
                         ImagenNombre = "default.jpg"
                     }).AsQueryable();
@@ -158,7 +158,7 @@ namespace VoluntariosConectadosRD.Controllers
             var userInfo = System.Text.Json.JsonSerializer.Deserialize<VoluntariosConectadosRD.Models.DTOs.UserInfoDto>(userInfoJson);
             
             // Verificar si el usuario es una organización
-            if (userInfo?.Rol != VoluntariosConectadosRD.Models.DTOs.UserRole.Organizacion)
+            if (userInfo?.Rol != (int)VoluntariosConectadosRD.Models.DTOs.UserRole.Organizacion)
             {
                 TempData["MensajeError"] = "Solo las organizaciones pueden crear oportunidades de voluntariado.";
                 return RedirectToAction("List");
@@ -182,7 +182,7 @@ namespace VoluntariosConectadosRD.Controllers
             }
 
             var userInfo = System.Text.Json.JsonSerializer.Deserialize<VoluntariosConectadosRD.Models.DTOs.UserInfoDto>(userInfoJson);
-            if (userInfo?.Rol != VoluntariosConectadosRD.Models.DTOs.UserRole.Organizacion)
+            if (userInfo?.Rol != (int)VoluntariosConectadosRD.Models.DTOs.UserRole.Organizacion)
             {
                 return Json(new { 
                     success = false, 
@@ -211,7 +211,7 @@ namespace VoluntariosConectadosRD.Controllers
                     }
 
                     // Intentar crear oportunidad a través de la API
-                    var createDto = new Models.DTOs.CreateOpportunityDto
+                    var createDto = new VoluntariadoConectadoRD.Models.DTOs.CreateOpportunityDto
                     {
                         Titulo = evento.Nombre,
                         Descripcion = evento.Descripcion ?? "",
@@ -328,7 +328,7 @@ namespace VoluntariosConectadosRD.Controllers
                         Fecha = opp.FechaInicio,
                         Ubicacion = opp.Ubicacion,
                         Descripcion = opp.Descripcion,
-                        Organizador = opp.Organizacion?.Nombre ?? "Sin especificar",
+                        Organizador = opp.OrganizacionNombre ?? opp.ONG ?? "Sin especificar",
                         ImagenUrl = GetCategoryImage(opp.Descripcion),
                         ImagenNombre = "default.jpg"
                     }).ToList();
@@ -463,7 +463,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 // Create update DTO
-                var updateDto = new Models.DTOs.UpdateOpportunityDto
+                var updateDto = new VoluntariadoConectadoRD.Models.DTOs.UpdateOpportunityDto
                 {
                     Id = evento.Id,
                     Titulo = evento.Nombre,
@@ -519,7 +519,7 @@ namespace VoluntariosConectadosRD.Controllers
                 var applicationsResponse = await _volunteerApiService.GetApplicationsForOpportunityAsync(id);
                 
                 ViewBag.Opportunity = opportunityResponse.Data;
-                ViewBag.Applications = applicationsResponse?.Data ?? new List<VolunteerApplicationDetailDto>();
+                ViewBag.Applications = applicationsResponse?.Data?.Cast<VolunteerApplicationDetailDto>().ToList() ?? new List<VolunteerApplicationDetailDto>();
 
                 return View();
             }

@@ -51,7 +51,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.GetAsync<ConversationListDto>(
+                var response = await _baseApiService.GetAsync<ApiResponseDto<ConversationListDto>>(
                     $"api/Message/conversations?page={page}&pageSize={pageSize}");
                 
                 return Json(new { 
@@ -82,7 +82,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.GetAsync<ConversationMessagesDto>(
+                var response = await _baseApiService.GetAsync<ApiResponseDto<ConversationMessagesDto>>(
                     $"api/Message/conversation/{conversationId}/messages?page={page}&pageSize={pageSize}");
                 
                 return Json(new { 
@@ -130,7 +130,7 @@ namespace VoluntariosConectadosRD.Controllers
                     formData.Add(fileContent, "Attachment", messageDto.Attachment.FileName);
                 }
 
-                var response = await _baseApiService.PostFormDataAsync<MessageDto>("api/Message/send", formData, token);
+                var response = await _baseApiService.PostFormDataAsync<ApiResponseDto<MessageDto>>("api/Message/send", formData, token);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -160,7 +160,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.PostAsync<ConversationDto>("api/Message/conversation/start", startDto);
+                var response = await _baseApiService.PostAsync<ApiResponseDto<ConversationDto>>("api/Message/conversation/start", startDto);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -220,7 +220,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.PutAsync<MessageDto>($"api/Message/{messageId}", editDto);
+                var response = await _baseApiService.PutAsync<ApiResponseDto<MessageDto>>($"api/Message/{messageId}", editDto);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -279,7 +279,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.GetAsync<ConversationStatsDto>("api/Message/stats");
+                var response = await _baseApiService.GetAsync<ApiResponseDto<ConversationStatsDto>>("api/Message/stats");
                 
                 return Json(new { 
                     success = response?.Success ?? false, 

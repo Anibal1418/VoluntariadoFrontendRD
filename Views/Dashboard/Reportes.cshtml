@@ -91,7 +91,7 @@
                                         <td>@volunteer.Pais</td>
                                         <td>
                                             @{
-                                                var statusClass = volunteer.Estado switch
+                                                var statusClass = ((UserStatus)volunteer.Estatus) switch
                                                 {
                                                     UserStatus.Activo => "bg-success",
                                                     UserStatus.Inactivo => "bg-secondary",
@@ -99,7 +99,7 @@
                                                     UserStatus.PendienteVerificacion => "bg-warning",
                                                     _ => "bg-secondary"
                                                 };
-                                                var statusText = volunteer.Estado switch
+                                                var statusText = ((UserStatus)volunteer.Estatus) switch
                                                 {
                                                     UserStatus.Activo => "Activo",
                                                     UserStatus.Inactivo => "Inactivo",

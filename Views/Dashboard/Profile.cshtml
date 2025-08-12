@@ -281,10 +281,10 @@
                     {
                         @foreach (var userEvent in userEvents)
                         {
-                            var statusBadgeClass = userEvent.Status == ApplicationStatus.Aceptada ? "bg-success" : 
-                                                  userEvent.Status == ApplicationStatus.Pendiente ? "bg-warning" : "bg-secondary";
-                            var eventStatus = userEvent.Status == ApplicationStatus.Aceptada ? "Aceptado" : 
-                                            userEvent.Status == ApplicationStatus.Pendiente ? "Pendiente" : "Rechazado";
+                            var statusBadgeClass = userEvent.Status == "Aceptada" ? "bg-success" : 
+                                                  userEvent.Status == "Pendiente" ? "bg-warning" : "bg-secondary";
+                            var eventStatus = userEvent.Status == "Aceptada" ? "Aceptado" : 
+                                            userEvent.Status == "Pendiente" ? "Pendiente" : "Rechazado";
                             var dateFormatted = userEvent.Date.ToString("MMM d", new System.Globalization.CultureInfo("es-ES")).ToUpper();
                             
                             <div class="col-md-6 col-lg-4 mb-4">
@@ -348,10 +348,10 @@
                     {
                         @foreach (var userEvent in userEvents.Where(e => e.Date >= DateTime.Now && e.Date <= DateTime.Now.AddDays(7)))
                         {
-                            var statusBadgeClass = userEvent.Status == ApplicationStatus.Aceptada ? "bg-success" : 
-                                                  userEvent.Status == ApplicationStatus.Pendiente ? "bg-warning" : "bg-secondary";
-                            var eventStatus = userEvent.Status == ApplicationStatus.Aceptada ? "Aceptado" : 
-                                            userEvent.Status == ApplicationStatus.Pendiente ? "Pendiente" : "Rechazado";
+                            var statusBadgeClass = userEvent.Status == "Aceptada" ? "bg-success" : 
+                                                  userEvent.Status == "Pendiente" ? "bg-warning" : "bg-secondary";
+                            var eventStatus = userEvent.Status == "Aceptada" ? "Aceptado" : 
+                                            userEvent.Status == "Pendiente" ? "Pendiente" : "Rechazado";
                             
                             <div class="week-day">
                                 <div class="week-day-header">@userEvent.Date.ToString("dddd", new System.Globalization.CultureInfo("es-ES")).ToUpper()<br>@userEvent.Date.ToString("d MMM yyyy", new System.Globalization.CultureInfo("es-ES")).ToUpper()</div>
@@ -798,7 +798,7 @@
                 title: "@userEvent.Title",
                 organization: "@userEvent.OrganizationName",
                 date: "@userEvent.Date.ToString("d 'de' MMMM, yyyy", new System.Globalization.CultureInfo("es-ES"))",
-                time: "9:00 AM - @(userEvent.EndDate?.ToString("h:mm tt") ?? "5:00 PM")",
+                time: "9:00 AM - @(userEvent.EndDate.HasValue ? userEvent.EndDate.Value.ToString("h:mm tt") : "5:00 PM")",
                 location: "@userEvent.Location",
                 image: "@(userEvent.ImageUrl ?? "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60")",
                 description: "@description",

@@ -1,6 +1,6 @@
 using VoluntariosConectadosRD.Models;
 using VoluntariosConectadosRD.Models.DTOs;
-using VoluntariadoConectadoRD.Models.DTOs;
+using BackendDTOs = VoluntariadoConectadoRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Services
 {
@@ -15,19 +15,19 @@ namespace VoluntariosConectadosRD.Services
             _logger = logger;
         }
 
-        public async Task<ApiResponseDto<LoginResponseDto>?> LoginAsync(LoginViewModel model)
+        public async Task<ApiResponseDto<BackendDTOs.LoginResponseDto>?> LoginAsync(LoginViewModel model)
         {
-            var loginRequest = new LoginRequestDto
+            var loginRequest = new BackendDTOs.LoginRequestDto
             {
                 Email = model.Email,
                 Password = model.Password
             };
-            return await _baseApiService.PostAsync<ApiResponseDto<LoginResponseDto>>("auth/login", loginRequest);
+            return await _baseApiService.PostAsync<ApiResponseDto<BackendDTOs.LoginResponseDto>>("auth/login", loginRequest);
         }
 
         public async Task<ApiResponseDto<UserInfoDto>?> RegisterVolunteerAsync(RegistroViewModel model)
         {
-            var registerRequest = new RegisterVoluntarioDto
+            var registerRequest = new BackendDTOs.RegisterVoluntarioDto
             {
                 Nombre = model.Nombre ?? "",
                 Apellido = model.Apellidos ?? "",
@@ -42,7 +42,7 @@ namespace VoluntariosConectadosRD.Services
 
         public async Task<ApiResponseDto<UserInfoDto>?> RegisterONGAsync(RegistroONGViewModel model)
         {
-            var registerRequest = new RegisterOrganizacionDto
+            var registerRequest = new BackendDTOs.RegisterOrganizacionDto
             {
                 NombreOrganizacion = model.NombreONG ?? "",
                 DescripcionOrganizacion = model.Descripcion,
@@ -61,9 +61,9 @@ namespace VoluntariosConectadosRD.Services
             return await _baseApiService.PostAsync<ApiResponseDto<UserInfoDto>>("auth/register/organizacion", registerRequest);
         }
 
-        public async Task<ApiResponseDto<UserProfileDto>?> UpdateVolunteerAsync(EditarVoluntarioViewModel model)
+        public async Task<ApiResponseDto<BackendDTOs.UserProfileDto>?> UpdateVolunteerAsync(EditarVoluntarioViewModel model)
         {
-            var updateRequest = new UpdateUserProfileDto
+            var updateRequest = new BackendDTOs.UpdateUserProfileDto
             {
                 Nombre = model.Nombre,
                 Apellido = model.Apellidos,
@@ -72,12 +72,12 @@ namespace VoluntariosConectadosRD.Services
                 Biografia = model.Descripcion,
                 Disponibilidad = model.Disponibilidad
             };
-            return await _baseApiService.PutAsync<ApiResponseDto<UserProfileDto>>("profile/user", updateRequest);
+            return await _baseApiService.PutAsync<ApiResponseDto<BackendDTOs.UserProfileDto>>("profile/user", updateRequest);
         }
 
-        public async Task<ApiResponseDto<OrganizationProfileDto>?> UpdateONGAsync(EditarONGViewModel model)
+        public async Task<ApiResponseDto<BackendDTOs.OrganizationProfileDto>?> UpdateONGAsync(EditarONGViewModel model)
         {
-            var updateRequest = new UpdateOrganizationProfileDto
+            var updateRequest = new BackendDTOs.UpdateOrganizationProfileDto
             {
                 Nombre = model.NombreONG,
                 Descripcion = model.Descripcion,
@@ -86,7 +86,7 @@ namespace VoluntariosConectadosRD.Services
                 SitioWeb = null // Not available in frontend model - could be added later
                 // Note: LogoONG field could be used here if the backend supports logo updates
             };
-            return await _baseApiService.PutAsync<ApiResponseDto<OrganizationProfileDto>>("profile/organization", updateRequest);
+            return await _baseApiService.PutAsync<ApiResponseDto<BackendDTOs.OrganizationProfileDto>>("profile/organization", updateRequest);
         }
 
         public async Task<ApiResponseDto<UserInfoDto>?> GetUserProfileAsync()
@@ -94,14 +94,14 @@ namespace VoluntariosConectadosRD.Services
             return await _baseApiService.GetAsync<ApiResponseDto<UserInfoDto>>("auth/profile");
         }
 
-        public async Task<ApiResponseDto<EnhancedUserProfileDto>?> GetUserProfileByIdAsync(int userId)
+        public async Task<ApiResponseDto<BackendDTOs.EnhancedUserProfileDto>?> GetUserProfileByIdAsync(int userId)
         {
-            return await _baseApiService.GetAsync<ApiResponseDto<EnhancedUserProfileDto>>($"volunteer/profile/{userId}");
+            return await _baseApiService.GetAsync<ApiResponseDto<BackendDTOs.EnhancedUserProfileDto>>($"volunteer/profile/{userId}");
         }
 
-        public async Task<ApiResponseDto<OrganizationProfileDto>?> GetOrganizationProfileAsync(int orgId)
+        public async Task<ApiResponseDto<BackendDTOs.OrganizationProfileDto>?> GetOrganizationProfileAsync(int orgId)
         {
-            return await _baseApiService.GetAsync<ApiResponseDto<OrganizationProfileDto>>($"profile/organization/{orgId}");
+            return await _baseApiService.GetAsync<ApiResponseDto<BackendDTOs.OrganizationProfileDto>>($"profile/organization/{orgId}");
         }
 
         public async Task<ApiResponseDto<bool>?> ValidateEmailAsync(string email)

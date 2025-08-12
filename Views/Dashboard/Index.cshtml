@@ -5,12 +5,12 @@
     var userInfo = ViewBag.UserInfo as UserInfoDto;
     var dashboardStats = ViewBag.DashboardStats as DashboardStatsDto;
     var userDashboard = ViewBag.UserDashboard as UserDashboardDto;
-    var orgDashboard = ViewBag.OrganizationDashboard as OrganizationDashboardDto;
+    var orgDashboard = ViewBag.OrganizationDashboard as VoluntariadoConectadoRD.Models.DTOs.OrganizationDashboardDto;
     var recentActivities = ViewBag.RecentActivities as IEnumerable<RecentActivityDto>;
     var myOpportunities = ViewBag.MyOpportunities as IEnumerable<OpportunityListDto>;
     
-    var isOrganization = userInfo?.Rol == UserRole.Organizacion;
-    var isVolunteer = userInfo?.Rol == UserRole.Voluntario;
+    var isOrganization = userInfo?.Rol == (int)UserRole.Organizacion;
+    var isVolunteer = userInfo?.Rol == (int)UserRole.Voluntario;
 }
 
 <div class="dashboard-bg py-4" style="background:#f6f8fa; min-height:100vh;">
@@ -291,11 +291,11 @@
                                                     <td>@application.ApplicationDate.ToString("dd/MM/yyyy")</td>
                                                     <td>
                                                         @{
-                                                            var statusClass = application.Status switch
+                                                            var statusClass = application.Status.ToString() switch
                                                             {
-                                                                ApplicationStatus.Pendiente => "bg-warning",
-                                                                ApplicationStatus.Aceptada => "bg-success",
-                                                                ApplicationStatus.Rechazada => "bg-danger",
+                                                                "Pendiente" => "bg-warning",
+                                                                "Aceptada" => "bg-success",
+                                                                "Rechazada" => "bg-danger",
                                                                 _ => "bg-secondary"
                                                             };
                                                         }

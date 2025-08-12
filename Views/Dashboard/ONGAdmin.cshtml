@@ -98,7 +98,7 @@
                                     <td>@(!string.IsNullOrEmpty(org.Direccion) ? org.Direccion : "No especificada")</td>
                                     <td>
                                         @{
-                                            var (statusClass, statusText) = org.Estado switch
+                                            var (statusClass, statusText) = ((UserStatus)org.Estado) switch
                                             {
                                                 UserStatus.Activo => ("bg-success", "Activa"),
                                                 UserStatus.Inactivo => ("bg-secondary", "Inactiva"),
@@ -116,19 +116,19 @@
                                             <button class="btn btn-sm btn-outline-primary" onclick="editarONG(@org.Id)">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            @if (org.Estado == UserStatus.PendienteVerificacion) // Pendiente verificación
+                                            @if (org.Estado == (int)UserStatus.PendienteVerificacion) // Pendiente verificación
                                             {
                                                 <button class="btn btn-sm btn-outline-success" onclick="aprobarONG(@org.Id)">
                                                     <i class="bi bi-check-circle"></i>
                                                 </button>
                                             }
-                                            else if (org.Estado == UserStatus.Activo) // Activa
+                                            else if (org.Estado == (int)UserStatus.Activo) // Activa
                                             {
                                                 <button class="btn btn-sm btn-outline-warning" onclick="verificarONG(@org.Id)">
                                                     <i class="bi bi-shield-check"></i>
                                                 </button>
                                             }
-                                            else if (org.Estado == UserStatus.Suspendido) // Suspendida
+                                            else if (org.Estado == (int)UserStatus.Suspendido) // Suspendida
                                             {
                                                 <button class="btn btn-sm btn-outline-success" onclick="reactivarONG(@org.Id)">
                                                     <i class="bi bi-arrow-clockwise"></i>

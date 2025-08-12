@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Dashboard ONG - Voluntariado Conectado RD";
     Layout = "_DashboardLayout";
-    var orgProfile = ViewBag.OrganizationProfile as OrganizationProfileDto;
+    var orgProfile = ViewBag.OrganizationProfile as VoluntariadoConectadoRD.Models.DTOs.OrganizationProfileDto;
     var userInfo = ViewBag.UserInfo as UserInfoDto;
     var orgStats = ViewBag.OrganizationStats as OrganizationStatsDto;
     var orgEvents = ViewBag.OrganizationEvents as IEnumerable<OrganizationEventDto>;

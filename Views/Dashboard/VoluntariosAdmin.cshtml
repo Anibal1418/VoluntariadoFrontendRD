@@ -86,16 +86,16 @@
                                     <td>
                                         @switch (volunteer.Estado)
                                         {
-                                            case UserStatus.Activo:
+                                            case "Activo":
                                                 <span class="badge bg-success">Activo</span>
                                                 break;
-                                            case UserStatus.Inactivo:
+                                            case "Inactivo":
                                                 <span class="badge bg-secondary">Inactivo</span>
                                                 break;
-                                            case UserStatus.Suspendido:
+                                            case "Suspendido":
                                                 <span class="badge bg-danger">Suspendido</span>
                                                 break;
-                                            case UserStatus.PendienteVerificacion:
+                                            case "PendienteVerificacion":
                                                 <span class="badge bg-warning">Pendiente</span>
                                                 break;
                                             default:
@@ -131,7 +131,7 @@
                                             <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario(@volunteer.Id)">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            @if (volunteer.Estado == UserStatus.Activo)
+                                            @if (volunteer.Estado == "Activo")
                                             {
                                                 <button class="btn btn-sm btn-outline-warning" onclick="bloquearUsuario(@volunteer.Id)" title="Suspender usuario">
                                                     <i class="bi bi-lock"></i>

@@ -49,7 +49,7 @@
                                 currentUser = System.Text.Json.JsonSerializer.Deserialize<VoluntariosConectadosRD.Models.DTOs.UserInfoDto>(userInfoJson);
                             }
                         }
-                        @if (currentUser?.Rol == VoluntariosConectadosRD.Models.DTOs.UserRole.Organizacion)
+                        @if (currentUser?.Rol == (int)VoluntariosConectadosRD.Models.DTOs.UserRole.Organizacion)
                         {
                             <a href="/Events/Create" class="btn btn-primary create-btn">
                                 <i class="bi bi-plus-circle me-2"></i>Crear Nuevo Evento

@@ -133,7 +133,7 @@ namespace VoluntariosConectadosRD.Controllers
                     return Json(new { success = false, message = "Tipo de filtro inválido" });
                 }
 
-                var response = await _baseApiService.GetAsync<SearchFilters>($"api/Voluntariado/search/filters/{type}");
+                var response = await _baseApiService.GetAsync<ApiResponseDto<SearchFilters>>($"api/Voluntariado/search/filters/{type}");
                 
                 return Json(new { 
                     success = response?.Success ?? false, 

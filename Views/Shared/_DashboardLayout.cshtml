@@ -40,14 +40,14 @@
                 <nav class="dashboard-nav d-flex align-items-center" style="margin-right: 20px;">
                     @if (userInfo != null)
                     {
-                        @if (userInfo.Rol == UserRole.Voluntario)
+                        @if ((UserRole)userInfo.Rol == UserRole.Voluntario)
                         {
                             <!-- Volunteer Navigation -->
                             <a href="/Dashboard/Index" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">Inicio</a>
                             <a href="/Events/List" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Events" ? "active" : "")">Oportunidades</a>
                             <a href="/Dashboard/Profile" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")">Mi Perfil</a>
                         }
-                        else if (userInfo.Rol == UserRole.Organizacion)
+                        else if ((UserRole)userInfo.Rol == UserRole.Organizacion)
                         {
                             <!-- Organization Navigation -->
                             <a href="/Dashboard/ProfileONG" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "ProfileONG" ? "active" : "")">Inicio</a>
@@ -55,7 +55,7 @@
                             <a href="/Events/Manage" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Manage" ? "active" : "")">Mis Eventos</a>
                             <a href="/Dashboard/Reportes" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reportes" ? "active" : "")">Reportes</a>
                         }
-                        else if (userInfo.Rol == UserRole.Administrador)
+                        else if (userInfo.Rol == (int)UserRole.Administrador)
                         {
                             <!-- Administrator Navigation -->
                             <a href="/Dashboard/Index" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">Inicio</a>
@@ -95,17 +95,17 @@
                     <ul class="dropdown-menu dropdown-menu-end">
                         @if (userInfo != null)
                         {
-                            @if (userInfo.Rol == UserRole.Voluntario)
+                            @if ((UserRole)userInfo.Rol == UserRole.Voluntario)
                             {
                                 <li><a class="dropdown-item" href="/Dashboard/Profile"><i class="bi bi-person me-2"></i>Mi perfil</a></li>
                                 <li><a class="dropdown-item" href="/Events/List"><i class="bi bi-calendar-event me-2"></i>Buscar eventos</a></li>
                             }
-                            else if (userInfo.Rol == UserRole.Organizacion)
+                            else if ((UserRole)userInfo.Rol == UserRole.Organizacion)
                             {
                                 <li><a class="dropdown-item" href="/Dashboard/ProfileONG"><i class="bi bi-building me-2"></i>Perfil organización</a></li>
                                 <li><a class="dropdown-item" href="/Events/Create"><i class="bi bi-plus-circle me-2"></i>Crear evento</a></li>
                             }
-                            else if (userInfo.Rol == UserRole.Administrador)
+                            else if (userInfo.Rol == (int)UserRole.Administrador)
                             {
                                 <li><a class="dropdown-item" href="/Dashboard/Index"><i class="bi bi-speedometer2 me-2"></i>Panel Admin</a></li>
                                 <li><a class="dropdown-item" href="/Dashboard/VoluntariosAdmin"><i class="bi bi-people me-2"></i>Gestionar usuarios</a></li>

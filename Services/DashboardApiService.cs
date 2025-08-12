@@ -14,11 +14,11 @@ namespace VoluntariosConectadosRD.Services
             _logger = logger;
         }
 
-        public async Task<ApiResponseDto<DashboardStatsDto>?> GetDashboardStatsAsync()
+        public async Task<ApiResponseDto<VoluntariosConectadosRD.Models.DTOs.DashboardStatsDto>?> GetDashboardStatsAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponseDto<DashboardStatsDto>>("Dashboard/stats");
+                return await _baseApiService.GetAsync<ApiResponseDto<VoluntariosConectadosRD.Models.DTOs.DashboardStatsDto>>("Dashboard/stats");
             }
             catch (Exception ex)
             {
@@ -27,11 +27,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<UserDashboardDto>?> GetUserDashboardAsync()
+        public async Task<ApiResponseDto<VoluntariosConectadosRD.Models.DTOs.UserDashboardDto>?> GetUserDashboardAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponseDto<UserDashboardDto>>("Dashboard/user");
+                return await _baseApiService.GetAsync<ApiResponseDto<VoluntariosConectadosRD.Models.DTOs.UserDashboardDto>>("Dashboard/user");
             }
             catch (Exception ex)
             {
@@ -40,11 +40,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<OrganizationDashboardDto>?> GetOrganizationDashboardAsync()
+        public async Task<ApiResponseDto<VoluntariadoConectadoRD.Models.DTOs.OrganizationDashboardDto>?> GetOrganizationDashboardAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponseDto<OrganizationDashboardDto>>("Dashboard/organization");
+                return await _baseApiService.GetAsync<ApiResponseDto<VoluntariadoConectadoRD.Models.DTOs.OrganizationDashboardDto>>("Dashboard/organization");
             }
             catch (Exception ex)
             {
@@ -53,11 +53,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<IEnumerable<RecentActivityDto>>?> GetRecentActivitiesAsync(int limit = 10)
+        public async Task<ApiResponseDto<IEnumerable<VoluntariosConectadosRD.Models.DTOs.RecentActivityDto>>?> GetRecentActivitiesAsync(int limit = 10)
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<RecentActivityDto>>>($"Dashboard/activities?limit={limit}");
+                return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<VoluntariosConectadosRD.Models.DTOs.RecentActivityDto>>>($"Dashboard/activities?limit={limit}");
             }
             catch (Exception ex)
             {
@@ -66,11 +66,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<IEnumerable<OpportunityListDto>>?> GetMyOpportunitiesAsync(int limit = 5)
+        public async Task<ApiResponseDto<IEnumerable<VoluntariosConectadosRD.Models.DTOs.OpportunityListDto>>?> GetMyOpportunitiesAsync(int limit = 5)
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<OpportunityListDto>>>($"Dashboard/my-opportunities?limit={limit}");
+                return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<VoluntariosConectadosRD.Models.DTOs.OpportunityListDto>>>($"Dashboard/my-opportunities?limit={limit}");
             }
             catch (Exception ex)
             {
@@ -79,7 +79,7 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<PaginatedResult<AdminVolunteerDto>>?> GetVolunteersForReportsAsync(int page = 1, int pageSize = 10, string? search = null)
+        public async Task<ApiResponseDto<PaginatedResult<VoluntariosConectadosRD.Models.DTOs.AdminVolunteerDto>>?> GetVolunteersForReportsAsync(int page = 1, int pageSize = 10, string? search = null)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace VoluntariosConectadosRD.Services
                     queryParams += $"&search={Uri.EscapeDataString(search)}";
                 }
                 
-                return await _baseApiService.GetAsync<ApiResponseDto<PaginatedResult<AdminVolunteerDto>>>($"Volunteer/admin/volunteers{queryParams}");
+                return await _baseApiService.GetAsync<ApiResponseDto<PaginatedResult<VoluntariosConectadosRD.Models.DTOs.AdminVolunteerDto>>>($"Volunteer/admin/volunteers{queryParams}");
             }
             catch (Exception ex)
             {
@@ -98,11 +98,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<AdminStatsDto>?> GetAdminStatsForReportsAsync()
+        public async Task<ApiResponseDto<VoluntariosConectadosRD.Models.DTOs.AdminStatsDto>?> GetAdminStatsForReportsAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponseDto<AdminStatsDto>>("Volunteer/admin/stats");
+                return await _baseApiService.GetAsync<ApiResponseDto<VoluntariosConectadosRD.Models.DTOs.AdminStatsDto>>("Volunteer/admin/stats");
             }
             catch (Exception ex)
             {
@@ -111,11 +111,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<OrganizationStatsDto>?> GetOrganizationStatsAsync()
+        public async Task<ApiResponseDto<VoluntariosConectadosRD.Models.DTOs.OrganizationStatsDto>?> GetOrganizationStatsAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponseDto<OrganizationStatsDto>>("Voluntariado/organization/stats");
+                return await _baseApiService.GetAsync<ApiResponseDto<VoluntariosConectadosRD.Models.DTOs.OrganizationStatsDto>>("Voluntariado/organization/stats");
             }
             catch (Exception ex)
             {
@@ -124,11 +124,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<IEnumerable<OrganizationEventDto>>?> GetOrganizationEventsAsync()
+        public async Task<ApiResponseDto<IEnumerable<VoluntariosConectadosRD.Models.DTOs.OrganizationEventDto>>?> GetOrganizationEventsAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<OrganizationEventDto>>>("Voluntariado/organization/events");
+                return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<VoluntariosConectadosRD.Models.DTOs.OrganizationEventDto>>>("Voluntariado/organization/events");
             }
             catch (Exception ex)
             {
@@ -137,11 +137,11 @@ namespace VoluntariosConectadosRD.Services
             }
         }
 
-        public async Task<ApiResponseDto<IEnumerable<UserEventDto>>?> GetUserEventsAsync()
+        public async Task<ApiResponseDto<IEnumerable<VoluntariosConectadosRD.Models.DTOs.UserEventDto>>?> GetUserEventsAsync()
         {
             try
             {
-                return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<UserEventDto>>>("Voluntariado/user/events");
+                return await _baseApiService.GetAsync<ApiResponseDto<IEnumerable<VoluntariosConectadosRD.Models.DTOs.UserEventDto>>>("Voluntariado/user/events");
             }
             catch (Exception ex)
             {

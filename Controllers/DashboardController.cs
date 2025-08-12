@@ -61,7 +61,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 // Get user-specific or organization-specific dashboard data based on role
-                if (userInfo.Rol == UserRole.Organizacion && userInfo.Organizacion != null)
+                if ((UserRole)userInfo.Rol == UserRole.Organizacion && userInfo.Organizacion != null)
                 {
                     // Organization dashboard
                     try
@@ -77,7 +77,7 @@ namespace VoluntariosConectadosRD.Controllers
                         _logger.LogError(ex, "Error getting organization dashboard data");
                     }
                 }
-                else if (userInfo.Rol == UserRole.Voluntario)
+                else if ((UserRole)userInfo.Rol == UserRole.Voluntario)
                 {
                     // User dashboard
                     try
@@ -284,7 +284,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 var userInfo = System.Text.Json.JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
-                if (userInfo == null || userInfo.Rol != UserRole.Administrador)
+                if (userInfo == null || (UserRole)userInfo.Rol != UserRole.Administrador)
                 {
                     TempData["MensajeError"] = "No tienes permisos para acceder a esta página.";
                     return RedirectToAction("Index");
@@ -313,7 +313,7 @@ namespace VoluntariosConectadosRD.Controllers
                     if (volunteersResponse?.Success == true && volunteersResponse.Data != null)
                     {
                         ViewBag.VolunteersData = volunteersResponse.Data;
-                        ViewBag.CurrentPage = page;
+                        ViewBag.CurrentPageNumber = page;
                         ViewBag.PageSize = pageSize;
                         ViewBag.SearchQuery = search;
                     }
@@ -415,14 +415,14 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 var userInfo = JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
-                if (userInfo == null || userInfo.Rol != UserRole.Administrador)
+                if (userInfo == null || (UserRole)userInfo.Rol != UserRole.Administrador)
                 {
                     TempData["MensajeError"] = "No tienes permisos para acceder a esta página.";
                     return RedirectToAction("Index");
                 }
 
                 ViewBag.UserInfo = userInfo;
-                ViewBag.CurrentPage = page;
+                ViewBag.CurrentPageNumber = page;
                 ViewBag.PageSize = pageSize;
                 ViewBag.SearchQuery = search;
 
@@ -437,14 +437,14 @@ namespace VoluntariosConectadosRD.Controllers
                     else
                     {
                         ViewBag.ErrorMessage = volunteersResponse?.Message ?? "Error al obtener los datos de voluntarios";
-                        ViewBag.VolunteersData = new PaginatedResult<AdminVolunteerDto> { Items = new List<AdminVolunteerDto>(), TotalCount = 0, Page = page, PageSize = pageSize };
+                        ViewBag.VolunteersData = new PaginatedResult<AdminVolunteerDto> { Items = new List<AdminVolunteerDto>(), TotalCount = 0, PageNumber = page, PageSize = pageSize };
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error al obtener voluntarios para administración");
                     ViewBag.ErrorMessage = "Error de conexión al obtener los datos";
-                    ViewBag.VolunteersData = new PaginatedResult<AdminVolunteerDto> { Items = new List<AdminVolunteerDto>(), TotalCount = 0, Page = page, PageSize = pageSize };
+                    ViewBag.VolunteersData = new PaginatedResult<AdminVolunteerDto> { Items = new List<AdminVolunteerDto>(), TotalCount = 0, PageNumber = page, PageSize = pageSize };
                 }
 
                 // Get admin stats
@@ -482,14 +482,14 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 var userInfo = JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
-                if (userInfo == null || userInfo.Rol != UserRole.Administrador)
+                if (userInfo == null || (UserRole)userInfo.Rol != UserRole.Administrador)
                 {
                     TempData["MensajeError"] = "No tienes permisos para acceder a esta página.";
                     return RedirectToAction("Index");
                 }
 
                 ViewBag.UserInfo = userInfo;
-                ViewBag.CurrentPage = page;
+                ViewBag.CurrentPageNumber = page;
                 ViewBag.PageSize = pageSize;
                 ViewBag.SearchQuery = search;
 
@@ -504,14 +504,14 @@ namespace VoluntariosConectadosRD.Controllers
                     else
                     {
                         ViewBag.ErrorMessage = organizationsResponse?.Message ?? "Error al obtener los datos de organizaciones";
-                        ViewBag.OrganizationsData = new PaginatedResult<AdminOrganizationDto> { Items = new List<AdminOrganizationDto>(), TotalCount = 0, Page = page, PageSize = pageSize };
+                        ViewBag.OrganizationsData = new PaginatedResult<AdminOrganizationDto> { Items = new List<AdminOrganizationDto>(), TotalCount = 0, PageNumber = page, PageSize = pageSize };
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error al obtener organizaciones para administración");
                     ViewBag.ErrorMessage = "Error de conexión al obtener los datos";
-                    ViewBag.OrganizationsData = new PaginatedResult<AdminOrganizationDto> { Items = new List<AdminOrganizationDto>(), TotalCount = 0, Page = page, PageSize = pageSize };
+                    ViewBag.OrganizationsData = new PaginatedResult<AdminOrganizationDto> { Items = new List<AdminOrganizationDto>(), TotalCount = 0, PageNumber = page, PageSize = pageSize };
                 }
 
                 // Get admin stats

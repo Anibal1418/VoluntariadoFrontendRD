@@ -28,7 +28,7 @@
                             <img src="@(hasProfile && !string.IsNullOrEmpty(volunteerProfile.ImagenUrl) ? volunteerProfile.ImagenUrl : "~/images/avatar1.jpg")" alt="Foto del voluntario" class="rounded-circle mb-3" width="120" height="120" style="object-fit: cover; border: 4px solid #7db9e8;">
                             <h3 class="mb-1" style="font-weight: 700; color: #2c3e50;">@(hasProfile ? volunteerProfile.Nombre + " " + volunteerProfile.Apellido : "Voluntario")</h3>
                             <p class="text-muted mb-3">Voluntario desde @(hasProfile ? volunteerProfile.FechaRegistro.Year : DateTime.Now.Year)</p>
-                            <span class="badge @(hasProfile && volunteerProfile.Estado == UserStatus.Activo ? "bg-success" : "bg-warning") volunteer-status">@(hasProfile && volunteerProfile.Estado == UserStatus.Activo ? "Activo" : "Inactivo")</span>
+                            <span class="badge @(hasProfile && volunteerProfile.Estado == "Activo" ? "bg-success" : "bg-warning") volunteer-status">@(hasProfile && volunteerProfile.Estado == "Activo" ? "Activo" : "Inactivo")</span>
                         </div>
                         
                         <!-- Contact Information -->
@@ -77,16 +77,17 @@
                         <div class="mb-4">
                             <h5 class="mb-3" style="color: #495057;">Habilidades Principales</h5>
                             <div class="skills-container">
-                                @if (hasProfile && volunteerProfile.Habilidades != null && volunteerProfile.Habilidades.Any())
+                                @if (hasProfile && !string.IsNullOrEmpty(volunteerProfile.Habilidades))
                                 {
-                                    @foreach (var habilidad in volunteerProfile.Habilidades)
+                                    var habilidades = volunteerProfile.Habilidades.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                                    @foreach (var habilidad in habilidades)
                                     {
                                         <div class="skill-item">
-                                            <div class="skill-name">@habilidad.Nombre</div>
+                                            <div class="skill-name">@habilidad.Trim()</div>
                                             <div class="skill-bar">
-                                                <div class="skill-progress" style="width: @(habilidad.Nivel)%;"></div>
+                                                <div class="skill-progress" style="width: 75%;"></div>
                                             </div>
-                                            <div class="skill-percentage">@(habilidad.Nivel)%</div>
+                                            <div class="skill-percentage">75%</div>
                                         </div>
                                     }
                                 }
