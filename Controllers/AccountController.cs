@@ -372,67 +372,105 @@ namespace VoluntariosConectadosRD.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return Json(new
+                    // If it's an AJAX request, return JSON
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        success = false,
-                        message = "Por favor, corrige los errores en el formulario.",
-                        errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList()
-                    });
+                        var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Por favor, corrige los errores:",
+                            errors = errors
+                        });
+                    }
+                    else
+                    {
+                        // If it's a regular form submission, return view with validation errors
+                        TempData["MensajeError"] = "Por favor, corrige los errores en el formulario.";
+                        return View(model);
+                    }
                 }
 
                 // Get current user from session
                 var userInfoJson = HttpContext.Session.GetString("UserInfo");
                 if (string.IsNullOrEmpty(userInfoJson))
                 {
-                    return Json(new { success = false, message = "Sesión expirada. Por favor, inicia sesión nuevamente." });
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Sesión expirada. Por favor, inicia sesión nuevamente." });
+                    }
+                    else
+                    {
+                        TempData["MensajeError"] = "Sesión expirada. Por favor, inicia sesión nuevamente.";
+                        return RedirectToAction("Login");
+                    }
                 }
 
                 var userInfo = System.Text.Json.JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
                 if (userInfo == null)
                 {
-                    return Json(new { success = false, message = "Error al obtener información del usuario." });
+                    var errorMessage = "Error al obtener información del usuario.";
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = errorMessage });
+                    }
+                    else
+                    {
+                        TempData["MensajeError"] = errorMessage;
+                        return View(model);
+                    }
                 }
-
-                // Call API to change password
-                var changePasswordDto = new
-                {
-                    CurrentPassword = model.CurrentPassword,
-                    NewPassword = model.NewPassword
-                };
 
                 var response = await _accountApiService.ChangePasswordAsync(model.CurrentPassword, model.NewPassword);
 
                 if (response?.Success == true)
                 {
-                    return Json(new
+                    var successMessage = "Contraseña actualizada exitosamente.";
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        success = true,
-                        message = "Contraseña actualizada exitosamente."
-                    });
+                        return Json(new { success = true, message = successMessage });
+                    }
+                    else
+                    {
+                        TempData["MensajeExito"] = successMessage;
+                        return View(model);
+                    }
                 }
                 else
                 {
-                    return Json(new
+                    var errorMessage = response?.Message ?? "Error al cambiar la contraseña.";
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        success = false,
-                        message = response?.Message ?? "Error al cambiar la contraseña."
-                    });
+                        return Json(new { success = false, message = errorMessage });
+                    }
+                    else
+                    {
+                        TempData["MensajeError"] = errorMessage;
+                        return View(model);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error changing password for user");
-                return Json(new
+                var errorMessage = "Error de conexión. Por favor, inténtalo de nuevo más tarde.";
+                
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    success = false,
-                    message = "Error de conexión. Por favor, inténtalo de nuevo más tarde."
-                });
+                    return Json(new { success = false, message = errorMessage });
+                }
+                else
+                {
+                    TempData["MensajeError"] = errorMessage;
+                    return View(model);
+                }
             }
         }
     }

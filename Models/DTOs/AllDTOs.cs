@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json.Serialization;
 
 namespace VoluntariosConectadosRD.Models.DTOs
 {
@@ -48,6 +49,8 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public string? ProfileImageUrl { get; set; }
         public bool PerfilCompleto { get; set; }
         public DateTime FechaCreacion { get; set; }
+        
+        [JsonPropertyName("organizacion")]
         public OrganizationInfoDto? Organizacion { get; set; }
     }
 

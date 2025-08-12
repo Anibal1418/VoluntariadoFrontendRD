@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using VoluntariosConectadosRD.Models;
 using VoluntariosConectadosRD.Services;
 using VoluntariosConectadosRD.Models.DTOs;
@@ -6,6 +7,7 @@ using VoluntariadoConectadoRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Controllers
 {
+    [Authorize]
     public class MessagesController : Controller
     {
         private readonly ILogger<MessagesController> _logger;
@@ -23,7 +25,7 @@ namespace VoluntariosConectadosRD.Controllers
             return View();
         }
 
-        [HttpGet("{conversationId}")]
+        [HttpGet("Conversation/{conversationId}")]
         public IActionResult Conversation(string conversationId)
         {
             ViewBag.ConversationId = conversationId;

@@ -212,13 +212,23 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 var userInfo = JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
-                if (userInfo == null || userInfo.Organizacion == null)
+                if (userInfo == null)
                 {
                     return RedirectToAction("Login", "Account");
                 }
+                
+                // Check if user is an organization user
+                if (userInfo.Rol != (int)UserRole.Organizacion)
+                {
+                    TempData["MensajeError"] = "Solo las organizaciones pueden acceder a esta página.";
+                    return RedirectToAction("Profile");
+                }
 
+                // If user organization data is missing, try to get it from the API using user ID
+                int organizacionId = userInfo.Organizacion?.Id ?? userInfo.Id;
+                
                 // Obtener perfil completo de la organización desde la API
-                var orgProfileResponse = await _accountApiService.GetOrganizationProfileAsync(userInfo.Organizacion.Id);
+                var orgProfileResponse = await _accountApiService.GetOrganizationProfileAsync(organizacionId);
                 
                 // Obtener estadísticas de la organización
                 _logger.LogInformation("Fetching organization stats...");

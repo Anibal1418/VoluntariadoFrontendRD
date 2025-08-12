@@ -175,19 +175,31 @@ namespace VoluntariosConectadosRD.Controllers
             var userInfoJson = HttpContext.Session.GetString("UserInfo");
             if (string.IsNullOrEmpty(userInfoJson))
             {
-                return Json(new { 
-                    success = false, 
-                    message = "Debes iniciar sesión para crear una oportunidad."
-                });
+                var errorMsg = "Debes iniciar sesión para crear una oportunidad.";
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = errorMsg });
+                }
+                else
+                {
+                    TempData["MensajeError"] = errorMsg;
+                    return RedirectToAction("Login", "Account");
+                }
             }
 
             var userInfo = System.Text.Json.JsonSerializer.Deserialize<VoluntariosConectadosRD.Models.DTOs.UserInfoDto>(userInfoJson);
             if (userInfo?.Rol != (int)VoluntariosConectadosRD.Models.DTOs.UserRole.Organizacion)
             {
-                return Json(new { 
-                    success = false, 
-                    message = "Solo las organizaciones pueden crear oportunidades de voluntariado."
-                });
+                var errorMsg = "Solo las organizaciones pueden crear oportunidades de voluntariado.";
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = errorMsg });
+                }
+                else
+                {
+                    TempData["MensajeError"] = errorMsg;
+                    return View(evento);
+                }
             }
 
             if (ModelState.IsValid)
@@ -197,10 +209,16 @@ namespace VoluntariosConectadosRD.Controllers
                     // Validación adicional de fecha
                     if (evento.Fecha.Date < DateTime.Today)
                     {
-                        return Json(new { 
-                            success = false, 
-                            message = "La fecha del evento no puede ser anterior a hoy."
-                        });
+                        var errorMsg = "La fecha del evento no puede ser anterior a hoy.";
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return Json(new { success = false, message = errorMsg });
+                        }
+                        else
+                        {
+                            TempData["MensajeError"] = errorMsg;
+                            return View(evento);
+                        }
                     }
 
                     // Set category-based default image if no file uploaded
@@ -227,11 +245,21 @@ namespace VoluntariosConectadosRD.Controllers
                     if (response?.Success == true)
                     {
                         _logger.LogInformation("Oportunidad creada exitosamente a través de la API");
-                        return Json(new { 
-                            success = true, 
-                            message = "¡Evento creado exitosamente!",
-                            redirectUrl = Url.Action(nameof(List))
-                        });
+                        var successMsg = "¡Evento creado exitosamente!";
+                        
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return Json(new { 
+                                success = true, 
+                                message = successMsg,
+                                redirectUrl = Url.Action(nameof(List))
+                            });
+                        }
+                        else
+                        {
+                            TempData["MensajeExito"] = successMsg;
+                            return RedirectToAction(nameof(List));
+                        }
                     }
                     else
                     {
@@ -239,42 +267,52 @@ namespace VoluntariosConectadosRD.Controllers
                         var errorMessage = response?.Message ?? "Error al crear la oportunidad";
                         _logger.LogWarning("Error al crear oportunidad en la API: {Message}", errorMessage);
                         
-                        // Si el error es por autorización, retornar mensaje claro
-                        if (errorMessage.Contains("Usuario no asociado a una organización") || 
-                            errorMessage.Contains("Usuario no válido"))
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                         {
-                            return Json(new { 
-                                success = false, 
-                                message = errorMessage
-                            });
+                            return Json(new { success = false, message = errorMessage });
                         }
-                        
-                        // Return the API error message
-                        _logger.LogError("Error creating event via API: {ErrorMessage}", errorMessage);
-                        return Json(new { 
-                            success = false, 
-                            message = $"Error del servidor: {errorMessage}"
-                        });
+                        else
+                        {
+                            TempData["MensajeError"] = errorMessage;
+                            return View(evento);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     // Error general
                     _logger.LogError(ex, "Error al crear evento");
-                    return Json(new { 
-                        success = false, 
-                        message = "Error al crear el evento. Por favor, inténtalo de nuevo."
-                    });
+                    var errorMsg = "Error al crear el evento. Por favor, inténtalo de nuevo.";
+                    
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = errorMsg });
+                    }
+                    else
+                    {
+                        TempData["MensajeError"] = errorMsg;
+                        return View(evento);
+                    }
                 }
             }
             
             // Errores de validación
             var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
-            return Json(new { 
-                success = false, 
-                message = "Por favor, corrige los errores en el formulario.",
-                errors = errors
-            });
+            var validationMsg = "Por favor, corrige los errores en el formulario.";
+            
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { 
+                    success = false, 
+                    message = validationMsg,
+                    errors = errors
+                });
+            }
+            else
+            {
+                TempData["MensajeError"] = validationMsg;
+                return View(evento);
+            }
         }
 
         [HttpPost]
@@ -560,6 +598,41 @@ namespace VoluntariosConectadosRD.Controllers
                     success = false, 
                     message = "Error interno del servidor" 
                 });
+            }
+        }
+
+        public async Task<IActionResult> Manage(int page = 1, int pageSize = 10)
+        {
+            try
+            {
+                // Get user info to determine role
+                var userInfoJson = HttpContext.Session.GetString("UserInfo");
+                if (string.IsNullOrEmpty(userInfoJson))
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+
+                var userInfo = System.Text.Json.JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
+                
+                // Redirect based on user role
+                if (userInfo?.Rol == (int)UserRole.Administrador)
+                {
+                    return RedirectToAction("ListAdmin", new { page, pageSize });
+                }
+                else if (userInfo?.Rol == (int)UserRole.Organizacion)
+                {
+                    return RedirectToAction("ListONG", new { page, pageSize });
+                }
+                else
+                {
+                    // Regular volunteers can see general list
+                    return RedirectToAction("List", new { page, pageSize });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in Manage action");
+                return RedirectToAction("List");
             }
         }
 
