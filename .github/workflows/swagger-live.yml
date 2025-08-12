@@ -19,7 +19,7 @@ jobs:
       JWT__Issuer: VoluntariadoConectadoRD
       JWT__Audience: VoluntariadoConectadoRD-Users
       JWT__ExpirationMinutes: 60
-      ApiSettings__BaseUrl: https://bottle-download-ends-delhi.trycloudflare.com/api/
+      ApiSettings__BaseUrl: https://graph-tamil-newton-disclose.trycloudflare.com/api/
       ApiSettings__Timeout: 30
 
     steps:
@@ -30,7 +30,7 @@ jobs:
     - name: Build Frontend MVC
       run: |
         dotnet restore
-        dotnet publish -c Release -o frontend-out
+        dotnet publish -c debug -o frontend-out
 
     - name: Launch Frontend MVC
       run: |
