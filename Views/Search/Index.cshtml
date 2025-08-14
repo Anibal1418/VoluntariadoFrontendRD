@@ -115,6 +115,7 @@
     </div>
 </div>
 
+@section Scripts {
 <script>
 let currentSearchType = '@searchType';
 let currentPage = 1;
@@ -159,20 +160,28 @@ $(document).ready(function() {
 });
 
 function loadFilters(type) {
+    console.log('Loading filters for type:', type);
     $.ajax({
         url: '@Url.Action("GetFilters")',
         type: 'GET',
         data: { type: type },
         success: function(response) {
+            console.log('Filters response:', response);
             if (response.success && response.data) {
                 renderFilters(response.data, type);
                 updateSortOptions();
             } else {
                 console.error('Error loading filters:', response.message);
+                // Show basic filters even if API fails
+                renderFilters({}, type);
+                updateSortOptions();
             }
         },
-        error: function() {
-            console.error('Error loading filters');
+        error: function(xhr, status, error) {
+            console.error('Error loading filters:', xhr.responseText, status, error);
+            // Show basic filters even if API fails
+            renderFilters({}, type);
+            updateSortOptions();
         }
     });
 }
@@ -406,20 +415,26 @@ function performSearch() {
         organizations: '@Url.Action("SearchOrganizations")'
     };
 
+    console.log('Performing search with data:', searchData);
+    console.log('Endpoint:', endpoints[currentSearchType]);
+    
     $.ajax({
         url: endpoints[currentSearchType],
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(searchData),
         success: function(response) {
+            console.log('Search response:', response);
             $('#loadingSpinner').hide();
             $('#searchResults').show();
 
             if (response.success && response.data) {
+                console.log('Search results:', response.data.results);
                 renderSearchResults(response.data, currentSearchType);
                 renderPagination(response.data);
                 updateResultsTitle(response.data.totalCount, searchTerm);
             } else {
+                console.log('Search failed or no results:', response.message);
                 $('#searchResults').html(`
                     <div class="alert alert-warning">
                         <i class="bi bi-exclamation-triangle me-2"></i>
@@ -428,12 +443,13 @@ function performSearch() {
                 `);
             }
         },
-        error: function() {
+        error: function(xhr, status, error) {
+            console.error('Search error:', xhr.responseText, status, error);
             $('#loadingSpinner').hide();
             $('#searchResults').show().html(`
                 <div class="alert alert-danger">
                     <i class="bi bi-exclamation-circle me-2"></i>
-                    Error de conexión al realizar la búsqueda
+                    Error de conexión al realizar la búsqueda: ${error}
                 </div>
             `);
         }
@@ -441,12 +457,16 @@ function performSearch() {
 }
 
 function renderSearchResults(data, type) {
+    console.log('Rendering search results:', data, 'type:', type);
     let html = '';
 
-    if (!data.results || data.results.length === 0) {
+    if (!data || !data.results || data.results.length === 0) {
+        console.log('No results found, showing empty state');
         html = getEmptyState();
     } else {
-        data.results.forEach(item => {
+        console.log('Found', data.results.length, 'results');
+        data.results.forEach((item, index) => {
+            console.log(`Rendering item ${index}:`, item);
             if (type === 'opportunities') {
                 html += renderOpportunityCard(item);
             } else if (type === 'volunteers') {
@@ -658,6 +678,7 @@ function clearFilters() {
     $('#resultsTitle').text('Resultados de Búsqueda');
 }
 </script>
+}
 
 <style>
 .nav-pills .nav-link {

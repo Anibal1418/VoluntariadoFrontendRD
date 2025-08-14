@@ -29,12 +29,25 @@ namespace VoluntariosConectadosRD.Controllers
         {
             try
             {
-                var response = await _baseApiService.PostAsync<SearchResultDto<dynamic>>("api/Voluntariado/search/opportunities", searchDto);
+                _logger.LogInformation("SearchOpportunities called with: {@SearchDto}", searchDto);
+                
+                if (searchDto == null)
+                {
+                    _logger.LogWarning("SearchDto is null");
+                    return Json(new { 
+                        success = false, 
+                        message = "Datos de búsqueda requeridos" 
+                    });
+                }
+
+                var response = await _baseApiService.PostAsync<SearchResultDto<dynamic>>("Voluntariado/search/opportunities", searchDto);
+                
+                _logger.LogInformation("API Response: {@Response}", response);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
                     data = response?.Data,
-                    message = response?.Message 
+                    message = response?.Message ?? (response?.Success == false ? "No se encontraron resultados" : null)
                 });
             }
             catch (Exception ex)
@@ -42,7 +55,7 @@ namespace VoluntariosConectadosRD.Controllers
                 _logger.LogError(ex, "Error searching opportunities");
                 return Json(new { 
                     success = false, 
-                    message = "Error de conexión al buscar oportunidades" 
+                    message = $"Error de conexión al buscar oportunidades: {ex.Message}" 
                 });
             }
         }
@@ -59,7 +72,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.PostAsync<SearchResultDto<dynamic>>("api/Voluntariado/search/volunteers", searchDto);
+                var response = await _baseApiService.PostAsync<SearchResultDto<dynamic>>("Voluntariado/search/volunteers", searchDto);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -82,7 +95,7 @@ namespace VoluntariosConectadosRD.Controllers
         {
             try
             {
-                var response = await _baseApiService.PostAsync<SearchResultDto<dynamic>>("api/Voluntariado/search/organizations", searchDto);
+                var response = await _baseApiService.PostAsync<SearchResultDto<dynamic>>("Voluntariado/search/organizations", searchDto);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -105,7 +118,7 @@ namespace VoluntariosConectadosRD.Controllers
         {
             try
             {
-                var response = await _baseApiService.PostAsync<QuickSearchResultDto>("api/Voluntariado/search/quick", searchDto);
+                var response = await _baseApiService.PostAsync<QuickSearchResultDto>("Voluntariado/search/quick", searchDto);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -133,7 +146,7 @@ namespace VoluntariosConectadosRD.Controllers
                     return Json(new { success = false, message = "Tipo de filtro inválido" });
                 }
 
-                var response = await _baseApiService.GetAsync<ApiResponseDto<SearchFilters>>($"api/Voluntariado/search/filters/{type}");
+                var response = await _baseApiService.GetAsync<ApiResponseDto<SearchFilters>>($"Voluntariado/search/filters/{type}");
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
