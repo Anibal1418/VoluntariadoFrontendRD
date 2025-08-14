@@ -24,12 +24,15 @@ namespace VoluntariosConectadosRD.Services
 
         public async Task<T?> GetAsync<T>(string endpoint)
         {
+            string? content = null;
             try
             {
                 var response = await _httpClient.GetAsync(endpoint);
                 response.EnsureSuccessStatusCode();
                 
-                var content = await response.Content.ReadAsStringAsync();
+                content = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation("GET {Endpoint} response: {Content}", endpoint, content?.Substring(0, Math.Min(500, content?.Length ?? 0)));
+                
                 return JsonSerializer.Deserialize<T>(content, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
@@ -37,7 +40,7 @@ namespace VoluntariosConectadosRD.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al llamar GET {Endpoint}", endpoint);
+                _logger.LogError(ex, "Error al llamar GET {Endpoint}. Response content: {Content}", endpoint, content ?? "null");
                 return default;
             }
         }
@@ -47,6 +50,7 @@ namespace VoluntariosConectadosRD.Services
             try
             {
                 var json = JsonSerializer.Serialize(data);
+                _logger.LogInformation("POST {Endpoint} - Sending JSON: {Json}", endpoint, json);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 
                 var response = await _httpClient.PostAsync(endpoint, content);

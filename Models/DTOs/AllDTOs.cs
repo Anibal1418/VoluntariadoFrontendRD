@@ -317,6 +317,7 @@ namespace VoluntariosConectadosRD.Models.DTOs
         public int VoluntariosRegistrados { get; set; }
         public OrganizationInfoDto? Organizacion { get; set; }
         public string? OrganizacionNombre { get; set; }
+        public string? ONG => OrganizacionNombre; // Alias for backward compatibility
     }
 
     public class CreateOpportunityDto
@@ -350,6 +351,10 @@ namespace VoluntariosConectadosRD.Models.DTOs
 
         [Required(ErrorMessage = "Debe seleccionar al menos una categoría.")]
         public string Categoria { get; set; } = string.Empty;
+        
+        public string? Beneficios { get; set; }
+        public string? AreaInteres { get; set; }
+        public string? NivelExperiencia { get; set; }
     }
 }
 
@@ -465,6 +470,10 @@ namespace VoluntariadoConectadoRD.Models.DTOs
 
         [Required(ErrorMessage = "Debe seleccionar al menos una categoría.")]
         public string Categoria { get; set; } = string.Empty;
+        
+        public string? Beneficios { get; set; }
+        public string? AreaInteres { get; set; }
+        public string? NivelExperiencia { get; set; }
     }
 
 
@@ -473,42 +482,66 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public int Id { get; set; }
         public string Titulo { get; set; } = string.Empty;
         public string Descripcion { get; set; } = string.Empty;
+        public string? Ubicacion { get; set; }
         public DateTime FechaInicio { get; set; }
-        public string Ubicacion { get; set; } = string.Empty;
-        public int VoluntariosRequeridos { get; set; }
-        public int VoluntariosInscritos { get; set; }
-        public string Categoria { get; set; } = string.Empty;
-        public string ONG { get; set; } = string.Empty;
-        public string? ONGLogoUrl { get; set; }
-
-        // Additional properties for views
-        public string Organizacion => ONG;
-        public string OrganizacionNombre => ONG;
-        public int VoluntariosRegistrados => VoluntariosInscritos;
-        public int VoluntariosNecesarios => VoluntariosRequeridos;
-    }
-
-    public class OpportunityDetailDto
-    {
-        public int Id { get; set; }
-        public string Titulo { get; set; } = string.Empty;
-        public string Descripcion { get; set; } = string.Empty;
-        public DateTime FechaInicio { get; set; }
-        public DateTime FechaFin { get; set; }
-        public string Ubicacion { get; set; } = string.Empty;
+        public DateTime? FechaFin { get; set; }
         public int DuracionHoras { get; set; }
         public int VoluntariosRequeridos { get; set; }
         public int VoluntariosInscritos { get; set; }
-        public List<string> Requisitos { get; set; } = new List<string>();
-        public List<string> Tareas { get; set; } = new List<string>();
-        public string Categoria { get; set; } = string.Empty;
-        public OrganizationInfoDto ONG { get; set; } = new OrganizationInfoDto();
-        public bool IsActive { get; set; }
-        public bool IsFeatured { get; set; }
-        public List<VolunteerInfoDto> Voluntarios { get; set; } = new List<VolunteerInfoDto>();
+        public string? AreaInteres { get; set; }
+        public string? NivelExperiencia { get; set; }
+        public int Estatus { get; set; }
+        public OrganizacionBasicDto Organizacion { get; set; } = null!;
+        public string? OrganizacionNombre { get; set; }
+        public string? ONG => OrganizacionNombre; // Alias for backward compatibility
+    }
 
-        // Additional property for views
-        public OrganizationInfoDto Organizacion => ONG;
+    public class OpportunityDetailDto : OpportunityListDto
+    {
+        public string? Requisitos { get; set; }
+        public string? Beneficios { get; set; }
+        public DateTime FechaCreacion { get; set; }
+    }
+
+    public class OrganizacionBasicDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string? Ubicacion { get; set; }
+    }
+
+    // Enums from backend
+    public enum OpportunityStatus
+    {
+        Borrador = 0,
+        Activa = 1,
+        Pausada = 2,
+        Cerrada = 3,
+        Completada = 4
+    }
+
+    public enum ApplicationStatus
+    {
+        Pendiente = 0,
+        Aceptada = 1,
+        Rechazada = 2,
+        Retirada = 3,
+        Completado = 4
+    }
+
+    public enum UserRole
+    {
+        Voluntario = 1,
+        Organizacion = 2,
+        Administrador = 3
+    }
+
+    public enum UserStatus
+    {
+        Activo = 1,
+        Inactivo = 2,
+        Suspendido = 3,
+        PendienteVerificacion = 4
     }
 
     // SearchDTOs.cs
@@ -782,6 +815,7 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public string? ProfileImageUrl { get; set; }
         public bool PerfilCompleto { get; set; }
         public DateTime FechaCreacion { get; set; }
+        public OrganizacionBasicDto? Organizacion { get; set; }
     }
 
     public class UserProfileDto
@@ -845,19 +879,17 @@ namespace VoluntariadoConectadoRD.Models.DTOs
         public string? Descripcion { get; set; }
         public string? Direccion { get; set; }
         public string? Telefono { get; set; }
+        public string Email { get; set; } = string.Empty;
         public string? SitioWeb { get; set; }
-        public string? LogoUrl { get; set; }
         public string? TipoOrganizacion { get; set; }
+        public string? NumeroRegistro { get; set; }
+        public DateTime? FechaFundacion { get; set; }
         public string? Mision { get; set; }
         public string? Vision { get; set; }
-        public DateTime? FechaFundacion { get; set; }
-        public string? NumeroRegistro { get; set; }
-        public bool Verificada { get; set; }
-        public int CalificacionPromedio { get; set; }
-        public int TotalOportunidades { get; set; }
-        
-        // Additional property
-        public string? Email { get; set; }
+        public List<string> AreasInteres { get; set; } = new List<string>();
+        public string? LogoUrl { get; set; }
+        public bool PerfilCompleto { get; set; }
+        public decimal SaldoActual { get; set; } = 0m;
     }
 
     public class AdminStatsDto
@@ -958,13 +990,6 @@ namespace VoluntariadoConectadoRD.Models.DTOs
     }
 
     // Additional missing DTOs and Enums
-    public enum UserStatus
-    {
-        Activo = 1,
-        Inactivo = 2,
-        Suspendido = 3,
-        PendienteVerificacion = 4
-    }
 
     public class AdminEditUserDto
     {
@@ -1371,14 +1396,6 @@ namespace VoluntariadoConectadoRD.Models.DTOs
     }
 
     // Missing Enums
-    public enum ApplicationStatus
-    {
-        Pendiente = 0,
-        Aceptada = 1,
-        Rechazada = 2,
-        Retirada = 3,
-        Completado = 4
-    }
 
     // Additional Service DTOs
     public class ApplyToOpportunityDto

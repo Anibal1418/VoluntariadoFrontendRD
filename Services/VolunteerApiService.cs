@@ -26,7 +26,7 @@ namespace VoluntariosConectadosRD.Services
 
         public async Task<ApiResponseDto<BackendDTOs.OpportunityDetailDto>?> GetOpportunityDetailsAsync(int id)
         {
-            return await _baseApiService.GetAsync<ApiResponseDto<BackendDTOs.OpportunityDetailDto>>($"voluntariado/opportunities/{id}");
+            return await _baseApiService.GetAsync<ApiResponseDto<BackendDTOs.OpportunityDetailDto>>($"Voluntariado/opportunities/{id}");
         }
 
         public async Task<ApiResponseDto<BackendDTOs.OpportunityDetailDto>?> GetOpportunityByIdAsync(int id)
@@ -42,7 +42,7 @@ namespace VoluntariosConectadosRD.Services
 
         public async Task<ApiResponseDto<object>?> CreateOpportunityAsync(BackendDTOs.CreateOpportunityDto opportunity)
         {
-            return await _baseApiService.PostAsync<ApiResponseDto<object>>("voluntariado/opportunities", opportunity);
+            return await _baseApiService.PostAsync<ApiResponseDto<object>>("api/voluntariado/opportunities", opportunity);
         }
 
         public async Task<ApiResponseDto<object>?> UpdateOpportunityAsync(int opportunityId, BackendDTOs.UpdateOpportunityDto opportunity)
