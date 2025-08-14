@@ -27,20 +27,6 @@
                                     <input asp-for="Password" class="form-control form-control-lg border-2" type="password" placeholder="••••••••" style="border-radius: 12px; font-size: 0.9rem;" />
                                     <span asp-validation-for="Password" class="text-danger small"></span>
                                 </div>
-                                <div class="mb-3">
-                                    <div class="alert alert-warning text-center mb-3" style="border-radius: 8px; font-size: 0.75rem; padding: 0.5rem;">
-                                        <i class="bi bi-exclamation-triangle me-1"></i>
-                                        <strong>SOLO PARA PROPOSITOS DE TESTING, REMOVER CUANDO SE PONGA EN PRODUCCION</strong>
-                                    </div>
-                                    <label asp-for="UserRole" class="form-label fw-semibold text-dark">Tipo de Usuario</label>
-                                    <select asp-for="UserRole" class="form-select form-select-lg border-2" style="border-radius: 12px; font-size: 0.9rem;">
-                                        <option value="">Selecciona tu rol</option>
-                                        <option value="Voluntario">Voluntario</option>
-                                        <option value="ONG">ONG</option>
-                                        <option value="Admin">Admin</option>
-                                    </select>
-                                    <span asp-validation-for="UserRole" class="text-danger small"></span>
-                                </div>
                                 <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4">
                                     <div class="form-check">
                                         <input asp-for="Remember" class="form-check-input" style="width: 1.2rem; height: 1.2rem;" />
