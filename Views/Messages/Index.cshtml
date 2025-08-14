@@ -176,9 +176,11 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/microsoft-signalr@6.0.1/dist/browser/signalr.min.js"></script>
+@section Scripts {
+    <!-- SignalR temporarily disabled -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/microsoft-signalr@6.0.1/dist/browser/signalr.min.js"></script> -->
 
-<script>
+    <script>
 let currentConversation = null;
 let currentUser = null;
 let connection = null;
@@ -186,11 +188,24 @@ let conversations = [];
 let replyToMessage = null;
 let typingTimeout = null;
 
+// Helper function to get authorization headers
+function getAuthHeaders() {
+    const token = '@Context.Session.GetString("JWTToken")';
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : ''
+    };
+}
+
 $(document).ready(function() {
-    initializeSignalR();
+    // Temporarily disable SignalR to get basic functionality working
+    // initializeSignalR();
     loadConversations();
     setupEventHandlers();
     getCurrentUser();
+    
+    // Check if we have a pre-selected recipient from another page
+    checkForPreselectedRecipient();
 });
 
 function initializeSignalR() {
@@ -259,14 +274,38 @@ function setupEventHandlers() {
 
 async function loadConversations() {
     try {
-        const response = await fetch('/Messages/api/conversations');
+        const response = await fetch('http://localhost:5161/api/message/conversations');
         const result = await response.json();
         
+        console.log('API Response:', result); // Debug logging
+        console.log('Data structure:', result.data); // Debug logging
+        
         if (result.success && result.data) {
-            conversations = result.data.conversations;
+            // Handle ConversationListDto structure
+            let conversationList = [];
+            
+            // Check if result.data is ConversationListDto with Conversations property
+            if (result.data.Conversations && Array.isArray(result.data.Conversations)) {
+                conversationList = result.data.Conversations;
+            } else if (result.data.conversations && Array.isArray(result.data.conversations)) {
+                conversationList = result.data.conversations;
+            } else if (Array.isArray(result.data)) {
+                conversationList = result.data;
+            } else {
+                // If no conversations found, set empty array
+                console.log('No conversations property found in data:', result.data);
+                conversationList = [];
+            }
+            
+            conversations = conversationList;
+            console.log('Conversations loaded:', conversations.length); // Debug logging
+            if (conversations.length > 0) {
+                console.log('First conversation:', conversations[0]); // Debug logging
+            }
             displayConversations(conversations);
         } else {
-            console.error('Error loading conversations:', result.message);
+            console.error('Error loading conversations:', result.message || 'Unknown error');
+            console.error('Full result:', result); // Debug logging
         }
     } catch (error) {
         console.error('Error loading conversations:', error);
@@ -351,7 +390,7 @@ async function openConversation(conversationId) {
 
 async function loadConversationMessages(conversationId) {
     try {
-        const response = await fetch(`/Messages/api/conversation/${conversationId}/messages`);
+        const response = await fetch(`http://localhost:5161/api/message/conversation/${conversationId}/messages`);
         const result = await response.json();
         
         if (result.success && result.data) {
@@ -444,7 +483,7 @@ function displayMessage(message) {
                         <i class="bi bi-three-dots-vertical"></i>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="replyToMessage(${message.id})">
+                        <li><a class="dropdown-item" href="#" onclick="replyToThisMessage(${message.id})">
                             <i class="bi bi-reply me-2"></i>Responder
                         </a></li>
                         <li><a class="dropdown-item" href="#" onclick="editMessage(${message.id})">
@@ -462,7 +501,7 @@ function displayMessage(message) {
                         <i class="bi bi-three-dots-vertical"></i>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="replyToMessage(${message.id})">
+                        <li><a class="dropdown-item" href="#" onclick="replyToThisMessage(${message.id})">
                             <i class="bi bi-reply me-2"></i>Responder
                         </a></li>
                     </ul>
@@ -494,7 +533,7 @@ async function sendMessage() {
     }
     
     try {
-        const response = await fetch('/Messages/api/send', {
+        const response = await fetch('http://localhost:5161/api/message/send', {
             method: 'POST',
             body: formData
         });
@@ -515,17 +554,17 @@ async function sendMessage() {
                 await connection.invoke("StopTyping", parseInt(recipientId), currentConversation);
             }
         } else {
-            alert('Error sending message: ' + result.message);
+            Toast.error('Error enviando mensaje: ' + result.message);
         }
     } catch (error) {
         console.error('Error sending message:', error);
-        alert('Error sending message');
+        Toast.error('Error enviando mensaje');
     }
 }
 
 async function markMessagesAsRead(conversationId) {
     try {
-        await fetch(`/Messages/api/conversation/${conversationId}/read`, {
+        await fetch(`http://localhost:5161/api/message/conversation/${conversationId}/read`, {
             method: 'PUT'
         });
         
@@ -549,7 +588,7 @@ function removeAttachment() {
     $('#attachmentPreview').addClass('d-none');
 }
 
-function replyToMessage(messageId) {
+function replyToThisMessage(messageId) {
     const messageElement = $(`[data-message-id="${messageId}"]`);
     const content = messageElement.find('.message-content').text();
     const sender = $('#chatUserName').text();
@@ -645,12 +684,12 @@ async function sendNewMessage() {
     const message = $('#initialMessage').val().trim();
     
     if (!recipientId || !message) {
-        alert('Por favor selecciona un destinatario y escribe un mensaje');
+        Toast.error('Por favor selecciona un destinatario y escribe un mensaje');
         return;
     }
     
     try {
-        const response = await fetch('/Messages/api/conversation/start', {
+        const response = await fetch('http://localhost:5161/api/message/conversation/start', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -667,19 +706,56 @@ async function sendNewMessage() {
             $('#newMessageModal').modal('hide');
             $('#newMessageForm')[0].reset();
             $('#selectedRecipientId').val('');
+            $('#recipientsList').empty();
             
             // Refresh conversations and open the new one
             await updateConversationsList();
             await openConversation(result.data.id);
         } else {
-            alert('Error starting conversation: ' + result.message);
+            Toast.error('Error iniciando conversación: ' + result.message);
         }
     } catch (error) {
         console.error('Error starting conversation:', error);
-        alert('Error starting conversation');
+        Toast.error('Error iniciando conversación');
     }
 }
-</script>
+
+function checkForPreselectedRecipient() {
+    const recipientData = sessionStorage.getItem('messageRecipient');
+    if (recipientData) {
+        try {
+            const recipient = JSON.parse(recipientData);
+            sessionStorage.removeItem('messageRecipient'); // Clear it after use
+            
+            // Show the new message modal with pre-selected recipient
+            setTimeout(() => {
+                $('#selectedRecipientId').val(recipient.id);
+                $('#recipientSearch').val(recipient.name).prop('disabled', true);
+                
+                // Display the selected recipient
+                $('#recipientsList').html(`
+                    <div class="selected-recipient p-2 border rounded bg-light">
+                        <i class="bi bi-person-check me-2"></i>
+                        <strong>${recipient.name}</strong>
+                        <span class="text-muted ms-2">(Seleccionado)</span>
+                    </div>
+                `);
+                
+                // Open the modal
+                $('#newMessageModal').modal('show');
+                
+                // Focus on the message input
+                setTimeout(() => {
+                    $('#initialMessage').focus();
+                }, 500);
+            }, 500); // Small delay to ensure page is fully loaded
+        } catch (error) {
+            console.error('Error parsing recipient data:', error);
+        }
+    }
+}
+    </script>
+}
 
 <style>
 .conversation-item {

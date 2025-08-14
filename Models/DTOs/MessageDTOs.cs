@@ -6,8 +6,10 @@ namespace VoluntariosConectadosRD.Models.DTOs
     public class UserBasicDto
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string? ProfileImageUrl { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string? ImagenUrl { get; set; }
+        public string FullName => $"{Nombre} {Apellido}";
     }
 
     public enum MessageType
@@ -28,37 +30,39 @@ namespace VoluntariosConectadosRD.Models.DTOs
     public class MessageDto
     {
         public int Id { get; set; }
-        public int ConversationId { get; set; }
         public int SenderId { get; set; }
+        public int RecipientId { get; set; }
         public string Content { get; set; } = string.Empty;
         public MessageType Type { get; set; } = MessageType.Text;
+        public bool IsRead { get; set; }
         public DateTime SentAt { get; set; }
-        public MessageStatus Status { get; set; } = MessageStatus.Sent;
+        public DateTime? ReadAt { get; set; }
+        public DateTime? EditedAt { get; set; }
+        public int? ReplyToMessageId { get; set; }
         public string? AttachmentUrl { get; set; }
-        public string? AttachmentName { get; set; }
+        public string? AttachmentFileName { get; set; }
+        public string? AttachmentMimeType { get; set; }
+        public int? AttachmentSize { get; set; }
+        public string ConversationId { get; set; } = string.Empty;  // STRING not INT!
         public UserBasicDto Sender { get; set; } = new UserBasicDto();
         public UserBasicDto Recipient { get; set; } = new UserBasicDto();
-
-        // Additional properties for UI
-        public bool IsFromCurrentUser { get; set; }
-        public bool IsRead { get; set; }
+        public MessageDto? ReplyToMessage { get; set; }
         public string TimeAgo { get; set; } = string.Empty;
+        public bool IsFromCurrentUser { get; set; }
+        public string FormattedContent { get; set; } = string.Empty;
     }
 
     public class ConversationDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public DateTime LastMessageAt { get; set; }
-        public string LastMessageContent { get; set; } = string.Empty;
-        public bool HasUnreadMessages { get; set; }
-        public int UnreadCount { get; set; }
-        public List<MessageDto> Messages { get; set; } = new();
-        public List<UserBasicDto> Participants { get; set; } = new();
-        
-        // For direct messages
-        public bool IsDirectMessage { get; set; }
+        public string Id { get; set; } = string.Empty;
         public UserBasicDto OtherUser { get; set; } = new UserBasicDto();
+        public MessageDto? LastMessage { get; set; }
+        public DateTime LastMessageAt { get; set; }
+        public bool HasUnread { get; set; }
+        public int UnreadCount { get; set; }
+        public DateTime? LastSeen { get; set; }
+        public bool IsOnline { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
     public class CreateMessageDto
@@ -89,14 +93,14 @@ namespace VoluntariosConectadosRD.Models.DTOs
 
     public class ConversationListDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public DateTime LastActivity { get; set; }
-        public string LastMessage { get; set; } = string.Empty;
-        public int UnreadCount { get; set; }
-        public bool IsDirectMessage { get; set; }
-        public UserBasicDto OtherUser { get; set; } = new UserBasicDto();
-        public string TimeAgo { get; set; } = string.Empty;
+        public List<ConversationDto> Conversations { get; set; } = new List<ConversationDto>();
+        public int TotalUnread { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+        public int TotalCount { get; set; }
+        public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+        public bool HasNextPage => Page < TotalPages;
+        public bool HasPreviousPage => Page > 1;
     }
 
     public class SendMessageDto

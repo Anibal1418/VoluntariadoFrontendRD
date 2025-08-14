@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using VoluntariosConectadosRD.Models;
 using VoluntariosConectadosRD.Services;
 using VoluntariosConectadosRD.Models.DTOs;
@@ -7,7 +6,7 @@ using VoluntariadoConectadoRD.Models.DTOs;
 
 namespace VoluntariosConectadosRD.Controllers
 {
-    [Authorize]
+    [Route("[controller]")]
     public class MessagesController : Controller
     {
         private readonly ILogger<MessagesController> _logger;
@@ -19,15 +18,30 @@ namespace VoluntariosConectadosRD.Controllers
             _baseApiService = baseApiService;
         }
 
-        [HttpGet]
+        [HttpGet("")]
+        [HttpGet("Index")]
         public IActionResult Index()
         {
+            // Verificar si el usuario está autenticado
+            var token = HttpContext.Session.GetString("JWTToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            
             return View();
         }
 
         [HttpGet("Conversation/{conversationId}")]
         public IActionResult Conversation(string conversationId)
         {
+            // Verificar si el usuario está autenticado
+            var token = HttpContext.Session.GetString("JWTToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            
             ViewBag.ConversationId = conversationId;
             return View();
         }
@@ -35,13 +49,20 @@ namespace VoluntariosConectadosRD.Controllers
         [HttpGet("new/{recipientId:int}")]
         public IActionResult New(int recipientId)
         {
+            // Verificar si el usuario está autenticado
+            var token = HttpContext.Session.GetString("JWTToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            
             ViewBag.RecipientId = recipientId;
             return View();
         }
 
         // API endpoints for frontend
 
-        [HttpGet("api/conversations")]
+        [HttpGet("conversations")]
         public async Task<IActionResult> GetConversations(int page = 1, int pageSize = 20)
         {
             try
@@ -49,12 +70,17 @@ namespace VoluntariosConectadosRD.Controllers
                 var token = HttpContext.Session.GetString("JWTToken");
                 if (string.IsNullOrEmpty(token))
                 {
+                    _logger.LogWarning("No JWT token found in session");
                     return Json(new { success = false, message = "Sesión expirada" });
                 }
 
+                _logger.LogInformation("Making API call to backend with token");
                 _baseApiService.SetAuthToken(token);
                 var response = await _baseApiService.GetAsync<ApiResponseDto<ConversationListDto>>(
-                    $"api/Message/conversations?page={page}&pageSize={pageSize}");
+                    $"Message/conversations?page={page}&pageSize={pageSize}");
+                
+                _logger.LogInformation("Backend API response: Success={Success}, ConversationCount={Count}", 
+                    response?.Success, response?.Data?.Conversations?.Count ?? 0);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -72,7 +98,7 @@ namespace VoluntariosConectadosRD.Controllers
             }
         }
 
-        [HttpGet("api/conversation/{conversationId}/messages")]
+        [HttpGet("conversation/{conversationId}/messages")]
         public async Task<IActionResult> GetConversationMessages(string conversationId, int page = 1, int pageSize = 50)
         {
             try
@@ -85,7 +111,7 @@ namespace VoluntariosConectadosRD.Controllers
 
                 _baseApiService.SetAuthToken(token);
                 var response = await _baseApiService.GetAsync<ApiResponseDto<ConversationMessagesDto>>(
-                    $"api/Message/conversation/{conversationId}/messages?page={page}&pageSize={pageSize}");
+                    $"Message/conversation/{conversationId}/messages?page={page}&pageSize={pageSize}");
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -103,7 +129,7 @@ namespace VoluntariosConectadosRD.Controllers
             }
         }
 
-        [HttpPost("api/send")]
+        [HttpPost("send")]
         public async Task<IActionResult> SendMessage([FromForm] SendMessageDto messageDto)
         {
             try
@@ -132,7 +158,7 @@ namespace VoluntariosConectadosRD.Controllers
                     formData.Add(fileContent, "Attachment", messageDto.Attachment.FileName);
                 }
 
-                var response = await _baseApiService.PostFormDataAsync<ApiResponseDto<MessageDto>>("api/Message/send", formData, token);
+                var response = await _baseApiService.PostFormDataAsync<ApiResponseDto<MessageDto>>("Message/send", formData, token);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -150,7 +176,7 @@ namespace VoluntariosConectadosRD.Controllers
             }
         }
 
-        [HttpPost("api/conversation/start")]
+        [HttpPost("conversation/start")]
         public async Task<IActionResult> StartConversation([FromBody] StartConversationDto startDto)
         {
             try
@@ -162,7 +188,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.PostAsync<ApiResponseDto<ConversationDto>>("api/Message/conversation/start", startDto);
+                var response = await _baseApiService.PostAsync<ApiResponseDto<ConversationDto>>("Message/conversation/start", startDto);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -180,7 +206,7 @@ namespace VoluntariosConectadosRD.Controllers
             }
         }
 
-        [HttpPut("api/conversation/{conversationId}/read")]
+        [HttpPut("conversation/{conversationId}/read")]
         public async Task<IActionResult> MarkMessagesAsRead(string conversationId)
         {
             try
@@ -192,7 +218,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.PutAsync<ApiResponse<object>>($"api/Message/conversation/{conversationId}/read", null);
+                var response = await _baseApiService.PutAsync<ApiResponse<object>>($"Message/conversation/{conversationId}/read", null);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -210,7 +236,7 @@ namespace VoluntariosConectadosRD.Controllers
             }
         }
 
-        [HttpPut("api/message/{messageId:int}")]
+        [HttpPut("message/{messageId:int}")]
         public async Task<IActionResult> EditMessage(int messageId, [FromBody] EditMessageDto editDto)
         {
             try
@@ -222,7 +248,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.PutAsync<ApiResponseDto<MessageDto>>($"api/Message/{messageId}", editDto);
+                var response = await _baseApiService.PutAsync<ApiResponseDto<MessageDto>>($"Message/{messageId}", editDto);
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
@@ -240,7 +266,7 @@ namespace VoluntariosConectadosRD.Controllers
             }
         }
 
-        [HttpDelete("api/message/{messageId:int}")]
+        [HttpDelete("message/{messageId:int}")]
         public async Task<IActionResult> DeleteMessage(int messageId)
         {
             try
@@ -252,7 +278,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.DeleteAsync($"api/Message/{messageId}");
+                var response = await _baseApiService.DeleteAsync($"Message/{messageId}");
                 
                 return Json(new { 
                     success = response, 
@@ -269,7 +295,7 @@ namespace VoluntariosConectadosRD.Controllers
             }
         }
 
-        [HttpGet("api/stats")]
+        [HttpGet("stats")]
         public async Task<IActionResult> GetConversationStats()
         {
             try
@@ -281,7 +307,7 @@ namespace VoluntariosConectadosRD.Controllers
                 }
 
                 _baseApiService.SetAuthToken(token);
-                var response = await _baseApiService.GetAsync<ApiResponseDto<ConversationStatsDto>>("api/Message/stats");
+                var response = await _baseApiService.GetAsync<ApiResponseDto<ConversationStatsDto>>("Message/stats");
                 
                 return Json(new { 
                     success = response?.Success ?? false, 
