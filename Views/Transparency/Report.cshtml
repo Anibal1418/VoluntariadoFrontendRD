@@ -24,7 +24,7 @@
                             <h1 class="h2 mb-2">@Model.Titulo</h1>
                             <h4 class="text-muted mb-3">@Model.OrganizacionNombre</h4>
                             <div class="d-flex align-items-center mb-3">
-                                <span class="badge bg-primary fs-6 me-3">Q@Model.Trimestre @Model.Año</span>
+                                <span class="badge bg-primary fs-6 me-3"> @( "Q" + Model.Trimestre + " " + Model.Año )</span>
                                 <small class="text-muted">
                                     <i class="fas fa-calendar-alt"></i>
                                     Creado: @Model.FechaCreacion.ToString("dd/MM/yyyy")
