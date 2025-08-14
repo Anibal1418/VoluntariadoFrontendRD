@@ -19,7 +19,7 @@ jobs:
       JWT__Issuer: VoluntariadoConectadoRD
       JWT__Audience: VoluntariadoConectadoRD-Users
       JWT__ExpirationMinutes: 60
-      ApiSettings__BaseUrl: https://graph-tamil-newton-disclose.trycloudflare.com/api/
+      ApiSettings__BaseUrl: https://alice-pizza-lived-aquarium.trycloudflare.com/api/
       ApiSettings__Timeout: 30
 
     steps:
