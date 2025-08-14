@@ -85,7 +85,7 @@ jobs:
           **🎯 Aplicación Web:**
           ${{ steps.frontend_tunnel.outputs.url }}
           
-          **📋 Testing Info:**
+          **📋 Testing Info:** 
           - Frontend: Aplicación MVC completa con autenticación
           - Backend: Conectado al servidor de producción
           - Autenticación: JWT implementado
