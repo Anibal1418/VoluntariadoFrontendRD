@@ -1,0 +1,564 @@
+@model VoluntariosConectadosRD.Models.DTOs.OrganizationProfileDto
+@{
+    ViewData["Title"] = Model.Nombre;
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4" style="min-height: calc(100vh - 200px);">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Section -->
+            <div class="card shadow-sm mb-4" style="border-radius: 15px;">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-lg-2 text-center">
+                            <div class="organization-logo mb-3">
+                                @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                                {
+                                    <img src="@Model.LogoUrl" alt="@Model.Nombre" class="img-fluid rounded-circle shadow" style="max-width: 120px; height: 120px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="placeholder-logo d-flex align-items-center justify-content-center rounded-circle shadow" style="width: 120px; height: 120px; background: linear-gradient(135deg, #e9ecef, #dee2e6);">
+                                        <i class="bi bi-building" style="font-size: 3rem; color: #6c757d;"></i>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <h1 class="display-5 fw-bold text-primary mb-2">
+                                @Model.Nombre
+                                @if (Model.PerfilCompleto)
+                                {
+                                    <i class="bi bi-patch-check-fill text-success ms-2" title="Perfil completo"></i>
+                                }
+                            </h1>
+                            @if (!string.IsNullOrEmpty(Model.TipoOrganizacion))
+                            {
+                                <span class="badge bg-primary fs-6 mb-3">@Model.TipoOrganizacion</span>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Descripcion))
+                            {
+                                <p class="lead text-muted mb-0">@Model.Descripcion</p>
+                            }
+                        </div>
+                        <div class="col-lg-2 text-center">
+                            @if (!string.IsNullOrEmpty(Model.SitioWeb))
+                            {
+                                <a href="@Model.SitioWeb" target="_blank" class="btn btn-outline-primary btn-lg mb-2">
+                                    <i class="bi bi-globe me-2"></i>Sitio Web
+                                </a>
+                            }
+                            <br>
+                            <a href="/Transparency/Organization/@Model.Id" class="btn btn-outline-info">
+                                <i class="bi bi-graph-up me-2"></i>Ver Transparencia
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <!-- Mission & Vision -->
+                    @if (!string.IsNullOrEmpty(Model.Mision) || !string.IsNullOrEmpty(Model.Vision))
+                    {
+                        <div class="card shadow-sm mb-4" style="border-radius: 15px;">
+                            <div class="card-header bg-light">
+                                <h3 class="card-title mb-0">
+                                    <i class="bi bi-bullseye me-2 text-primary"></i>Misión y Visión
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                @if (!string.IsNullOrEmpty(Model.Mision))
+                                {
+                                    <div class="mb-4">
+                                        <h5 class="fw-bold text-primary">
+                                            <i class="bi bi-target me-2"></i>Misión
+                                        </h5>
+                                        <p class="text-muted fs-6 lh-lg">@Model.Mision</p>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Vision))
+                                {
+                                    <div>
+                                        <h5 class="fw-bold text-success">
+                                            <i class="bi bi-eye me-2"></i>Visión
+                                        </h5>
+                                        <p class="text-muted fs-6 lh-lg">@Model.Vision</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Areas of Interest -->
+                    @if (Model.AreasInteres != null && Model.AreasInteres.Any())
+                    {
+                        <div class="card shadow-sm mb-4" style="border-radius: 15px;">
+                            <div class="card-header bg-light">
+                                <h3 class="card-title mb-0">
+                                    <i class="bi bi-heart me-2 text-danger"></i>Áreas de Interés
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach (var area in Model.AreasInteres)
+                                    {
+                                        <span class="badge bg-info fs-6 py-2 px-3">
+                                            <i class="bi bi-tag-fill me-1"></i>@area
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Contact Information -->
+                    <div class="card shadow-sm mb-4" style="border-radius: 15px;">
+                        <div class="card-header bg-light">
+                            <h4 class="card-title mb-0">
+                                <i class="bi bi-info-circle me-2 text-info"></i>Información de Contacto
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="contact-info">
+                                @if (!string.IsNullOrEmpty(Model.Email))
+                                {
+                                    <div class="mb-3">
+                                        <i class="bi bi-envelope text-primary me-2"></i>
+                                        <a href="mailto:@Model.Email" class="text-decoration-none">@Model.Email</a>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Telefono))
+                                {
+                                    <div class="mb-3">
+                                        <i class="bi bi-telephone text-success me-2"></i>
+                                        <a href="tel:@Model.Telefono" class="text-decoration-none">@Model.Telefono</a>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Direccion))
+                                {
+                                    <div class="mb-3">
+                                        <i class="bi bi-geo-alt text-danger me-2"></i>
+                                        <span>@Model.Direccion</span>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.SitioWeb))
+                                {
+                                    <div class="mb-3">
+                                        <i class="bi bi-globe text-info me-2"></i>
+                                        <a href="@Model.SitioWeb" target="_blank" class="text-decoration-none">
+                                            Visitar sitio web <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Organization Info -->
+                    <div class="card shadow-sm mb-4" style="border-radius: 15px;">
+                        <div class="card-header bg-light">
+                            <h4 class="card-title mb-0">
+                                <i class="bi bi-building me-2 text-warning"></i>Información Organizacional
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Balance Section -->
+                            <div class="mb-4 p-3 bg-light rounded">
+                                <small class="text-muted">Balance Actual de Donaciones:</small><br>
+                                <h4 class="text-success mb-0">
+                                    <i class="bi bi-currency-dollar me-1"></i>@Model.SaldoActual.ToString("N2")
+                                </h4>
+                                <small class="text-muted">USD</small>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(Model.NumeroRegistro))
+                            {
+                                <div class="mb-3">
+                                    <small class="text-muted">Número de Registro:</small><br>
+                                    <strong>@Model.NumeroRegistro</strong>
+                                </div>
+                            }
+                            @if (Model.FechaFundacion.HasValue)
+                            {
+                                <div class="mb-3">
+                                    <small class="text-muted">Fecha de Fundación:</small><br>
+                                    <strong>@Model.FechaFundacion.Value.ToString("MMMM yyyy")</strong>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.TipoOrganizacion))
+                            {
+                                <div class="mb-3">
+                                    <small class="text-muted">Tipo de Organización:</small><br>
+                                    <span class="badge bg-secondary fs-6">@Model.TipoOrganizacion</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card shadow-sm" style="border-radius: 15px;">
+                        <div class="card-header bg-light">
+                            <h4 class="card-title mb-0">
+                                <i class="bi bi-lightning me-2 text-warning"></i>Acciones Rápidas
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-success btn-lg" onclick="openDonationModal()" style="background: linear-gradient(45deg, #28a745, #20c997); border: none;">
+                                    <i class="bi bi-heart-fill me-2"></i>Donar Ahora
+                                </button>
+                                <a href="/Events/list?organizacion=@Model.Id" class="btn btn-primary">
+                                    <i class="bi bi-calendar-event me-2"></i>Ver Eventos
+                                </a>
+                                <a href="/Transparency/Organization/@Model.Id" class="btn btn-outline-info">
+                                    <i class="bi bi-graph-up me-2"></i>Información Financiera
+                                </a>
+                                <button class="btn btn-outline-success" onclick="shareOrganization()">
+                                    <i class="bi bi-share me-2"></i>Compartir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Donation Modal -->
+<div class="modal fade" id="donationModal" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="donationModalLabel">
+                    <i class="bi bi-heart-fill me-2"></i>Hacer una Donación a @Model.Nombre
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="mb-3">Selecciona el monto de tu donación:</h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-4">
+                                <button class="btn btn-outline-success w-100 amount-btn" data-amount="10">$10</button>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-outline-success w-100 amount-btn" data-amount="25">$25</button>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-outline-success w-100 amount-btn" data-amount="50">$50</button>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-outline-success w-100 amount-btn" data-amount="100">$100</button>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-outline-success w-100 amount-btn" data-amount="250">$250</button>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-outline-success w-100 amount-btn" data-amount="500">$500</button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customAmount" class="form-label">O ingresa un monto personalizado:</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="customAmount" placeholder="0.00" min="1" max="10000" step="0.01">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="donorName" class="form-label">Tu nombre (opcional):</label>
+                            <input type="text" class="form-control" id="donorName" placeholder="Nombre del donante">
+                        </div>
+                        <div class="mb-3">
+                            <label for="donorEmail" class="form-label">Tu email (opcional):</label>
+                            <input type="email" class="form-control" id="donorEmail" placeholder="email@ejemplo.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="donationPurpose" class="form-label">Propósito de la donación (opcional):</label>
+                            <textarea class="form-control" id="donationPurpose" rows="2" placeholder="¿Para qué te gustaría que use esta donación la organización?"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">Resumen de Donación</h6>
+                                <div class="donation-summary">
+                                    <p><strong>Organización:</strong> @Model.Nombre</p>
+                                    <p><strong>Monto:</strong> $<span id="selectedAmount">0.00</span></p>
+                                    <p><strong>Método de pago:</strong> PayPal</p>
+                                </div>
+                                <hr>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <small>Tu donación será procesada de forma segura a través de PayPal. Recibirás un recibo por email.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <div id="paypal-button-container" style="display: none;"></div>
+                <button type="button" class="btn btn-success" id="proceedToDonation" disabled>
+                    <i class="bi bi-paypal me-2"></i>Proceder con PayPal
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.organization-logo img, .placeholder-logo {
+    border: 3px solid #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.contact-info a {
+    color: inherit;
+}
+
+.contact-info a:hover {
+    color: var(--bs-primary);
+}
+
+.card {
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.badge {
+    border-radius: 8px;
+}
+
+@@media (max-width: 768px) {
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    .organization-logo img, .placeholder-logo {
+        max-width: 80px !important;
+        height: 80px !important;
+    }
+    
+    .btn-lg {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+}
+</style>
+
+<script>
+function shareOrganization() {
+    if (navigator.share) {
+        navigator.share({
+            title: '@Model.Nombre',
+            text: '@(Model.Descripcion ?? "Conoce más sobre " + Model.Nombre)',
+            url: window.location.href
+        }).then(() => {
+            console.log('Organización compartida exitosamente');
+        }).catch((error) => {
+            console.log('Error al compartir:', error);
+            fallbackShare();
+        });
+    } else {
+        fallbackShare();
+    }
+}
+
+function fallbackShare() {
+    // Fallback: copy URL to clipboard
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        Toast.success('Enlace copiado al portapapeles');
+    }).catch(() => {
+        prompt('Copia este enlace:', window.location.href);
+    });
+}
+
+// Donation functionality
+let selectedDonationAmount = 0;
+const organizacionId = @Model.Id;
+
+function openDonationModal() {
+    const modal = new bootstrap.Modal(document.getElementById('donationModal'));
+    modal.show();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Amount button click handlers
+    document.querySelectorAll('.amount-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const amount = parseFloat(this.dataset.amount);
+            selectAmount(amount);
+            
+            // Clear custom amount if preset amount is selected
+            document.getElementById('customAmount').value = '';
+            
+            // Update button states
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('btn-success'));
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.add('btn-outline-success'));
+            this.classList.remove('btn-outline-success');
+            this.classList.add('btn-success');
+        });
+    });
+    
+    // Custom amount input handler
+    document.getElementById('customAmount').addEventListener('input', function() {
+        const amount = parseFloat(this.value);
+        if (!isNaN(amount) && amount > 0) {
+            selectAmount(amount);
+            
+            // Clear button selections
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('btn-success'));
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.add('btn-outline-success'));
+        } else {
+            selectAmount(0);
+        }
+    });
+    
+    // Proceed to donation button
+    document.getElementById('proceedToDonation').addEventListener('click', function() {
+        if (selectedDonationAmount > 0) {
+            initializePayPal();
+        }
+    });
+});
+
+function selectAmount(amount) {
+    selectedDonationAmount = amount;
+    document.getElementById('selectedAmount').textContent = amount.toFixed(2);
+    
+    const proceedBtn = document.getElementById('proceedToDonation');
+    if (amount > 0 && amount <= 10000) {
+        proceedBtn.disabled = false;
+    } else {
+        proceedBtn.disabled = true;
+    }
+}
+
+function initializePayPal() {
+    const proceedBtn = document.getElementById('proceedToDonation');
+    const paypalContainer = document.getElementById('paypal-button-container');
+    
+    proceedBtn.style.display = 'none';
+    paypalContainer.style.display = 'block';
+    
+    // Clear any existing PayPal buttons
+    paypalContainer.innerHTML = '';
+    
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return createDonationOrder();
+        },
+        onApprove: function(data, actions) {
+            return capturePayPalOrder(data.orderID);
+        },
+        onError: function(err) {
+            console.error('PayPal error:', err);
+            showError('Error procesando el pago. Por favor intenta nuevamente.');
+            resetPayPalButtons();
+        },
+        onCancel: function(data) {
+            console.log('Payment cancelled:', data);
+            resetPayPalButtons();
+        }
+    }).render('#paypal-button-container');
+}
+
+async function createDonationOrder() {
+    try {
+        const donorName = document.getElementById('donorName').value;
+        const donorEmail = document.getElementById('donorEmail').value;
+        const purpose = document.getElementById('donationPurpose').value;
+        
+        const response = await fetch('http://localhost:5161/api/donation/create-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: selectedDonationAmount,
+                currency: 'USD',
+                organizacionId: organizacionId,
+                purpose: purpose || 'Donación general',
+                donorName: donorName,
+                donorEmail: donorEmail
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+            return result.data.id;
+        } else {
+            throw new Error(result.message || 'Error creating order');
+        }
+    } catch (error) {
+        console.error('Error creating donation order:', error);
+        showError('Error iniciando la donación. Por favor intenta nuevamente.');
+        throw error;
+    }
+}
+
+async function capturePayPalOrder(orderId) {
+    try {
+        const response = await fetch(`http://localhost:5161/api/donation/capture-payment/${orderId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess('¡Donación completada exitosamente! Gracias por tu generosidad.');
+            // Close modal after a delay
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('donationModal'));
+                modal.hide();
+                // Optionally refresh the page to show updated balance
+                window.location.reload();
+            }, 2000);
+        } else {
+            throw new Error(result.message || 'Error capturing payment');
+        }
+    } catch (error) {
+        console.error('Error capturing payment:', error);
+        showError('Error procesando el pago. Por favor contacta soporte.');
+    }
+}
+
+function resetPayPalButtons() {
+    document.getElementById('proceedToDonation').style.display = 'block';
+    document.getElementById('paypal-button-container').style.display = 'none';
+}
+
+function showError(message) {
+    // You can replace this with your preferred notification system
+    alert('Error: ' + message);
+}
+
+function showSuccess(message) {
+    // You can replace this with your preferred notification system
+    alert(message);
+}
+</script>
+
+@section Scripts {
+    <!-- PayPal JavaScript SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AeaEfAAN9JgvB50JZkKUbZwpkuQn4pb21LspbMEHh0ZZ9RXf7LfWHDd3N6BPXYjxpBBnr00WdxoYpTC_&currency=USD&intent=capture"></script>
+}
