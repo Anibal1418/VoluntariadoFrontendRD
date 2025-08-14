@@ -20,6 +20,7 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/toast-notifications.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/VoluntariosConectadosRD.styles.css" asp-append-version="true" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -45,7 +46,9 @@
                             <!-- Volunteer Navigation -->
                             <a href="/Dashboard/Index" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">Inicio</a>
                             <a href="/Events/List" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Events" ? "active" : "")">Oportunidades</a>
+                            <a href="/Messages" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Messages" ? "active" : "")">Mensajes</a>
                             <a href="/Dashboard/Profile" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")">Mi Perfil</a>
+                            <a href="/Transparency" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Transparency" ? "active" : "")">Transparencia</a>
                         }
                         else if ((UserRole)userInfo.Rol == UserRole.Organizacion)
                         {
@@ -53,7 +56,9 @@
                             <a href="/Dashboard/ProfileONG" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "ProfileONG" ? "active" : "")">Inicio</a>
                             <a href="/Events/Create" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Create" ? "active" : "")">Crear Evento</a>
                             <a href="/Events/Manage" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Manage" ? "active" : "")">Mis Eventos</a>
+                            <a href="/Messages" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Messages" ? "active" : "")">Mensajes</a>
                             <a href="/Dashboard/Reportes" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reportes" ? "active" : "")">Reportes</a>
+                            <a href="/Transparency" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Transparency" ? "active" : "")">Transparencia</a>
                         }
                         else if (userInfo.Rol == (int)UserRole.Administrador)
                         {
@@ -61,8 +66,10 @@
                             <a href="/Dashboard/Index" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">Inicio</a>
                             <a href="/Dashboard/VoluntariosAdmin" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "VoluntariosAdmin" ? "active" : "")">Usuarios</a>
                             <a href="/Dashboard/ONGAdmin" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "ONGAdmin" ? "active" : "")">Organizaciones</a>
-                            <a href="/Dashboard/Reportes" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reportes" ? "active" : "")">Reportes</a>
                             <a href="/Events/List" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Events" ? "active" : "")">Eventos</a>
+                            <a href="/Messages" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Messages" ? "active" : "")">Mensajes</a>
+                            <a href="/Dashboard/Reportes" class="dashboard-tab @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reportes" ? "active" : "")">Reportes</a>
+                            <a href="/Transparency" class="dashboard-tab @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Transparency" ? "active" : "")">Transparencia</a>
                         }
                     }
                 </nav>
@@ -136,9 +143,10 @@
                     <h6 class="text-white mb-3">Enlaces</h6>
                     <ul class="list-unstyled">
                         <li><a href="/Home/Index" class="text-light text-decoration-none">Inicio</a></li>
-                        <li><a href="#como-funciona" class="text-light text-decoration-none">¿Cómo funciona?</a></li>
+                        <li><a href="/Home/ComoFunciona" class="text-light text-decoration-none">¿Cómo funciona?</a></li>
+                        <li><a href="/Transparency" class="text-light text-decoration-none">Transparencia</a></li>
                         <li><a href="/Account/Registro" class="text-light text-decoration-none">Registro</a></li>
-                        <li><a href="#contacto" class="text-light text-decoration-none">Contacto</a></li>
+                        <li><a href="/Home/Contacto" class="text-light text-decoration-none">Contacto</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
@@ -210,6 +218,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/toast-notifications.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

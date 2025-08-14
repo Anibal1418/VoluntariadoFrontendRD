@@ -1,8 +1,17 @@
 ﻿@using VoluntariosConectadosRD.Models.Configuration
+@using VoluntariosConectadosRD.Models.DTOs
 @using Microsoft.Extensions.Options
+@using System.Text.Json
 @inject IOptions<ContactConfiguration> ContactOptions
 @{
     var contactInfo = ContactOptions.Value;
+    var userInfoJson = Context.Session.GetString("UserInfo");
+    UserInfoDto? userInfo = null;
+    if (!string.IsNullOrEmpty(userInfoJson))
+    {
+        userInfo = JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
+    }
+    bool isAuthenticated = userInfo != null;
 }
 <!DOCTYPE html>
 <html lang="es">
@@ -19,7 +28,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <!-- Fixed Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
         <div class="container">
@@ -48,21 +57,35 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fw-bold" href="/Messages">
-                            <i class="bi bi-chat-dots me-1"></i>Mensajes
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link fw-bold" href="/Transparency">
                             <i class="fas fa-chart-line me-1"></i>Transparencia
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="/Account/Registro">Registro</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="/Account/Login">Iniciar sesión</a>
-                    </li>
+                    @if (isAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" href="/Messages">
+                                <i class="bi bi-chat-dots me-1"></i>Mensajes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" href="/Dashboard">
+                                <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" href="/Account/Logout">Cerrar sesión</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" href="/Account/Registro">Registro</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" href="/Account/Login">Iniciar sesión</a>
+                        </li>
+                    }
                     <li class="nav-item">
                         <a class="nav-link fw-bold" href="/Home/Contacto">Contacto</a>
                     </li>
@@ -72,12 +95,12 @@
     </nav>
 
     <!-- Main Content -->
-    <main role="main">
+    <main role="main" class="flex-grow-1" style="padding-top: 80px;">
         @RenderBody()
     </main>
 
     <!-- Footer -->
-    <footer class="footer-section">
+    <footer class="footer-section mt-auto">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4">
