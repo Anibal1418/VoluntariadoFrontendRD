@@ -72,11 +72,14 @@
                 </div>
 
                 <!-- Edit button -->
-                <div class="d-flex justify-content-end mt-4 gap-3">
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-action">
-                        <i class="bi bi-pencil-square me-1"></i>Editar
-                    </a>
-                </div>
+                @if (ViewBag.CanEdit == true)
+                {
+                    <div class="d-flex justify-content-end mt-4 gap-3">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-action">
+                            <i class="bi bi-pencil-square me-1"></i>Editar
+                        </a>
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -128,6 +128,28 @@ namespace VoluntariosConectadosRD.Controllers
                         ImagenNombre = "default.jpg"
                     };
                     
+                    // Check if user can edit
+                    var userInfoJson = HttpContext.Session.GetString("UserInfo");
+                    if (!string.IsNullOrEmpty(userInfoJson))
+                    {
+                        var userInfo = System.Text.Json.JsonSerializer.Deserialize<VoluntariosConectadosRD.Models.DTOs.UserInfoDto>(userInfoJson);
+                        if (userInfo != null)
+                        {
+                            // User can edit if they are admin or from the same organization
+                            ViewBag.CanEdit = userInfo.Rol == (int)VoluntariosConectadosRD.Models.DTOs.UserRole.Administrador ||
+                                            (userInfo.Rol == (int)VoluntariosConectadosRD.Models.DTOs.UserRole.Organizacion && 
+                                             userInfo.Organizacion?.Id == response.Data.Organizacion?.Id);
+                        }
+                        else
+                        {
+                            ViewBag.CanEdit = false;
+                        }
+                    }
+                    else
+                    {
+                        ViewBag.CanEdit = false;
+                    }
+                    
                     return View(eventoFromApi);
                 }
                 else
@@ -237,9 +259,16 @@ namespace VoluntariosConectadosRD.Controllers
                         FechaFin = evento.FechaFin ?? evento.Fecha.AddHours(evento.DuracionHoras),
                         Ubicacion = evento.Ubicacion,
                         DuracionHoras = evento.DuracionHoras,
-                        VoluntariosRequeridos = evento.VoluntariosRequeridos
+                        VoluntariosRequeridos = evento.VoluntariosRequeridos,
+                        Requisitos = null, // Optional field
+                        Beneficios = null, // Optional field
+                        AreaInteres = null, // Optional field
+                        NivelExperiencia = null // Optional field
                     };
 
+                    // Log the DTO being sent
+                    _logger.LogInformation("Sending CreateOpportunityDto: {@CreateDto}", createDto);
+                    
                     var response = await _volunteerApiService.CreateOpportunityAsync(createDto);
                     
                     if (response?.Success == true)
