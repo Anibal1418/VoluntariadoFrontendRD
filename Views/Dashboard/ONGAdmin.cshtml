@@ -285,13 +285,13 @@
                 });
 
                 if (response.ok) {
-                    alert('ONG verificada exitosamente');
-                    location.reload(); // Reload page to update status
+                    Toast.success('ONG verificada exitosamente');
+                    setTimeout(() => location.reload(), 1500); // Reload page to update status
                 } else {
-                    alert('Error al verificar ONG');
+                    Toast.error('Error al verificar ONG');
                 }
             } catch (error) {
-                alert('Error de conexión al verificar ONG');
+                Toast.error('Error de conexión al verificar ONG');
             }
         }
     }
@@ -308,13 +308,13 @@
                 });
 
                 if (response.ok) {
-                    alert('ONG aprobada exitosamente');
-                    location.reload(); // Reload page to update status
+                    Toast.success('ONG aprobada exitosamente');
+                    setTimeout(() => location.reload(), 1500); // Reload page to update status
                 } else {
-                    alert('Error al aprobar ONG');
+                    Toast.error('Error al aprobar ONG');
                 }
             } catch (error) {
-                alert('Error de conexión al aprobar ONG');
+                Toast.error('Error de conexión al aprobar ONG');
             }
         }
     }
@@ -331,13 +331,13 @@
                 });
 
                 if (response.ok) {
-                    alert('ONG reactivada exitosamente');
-                    location.reload(); // Reload page to update status
+                    Toast.success('ONG reactivada exitosamente');
+                    setTimeout(() => location.reload(), 1500); // Reload page to update status
                 } else {
-                    alert('Error al reactivar ONG');
+                    Toast.error('Error al reactivar ONG');
                 }
             } catch (error) {
-                alert('Error de conexión al reactivar ONG');
+                Toast.error('Error de conexión al reactivar ONG');
             }
         }
     }
@@ -350,13 +350,13 @@
                 });
 
                 if (response.ok) {
-                    alert('ONG eliminada exitosamente');
-                    location.reload(); // Reload page to remove organization
+                    Toast.success('ONG eliminada exitosamente');
+                    setTimeout(() => location.reload(), 1500); // Reload page to remove organization
                 } else {
-                    alert('Error al eliminar ONG');
+                    Toast.error('Error al eliminar ONG');
                 }
             } catch (error) {
-                alert('Error de conexión al eliminar ONG');
+                Toast.error('Error de conexión al eliminar ONG');
             }
         }
     }
